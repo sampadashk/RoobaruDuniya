@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="photosel">
+        <item>@drawable/coffee</item>
+        <item>@drawable/sparrow</item>
+        <item>@drawable/avenue</item>
+        <item>@drawable/flower</item>
+        <item>@drawable/womens</item>
+
+
+    </string-array>
+</resources>

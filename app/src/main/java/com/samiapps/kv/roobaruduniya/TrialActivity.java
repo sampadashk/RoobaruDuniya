@@ -7,7 +7,6 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -106,8 +105,14 @@ public class TrialActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent intent=new Intent(Intent.ACTION_SEND);
+                intent.setType("text/html");
+
+                intent.putExtra(Intent.EXTRA_EMAIL,"roobaru.duniya@gmail.com");
+              //  intent.putExtra(Intent.EXTRA_SUBJECT, "Subject");
+                //intent.putExtra(Intent.EXTRA_TEXT, "I'm email body.");
+
+                startActivity(Intent.createChooser(intent, "Send Email"));
             }
         });
 
@@ -116,6 +121,8 @@ public class TrialActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
+        HomeFragment homeFragment = new HomeFragment();
+        getSupportFragmentManager().beginTransaction().replace(R.id.frame, homeFragment, CURRENT_TAG).commit();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -213,7 +220,7 @@ public class TrialActivity extends AppCompatActivity
         if (id == R.id.nav_home) {
             navItemIndex=0;
             CURRENT_TAG = TAG_HOME;
-            // Handle the camera action
+
         } else if (id == R.id.nav_favorites) {
             navItemIndex=1;
             CURRENT_TAG=TAG_FAV;

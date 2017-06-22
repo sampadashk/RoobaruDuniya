@@ -29,7 +29,7 @@ public class DraftFragment extends Fragment {
     private FirebaseDatabase firebaseDtabase;
     private DatabaseReference dbaseReference;
     private DatabaseReference msgReference;
-    private ValueEventListener msgListener;
+    private ChildEventListener msgListener;
     private ChildEventListener userListener;
 
 
@@ -43,6 +43,8 @@ public class DraftFragment extends Fragment {
     String uid;
     ArrayList<String> childkey;
     public static final String TAG = DraftFragment.class.getName();
+   // ProgressBar pgbar;
+   // TextView noDraftText;
 
     public DraftFragment() {
         super();
@@ -62,6 +64,7 @@ public class DraftFragment extends Fragment {
         Log.d("msgkt", msgReference.toString());
 
 
+
         //setHasOptionsMenu(true);
 
     }
@@ -71,10 +74,13 @@ public class DraftFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.headlinelayout, container, false);
         mRecycleView = (RecyclerView) rootView.findViewById(R.id.editor_recycleview);
         imageAdapter = new imgAdapter(rubaru, getContext());
+     //   pgbar=(ProgressBar) rootView.findViewById(R.id.pbar);
+      //  noDraftText=(TextView) rootView.findViewById(R.id.nodraftText);
         mRecycleView.setLayoutManager(new GridLayoutManager(getContext(), 2));
         mRecycleView.setItemAnimator(new DefaultItemAnimator());
 
         mRecycleView.setAdapter(imageAdapter);
+
 
         return rootView;
     }
@@ -86,7 +92,8 @@ public class DraftFragment extends Fragment {
 
             for (String key : msgList) {
                 //accessing those nodes whose key is equal to key in arraylist
-                msgReference.orderByKey().equalTo(key).addChildEventListener(new ChildEventListener() {
+
+               /* msgReference.orderByKey().equalTo(key).addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                         RoobaruDuniya rbd = dataSnapshot.getValue(RoobaruDuniya.class);
@@ -117,9 +124,11 @@ public class DraftFragment extends Fragment {
 
                     }
                 });
+                */
 
 
-            /*    msgReference.child(key).addListenerForSingleValueEvent(new ValueEventListener() {
+
+                msgReference.child(key).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         RoobaruDuniya rbd = dataSnapshot.getValue(RoobaruDuniya.class);
@@ -134,11 +143,16 @@ public class DraftFragment extends Fragment {
 
                     }
                 });
-                */
-            }
-        }
 
+
+            }//
+
+
+        }
     }
+
+
+
 
 
    /* public void onStart() {
@@ -174,17 +188,24 @@ public class DraftFragment extends Fragment {
         super.onStart();
     }
     */
-   public void onStart()
+   private void readmsgId()
    {
-       super.onStart();
        if(userListener==null)
        {
            userListener= new ChildEventListener() {
                //Adding keys in ArrayList msgList whose value is draft
                @Override
                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                   msgList.add(dataSnapshot.getKey());
-                   Log.d("dbkey",dataSnapshot.getKey());
+                   if(dataSnapshot==null)
+                   {
+                       // noDraftText.setVisibility(View.VISIBLE);
+                   }
+                   else {
+                       msgList.add(dataSnapshot.getKey());
+                       Log.d("dbkey", dataSnapshot.getKey());
+
+                   }
+
                }
 
                @Override
@@ -207,8 +228,10 @@ public class DraftFragment extends Fragment {
 
                }
            };
+
            dbaseReference.orderByValue().equalTo("draft").addChildEventListener(userListener);
        }
+
       /* dbaseReference.orderByValue().equalTo("draft").addChildEventListener(new ChildEventListener() {
            @Override
            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -246,13 +269,22 @@ public class DraftFragment extends Fragment {
 
 
    }
+   public void onStart()
+   {
+       super.onStart();
+       readmsgId();
+
+
+   }
 
     public void onPause() {
-        super.onPause();
-       if (userListener != null) {
-            dbaseReference.removeEventListener(userListener);
-            userListener = null;
+
+      if (userListener != null) {
+        dbaseReference.removeEventListener(userListener);
+
+           userListener = null;
         }
+        super.onPause();
 
 
     }

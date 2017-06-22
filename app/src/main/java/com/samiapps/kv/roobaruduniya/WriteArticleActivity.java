@@ -1,6 +1,7 @@
 package com.samiapps.kv.roobaruduniya;
 
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -29,6 +30,7 @@ import com.google.firebase.storage.UploadTask;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by KV on 18/6/17.
@@ -58,6 +60,7 @@ public class WriteArticleActivity extends AppCompatActivity {
     private static final int RC_PHOTO_PICKER = 2;
     private ValueEventListener eventListener;
     final HashMap<String, Object> userMap = new HashMap<String, Object>();
+
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -179,6 +182,10 @@ public class WriteArticleActivity extends AppCompatActivity {
                 try {
 
                     if (rbd == null) {
+                        TypedArray ids = getResources().obtainTypedArray(R.array.photosel);
+                        int idx = new Random().nextInt(ids.getIndexCount());
+
+
                         rbd = new RoobaruDuniya(title.getText().toString(), content.getText().toString(), null, user.getDisplayName().toString(), userEmail, 0, 1);
                         key = dbRefMsg.push().getKey();
                         dbRefMsg.child(key).setValue(rbd);
