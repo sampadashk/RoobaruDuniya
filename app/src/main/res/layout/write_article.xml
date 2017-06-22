@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_marginLeft="16dp"
+    android:layout_marginRight="16dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <EditText
+        android:id="@+id/post_title_edit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:background="@null"
+        android:hint="@string/post_title_hint"
+        android:imeOptions="actionDone"
+        android:inputType="text|textCapSentences"
+        android:textAppearance="@style/TextAppearance.Large.Light"
+        tools:text="My awesome post title"
+        />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@android:color/holo_blue_dark"
+        />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <EditText
+
+        android:id="@+id/post_content"
+        android:minLines="6"
+
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+
+
+        android:background="@android:color/transparent"
+        android:gravity="top"
+        android:hint="@string/post_body_hint"
+
+
+        android:focusable="true"
+
+
+        android:textIsSelectable="true"
+
+
+        android:inputType="textMultiLine|textLongMessage|textCapSentences"
+        android:padding="16dp"
+        android:textAppearance="@style/TextAppearance.Light"
+        android:textColorHint="@color/text_secondary"
+
+        />
+    </ScrollView>
+
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:showDividers="middle"
+        android:visibility="visible"
+        android:fitsSystemWindows="true">
+        <ImageButton
+            android:id="@+id/photoPickerButton"
+            android:layout_alignParentBottom="true"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@android:drawable/ic_menu_gallery" />
+        <Button
+            android:id="@+id/bold_button"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:textStyle="bold"
+            android:textSize="24sp"
+            android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@id/photoPickerButton"
+            android:text="B"/>
+        <Button
+            android:id="@+id/italic_button"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:textSize="24sp"
+            android:text="I"
+            android:textStyle="italic"
+            android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@id/bold_button"/>
+
+    </RelativeLayout>
+</LinearLayout>
+

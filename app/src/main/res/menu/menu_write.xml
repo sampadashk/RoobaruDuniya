@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/savecl"
+        android:title="save"
+        app:showAsAction="always"
+
+        android:enabled="false"
+        android:text="saveNclose"/>
+
+
+
+    <item android:id="@+id/draft"
+        android:title="draft"
+        app:showAsAction="always"
+        android:text="Draft"
+        android:enabled="false"/>
+    <item android:title="publish"
+        android:id="@+id/publish"
+        android:text="publish"
+        app:showAsAction="always"
+        android:enabled="true"/>
+</menu>
