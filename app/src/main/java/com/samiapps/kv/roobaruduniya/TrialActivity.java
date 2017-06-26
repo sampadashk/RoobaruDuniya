@@ -77,6 +77,7 @@ public class TrialActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         Log.d(TAG,"ONCREATE 1");
         setContentView(R.layout.activity_trial);
+        //postponeEnterTransition();
         mUsername = ANONYMOUS;
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -109,8 +110,10 @@ public class TrialActivity extends AppCompatActivity
 
             }
         };
+        firebaseDtabase=FirebaseDatabase.getInstance();
+     //   Logger.Level debugLevel = Logger.Level.valueOf("DEBUG");
 
-        firebaseDtabase = FirebaseDatabase.getInstance();
+
         dbEditor=firebaseDtabase.getReference("editor");
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -157,6 +160,7 @@ public class TrialActivity extends AppCompatActivity
 
         imgProfile = (ImageView) navHeader.findViewById(R.id.img_profile);
 
+
      /*   if (savedInstanceState == null) {
             navItemIndex = 0;
             CURRENT_TAG = TAG_HOME;
@@ -193,6 +197,7 @@ public class TrialActivity extends AppCompatActivity
 
             }
         });
+
         Log.d("checkedit",""+isEditor);
     }
 
@@ -418,6 +423,7 @@ public class TrialActivity extends AppCompatActivity
         mHandler = new Handler();
         Log.d("cname", uname);
         Log.d("curi", photoUri.toString());
+
         loadNavHeader();
         checkEditor();
         if(isEditor)

@@ -79,6 +79,7 @@ public class WriteArticleActivity extends AppCompatActivity {
         dbRefUser = db.getReference("user");
         firebaseStorage = FirebaseStorage.getInstance();
         storageReference = firebaseStorage.getReference().child("article_photo");
+      //  FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG);
         title = (EditText) findViewById(R.id.post_title_edit);
         content = (EditText) findViewById(R.id.post_content);
         dbEditor.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -167,7 +168,7 @@ public class WriteArticleActivity extends AppCompatActivity {
                     if (rbd == null) {
                         rbd = new RoobaruDuniya(title.getText().toString(), content.getText().toString(), null, user.getDisplayName().toString(), userEmail, 1, 0);
 
-                    } else
+                    } else if(rbd!=null)
                     {
                         if (rbd.getDraft() == 0) {
                             rbd.setDraft(1);
@@ -191,6 +192,7 @@ public class WriteArticleActivity extends AppCompatActivity {
                         dbRefUser.child(userId).child("articleStatus").child(key).setValue("draft");
                     } else {
                         dbRefUser.child(userId).setValue(u);
+                        dbRefUser.child(userId).child("articleStatus").child(key).setValue("draft");
                     }
 
 

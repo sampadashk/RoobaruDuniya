@@ -27,7 +27,7 @@ import java.util.ArrayList;
 public class HomeFragment extends Fragment {
     private FirebaseDatabase firebaseDtabase;
     private DatabaseReference dbaseReference;
-    private DatabaseReference dbEditor;
+
 
 
     private imgAdapter imageAdapter;
@@ -57,30 +57,8 @@ public class HomeFragment extends Fragment {
         email=FirebaseAuth.getInstance().getCurrentUser().getEmail();
         firebaseDtabase = FirebaseDatabase.getInstance();
         dbaseReference = firebaseDtabase.getReference().child("messages");
-        dbEditor=firebaseDtabase.getReference("editor");
+
         Log.d("checkt",dbaseReference.toString());
-        dbEditor.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot di:dataSnapshot.getChildren())
-                {
-                    editors.add(di.getValue().toString());
-                }
-
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-        if(editors.contains(email))
-        {
-            isEditor=true;
-        }
-
-         Log.d("checkeditor",""+isEditor);
 
 
 
@@ -211,6 +189,7 @@ public class HomeFragment extends Fragment {
         super.onStop();
         Log.d("actck","stop");
         rubaru.clear();
+
     }
     @Override
     public void onPause() {

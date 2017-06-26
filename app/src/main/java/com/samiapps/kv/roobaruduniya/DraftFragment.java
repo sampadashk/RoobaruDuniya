@@ -55,11 +55,14 @@ public class DraftFragment extends Fragment {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        firebaseDtabase = FirebaseDatabase.getInstance();
-        dbaseReference = firebaseDtabase.getReference().child("user").child(uid).child("articleStatus");
+      firebaseDtabase = FirebaseDatabase.getInstance();
+       dbaseReference = firebaseDtabase.getReference().child("user").child(uid).child("articleStatus");
         // dbaseReference = firebaseDtabase.getReference().child("user").child(uid);
         msgReference = firebaseDtabase.getReference().child("messages");
+
+
         Log.d("checkt", dbaseReference.toString());
         Log.d("msgkt", msgReference.toString());
         Log.d("actchk","1");
@@ -82,6 +85,8 @@ public class DraftFragment extends Fragment {
         Log.d("actchk","2");
 
         mRecycleView.setAdapter(imageAdapter);
+        //FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG);
+
        readmsgId();
 
 
@@ -120,8 +125,9 @@ public class DraftFragment extends Fragment {
            @Override
            public void onDataChange(DataSnapshot dataSnapshot) {
                if (dataSnapshot.hasChildren()) {
-                   Log.d("actchk","dbchk");
+                   Log.d("actchk", "dbchk");
                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                       Log.d("valck",ds.getValue()+"");
                        if (ds.getValue().equals("draft")) {
 
                            //msgList.add(ds.getKey());
@@ -133,6 +139,7 @@ public class DraftFragment extends Fragment {
 
 
                    }
+
 
                }
            }
