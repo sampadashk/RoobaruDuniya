@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
@@ -28,32 +33,33 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-    <EditText
 
-        android:id="@+id/post_content"
-        android:minLines="6"
+        <EditText
 
-        android:layout_width="match_parent"
-        android:layout_height="400dp"
+            android:id="@+id/post_content"
+            android:layout_width="match_parent"
 
-
-        android:background="@android:color/transparent"
-        android:gravity="top"
-        android:hint="@string/post_body_hint"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
 
 
-        android:focusable="true"
+            android:focusable="true"
+            android:gravity="top"
+            android:hint="@string/post_body_hint"
 
 
-        android:textIsSelectable="true"
+            android:inputType="textMultiLine|textLongMessage|textCapSentences"
 
 
-        android:inputType="textMultiLine|textLongMessage|textCapSentences"
-        android:padding="16dp"
-        android:textAppearance="@style/TextAppearance.Light"
-        android:textColorHint="@color/text_secondary"
+            android:minLines="6"
 
-        />
+
+            android:padding="16dp"
+            android:textAppearance="@style/TextAppearance.Light"
+            android:textColorHint="@color/text_secondary"
+            android:textIsSelectable="true"
+
+            />
     </ScrollView>
 
 
@@ -92,4 +98,5 @@
 
     </RelativeLayout>
 </LinearLayout>
+    </ScrollView>
 

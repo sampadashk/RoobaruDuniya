@@ -1,5 +1,6 @@
 package com.samiapps.kv.roobaruduniya;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -26,15 +27,20 @@ import java.util.ArrayList;
 public class HomeFragment extends Fragment {
     private FirebaseDatabase firebaseDtabase;
     private DatabaseReference dbaseReference;
+    private DatabaseReference dbEditor;
 
 
     private imgAdapter imageAdapter;
     ArrayList<RoobaruDuniya> rubaru=new ArrayList<RoobaruDuniya>();
+    ArrayList<String> editors=new ArrayList<>();
 
 
     private RecyclerView mRecycleView;
     private RecyclerView.LayoutManager mLayoutManager;
-    String uid;
+     String uid;
+    String email;
+    boolean isEditor;
+
     ArrayList<String> childkey;
     public static final String TAG=DraftFragment.class.getName();
     public HomeFragment() {
@@ -48,9 +54,33 @@ public class HomeFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         uid= FirebaseAuth.getInstance().getCurrentUser().getUid();
+        email=FirebaseAuth.getInstance().getCurrentUser().getEmail();
         firebaseDtabase = FirebaseDatabase.getInstance();
         dbaseReference = firebaseDtabase.getReference().child("messages");
+        dbEditor=firebaseDtabase.getReference("editor");
         Log.d("checkt",dbaseReference.toString());
+        dbEditor.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot di:dataSnapshot.getChildren())
+                {
+                    editors.add(di.getValue().toString());
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        if(editors.contains(email))
+        {
+            isEditor=true;
+        }
+
+         Log.d("checkeditor",""+isEditor);
 
 
 
@@ -64,34 +94,19 @@ public class HomeFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.headlinelayout, container, false);
         mRecycleView = (RecyclerView) rootView.findViewById(R.id.editor_recycleview);
+        imageAdapter=new imgAdapter(rubaru,getContext());
+        mRecycleView.setLayoutManager(new GridLayoutManager(getContext(),2));
+        mRecycleView.setItemAnimator(new DefaultItemAnimator());
+
+        mRecycleView.setAdapter(imageAdapter);
 
         // mLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         // mRecycleView.setHasFixedSize(true);
-
-        dbaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                Log.d("chkcount", String.valueOf(dataSnapshot.getChildrenCount()));
-                // ArrayList<RoobaruDuniya> rubaru=new ArrayList<RoobaruDuniya>();
-                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-
-
-                    RoobaruDuniya rbd = postSnapshot.getValue(RoobaruDuniya.class);
-
-                    Log.d("checktitle", rbd.getTitle());
-                    rubaru.add(rbd);
-                    Log.d("rub"," "+rubaru);
+        displayArticles();
 
 
 
-                }
-                imageAdapter=new imgAdapter(rubaru,getContext());
-                mRecycleView.setLayoutManager(new GridLayoutManager(getContext(),2));
-                mRecycleView.setItemAnimator(new DefaultItemAnimator());
-
-                mRecycleView.setAdapter(imageAdapter);
-              /*  imageAdapter.setOnItemClickListener(new imgAdapter.ClickListener() {
+           imageAdapter.setOnItemClickListener(new imgAdapter.ClickListener() {
                     @Override
                     public void onItemClick(int position, View v) {
 
@@ -99,7 +114,7 @@ public class HomeFragment extends Fragment {
                         Intent intent = new Intent(getContext(), ArticleDetail.class);
                         intent.putExtra("position", position);
                         Bundle b=new Bundle();
-                        b.putSerializable(articlePage.TAG,item);
+                        b.putSerializable(HomeFragment.TAG,item);
                         intent.putExtras(b);
 
 
@@ -108,15 +123,9 @@ public class HomeFragment extends Fragment {
                         startActivity(intent);
                     }
                 });
-                */
 
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                System.out.println("The read failed: " + databaseError.getCode());
-            }
-        });
+
 
 
         // Spinner spinner = (Spinner) rootView.findViewById(R.id.profile_spinner);
@@ -155,6 +164,38 @@ public class HomeFragment extends Fragment {
         return rootView;
     }
 
+    private void displayArticles() {
+
+
+
+        dbaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                Log.d("chkcount", String.valueOf(dataSnapshot.getChildrenCount()));
+                // ArrayList<RoobaruDuniya> rubaru=new ArrayList<RoobaruDuniya>();
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+
+
+                    RoobaruDuniya rbd = postSnapshot.getValue(RoobaruDuniya.class);
+
+                    Log.d("checktitle", rbd.getTitle());
+                    rubaru.add(rbd);
+                    imageAdapter.notifyDataSetChanged();
+                    Log.d("rub", " " + rubaru);
+
+
+                }
+            }
+
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.out.println("The read failed: " + databaseError.getCode());
+            }
+        });
+    }
+
     public void onStart() {
         super.onStart();
     }
@@ -164,12 +205,25 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
-
-
-
-
-
-
     }
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d("actck","stop");
+        rubaru.clear();
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d("actck","pause");
+    }
+
+
+
+
+
+
+
+
+
 }

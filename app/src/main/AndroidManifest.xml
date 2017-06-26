@@ -16,11 +16,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".WriteArticleActivity" />
+        <activity android:name=".WriteArticleActivity"
+            android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name=".TrialActivity"
             android:label="@string/title_activity_trial"
             android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".ArticleDetail"></activity>
     </application>
 
 </manifest>

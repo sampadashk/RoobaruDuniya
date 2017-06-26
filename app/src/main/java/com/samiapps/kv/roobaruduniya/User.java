@@ -8,6 +8,7 @@ public class User {
     String name;
     String email;
     String articleStatus;
+    String status;
     //published
   //  String drafted;
    // String sent;
@@ -20,10 +21,21 @@ public class User {
         this.name = name;
     }
 
-    public User(String name, String email, String articleStatus) {
+
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public User(String name, String email, String articleStatus, String status) {
         this.name = name;
         this.email = email;
         this.articleStatus = articleStatus;
+        this.status=status;
 
     }
 

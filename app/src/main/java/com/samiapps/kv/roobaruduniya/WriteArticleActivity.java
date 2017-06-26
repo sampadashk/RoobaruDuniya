@@ -1,7 +1,6 @@
 package com.samiapps.kv.roobaruduniya;
 
 import android.content.Intent;
-import android.content.res.TypedArray;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -30,7 +29,6 @@ import com.google.firebase.storage.UploadTask;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Created by KV on 18/6/17.
@@ -42,6 +40,7 @@ public class WriteArticleActivity extends AppCompatActivity {
     DatabaseReference dbRefMsg;
     DatabaseReference dbRefMsgList;
     DatabaseReference dbRefUser;
+    DatabaseReference dbEditor;
     int draftPressed=0;
     String userEmail;
     private FirebaseStorage firebaseStorage;
@@ -52,11 +51,13 @@ public class WriteArticleActivity extends AppCompatActivity {
     MenuItem saveButton;
     ImageButton photoButton;
     RoobaruDuniya rbd;
+    String userPos;
     String key;
     String userId;
     User u;
     Boolean b;
     List<String> uids;
+
     private static final int RC_PHOTO_PICKER = 2;
     private ValueEventListener eventListener;
     final HashMap<String, Object> userMap = new HashMap<String, Object>();
@@ -68,15 +69,39 @@ public class WriteArticleActivity extends AppCompatActivity {
         user = FirebaseAuth.getInstance().getCurrentUser();
         userEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         userId=FirebaseAuth.getInstance().getCurrentUser().getUid();
+        userPos="Blogger";
+
 
         db = FirebaseDatabase.getInstance();
         dbRefMsg = db.getReference("messages");
         dbRefMsgList = db.getReference("msg_list");
+        dbEditor=db.getReference("editor");
         dbRefUser = db.getReference("user");
         firebaseStorage = FirebaseStorage.getInstance();
         storageReference = firebaseStorage.getReference().child("article_photo");
         title = (EditText) findViewById(R.id.post_title_edit);
         content = (EditText) findViewById(R.id.post_content);
+        dbEditor.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    if (ds.getValue().equals(userEmail)) {
+                        userPos="Editor";
+                        dbEditor.removeEventListener(this);
+                        break;
+
+                    }
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
         uids=new ArrayList<>();
         photoButton = (ImageButton) findViewById(R.id.photoPickerButton);
         photoButton.setOnClickListener(new View.OnClickListener() {
@@ -142,8 +167,11 @@ public class WriteArticleActivity extends AppCompatActivity {
                     if (rbd == null) {
                         rbd = new RoobaruDuniya(title.getText().toString(), content.getText().toString(), null, user.getDisplayName().toString(), userEmail, 1, 0);
 
-                    } else if (rbd.getDraft() == 0) {
-                        rbd.setDraft(1);
+                    } else
+                    {
+                        if (rbd.getDraft() == 0) {
+                            rbd.setDraft(1);
+                        }
                     }
                     if (draftPressed == 0) {
                         key = dbRefMsg.push().getKey();
@@ -154,7 +182,7 @@ public class WriteArticleActivity extends AppCompatActivity {
                     }
 
                     if (u == null) {
-                        u = new User(user.getDisplayName(), userEmail, "draft");
+                        u = new User(user.getDisplayName(), userEmail, "draft",userPos);
                     }
 
                     Boolean b1=uids.contains(userId);
@@ -182,10 +210,6 @@ public class WriteArticleActivity extends AppCompatActivity {
                 try {
 
                     if (rbd == null) {
-                        TypedArray ids = getResources().obtainTypedArray(R.array.photosel);
-                        int idx = new Random().nextInt(ids.getIndexCount());
-
-
                         rbd = new RoobaruDuniya(title.getText().toString(), content.getText().toString(), null, user.getDisplayName().toString(), userEmail, 0, 1);
                         key = dbRefMsg.push().getKey();
                         dbRefMsg.child(key).setValue(rbd);
@@ -197,7 +221,7 @@ public class WriteArticleActivity extends AppCompatActivity {
                     }
                     if(u==null)
                     {
-                        u=new User(user.getDisplayName(), userEmail, "sent");
+                        u=new User(user.getDisplayName(), userEmail,"sent",userPos);
                     }
                     else
                         u.setArticleStatus("sent");
@@ -287,10 +311,12 @@ public class WriteArticleActivity extends AppCompatActivity {
                         Uri downloadUrl = taskSnapshot.getDownloadUrl();
                         try {
                             if(rbd!=null) {
-                                rbd = new RoobaruDuniya(title.getText().toString(), content.getText().toString(), downloadUrl.toString(), user.getDisplayName().toString(), userEmail, 0, 0);
+                                rbd.setPhoto(downloadUrl.toString());
+
                             }
                             else {
-                                rbd.setPhoto(downloadUrl.toString());
+                                rbd = new RoobaruDuniya(title.getText().toString(), content.getText().toString(), downloadUrl.toString(), user.getDisplayName().toString(), userEmail, 0, 0);
+
                             }
                             draftButton.setEnabled(true);
                             saveButton.setEnabled(true);

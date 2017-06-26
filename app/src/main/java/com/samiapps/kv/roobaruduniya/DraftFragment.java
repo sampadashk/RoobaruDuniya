@@ -62,6 +62,7 @@ public class DraftFragment extends Fragment {
         msgReference = firebaseDtabase.getReference().child("messages");
         Log.d("checkt", dbaseReference.toString());
         Log.d("msgkt", msgReference.toString());
+        Log.d("actchk","1");
 
 
 
@@ -78,55 +79,18 @@ public class DraftFragment extends Fragment {
       //  noDraftText=(TextView) rootView.findViewById(R.id.nodraftText);
         mRecycleView.setLayoutManager(new GridLayoutManager(getContext(), 2));
         mRecycleView.setItemAnimator(new DefaultItemAnimator());
+        Log.d("actchk","2");
 
         mRecycleView.setAdapter(imageAdapter);
+       readmsgId();
+
 
 
         return rootView;
     }
 
-    private void checkMessages() {
-        if (msgList.size() > 0) {
-            Log.d("msgct", msgList.size() + "");
-
-
-            for (String key : msgList) {
-                //accessing those nodes whose key is equal to key in arraylist
-
-               /* msgReference.orderByKey().equalTo(key).addChildEventListener(new ChildEventListener() {
-                    @Override
-                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                        RoobaruDuniya rbd = dataSnapshot.getValue(RoobaruDuniya.class);
-                        Log.d("titleck", rbd.getTitle());
-                        rubaru.add(rbd);
-                        imageAdapter.notifyDataSetChanged();
-
-
-                    }
-
-                    @Override
-                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                    }
-
-                    @Override
-                    public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                    }
-
-                    @Override
-                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-                */
-
-
+    private void checkMessages(String key) {
+        Log.d("actchk","4");
 
                 msgReference.child(key).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -145,155 +109,81 @@ public class DraftFragment extends Fragment {
                 });
 
 
-            }//
+            }
 
-
-        }
-    }
-
-
-
-
-
-   /* public void onStart() {
-        if (userListener == null) {
-            userListener = new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.hasChildren()) {
-                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                            if (ds.getValue().equals("draft")) {
-                                msgList.add(ds.getKey());
-                                Log.d("keyck", ds.getKey());
-                            }
-
-                        }
-                        Log.d("alck", msgList.get(0).toString());
-
-                    }
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            };
-            dbaseReference.addListenerForSingleValueEvent(userListener);
-        }
-
-        Log.d("where", "I am here");
-        checkMessages();
-
-        super.onStart();
-    }
-    */
    private void readmsgId()
    {
-       if(userListener==null)
-       {
-           userListener= new ChildEventListener() {
-               //Adding keys in ArrayList msgList whose value is draft
-               @Override
-               public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                   if(dataSnapshot==null)
-                   {
-                       // noDraftText.setVisibility(View.VISIBLE);
+
+       Log.d("actchk","3");
+
+       dbaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+           @Override
+           public void onDataChange(DataSnapshot dataSnapshot) {
+               if (dataSnapshot.hasChildren()) {
+                   Log.d("actchk","dbchk");
+                   for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                       if (ds.getValue().equals("draft")) {
+
+                           //msgList.add(ds.getKey());
+                           Log.d("keyck", ds.getKey());
+                           checkMessages(ds.getKey());
+
+
+                       }
+
+
                    }
-                   else {
-                       msgList.add(dataSnapshot.getKey());
-                       Log.d("dbkey", dataSnapshot.getKey());
-
-                   }
 
                }
-
-               @Override
-               public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-               }
-
-               @Override
-               public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-               }
-
-               @Override
-               public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-               }
-
-               @Override
-               public void onCancelled(DatabaseError databaseError) {
-
-               }
-           };
-
-           dbaseReference.orderByValue().equalTo("draft").addChildEventListener(userListener);
-       }
-
-      /* dbaseReference.orderByValue().equalTo("draft").addChildEventListener(new ChildEventListener() {
-           @Override
-           public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-               msgList.add(dataSnapshot.getKey());
-               Log.d("dbkey",dataSnapshot.getKey());
-
-
-           }
-
-           @Override
-           public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-           }
-
-           @Override
-           public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-           }
-
-           @Override
-           public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
            }
 
            @Override
            public void onCancelled(DatabaseError databaseError) {
 
            }
+       } );
 
 
-       });
-       */
 
-       checkMessages();
+
+
+
+      // checkMessages();
 
 
    }
    public void onStart()
    {
        super.onStart();
-       readmsgId();
+       Log.d("actchk","5");
+       //readmsgId();
 
+
+   }
+   public void onResume()
+   {
+       super.onResume();
+       Log.d("actchk","6");
 
    }
 
     public void onPause() {
 
-      if (userListener != null) {
-        dbaseReference.removeEventListener(userListener);
-
-           userListener = null;
-        }
+        Log.d("actchk","7");
         super.onPause();
+        rubaru.clear();
+
 
 
     }
-
-
-    @Override
-    public void onResume() {
-        super.onResume();
+    public void onStop()
+    {
+        super.onStop();
+        Log.d("actchk","8");
     }
+
+
+
 }
 
 

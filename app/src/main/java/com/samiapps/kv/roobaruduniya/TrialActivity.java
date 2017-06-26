@@ -27,6 +27,11 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Arrays;
 
@@ -41,7 +46,7 @@ public class TrialActivity extends AppCompatActivity
     private View navHeader;
     private String[] activityTitles;
     private ImageView imgNavHeaderBg, imgProfile;
-    private TextView txtName, txtemail;
+    private TextView txtName, txtStatus;
     private Toolbar toolbar;
     String uname;
     String uemail;
@@ -50,6 +55,7 @@ public class TrialActivity extends AppCompatActivity
     public static int navItemIndex = 0;
 
     // tags used to attach the fragments
+    private static final String TAG=TrialActivity.class.getName();
     private static final String TAG_HOME = "home";
     private static final String TAG_FAV = "favorites";
     private static final String TAG_DRAFTS = "drafts";
@@ -57,11 +63,19 @@ public class TrialActivity extends AppCompatActivity
     private static final String TAG_SENT = "sent";
     public static String CURRENT_TAG = TAG_HOME;
     FloatingActionButton fab;
+    public static boolean isEditor;
+    FirebaseDatabase firebaseDtabase;
+    DatabaseReference dbEditor;
+    NavigationView navigationView;
+    MenuItem sentart;
+
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG,"ONCREATE 1");
         setContentView(R.layout.activity_trial);
         mUsername = ANONYMOUS;
         mAuth = FirebaseAuth.getInstance();
@@ -72,13 +86,16 @@ public class TrialActivity extends AppCompatActivity
                 // String s=firebaseAuth.getCurrentUser().getUid();
                 if(user!=null)
                 {
+                    Log.d(TAG,"Signed in 3");
 
+
+                    onSignedInInitialize(user.getDisplayName(),user.getEmail(),user.getPhotoUrl());
                     Toast.makeText(TrialActivity.this,"Welcome!",Toast.LENGTH_LONG).show();
-                    onSignedInInitialize(user.getDisplayName());
 
                 }
                 else
                 {
+                    Log.d(TAG,"Signed in 2");
                     onSignedOutCleanup();
                     startActivityForResult(
                             AuthUI.getInstance()
@@ -93,7 +110,8 @@ public class TrialActivity extends AppCompatActivity
             }
         };
 
-
+        firebaseDtabase = FirebaseDatabase.getInstance();
+        dbEditor=firebaseDtabase.getReference("editor");
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -102,13 +120,16 @@ public class TrialActivity extends AppCompatActivity
 
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
+        //send email to roobaru.duniya@gmail.com
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(Intent.ACTION_SEND);
-                intent.setType("text/html");
+                String email ="roobaru.duniya@gmail.com";
+                Intent intent=new Intent(Intent.ACTION_SENDTO,Uri.parse("mailto:" +email));
+              //  intent.putExtra(Intent.EXTRA_EMAIL,"roobaru.duniya@gmail.com");
+                // intent.setType("text/html");
 
-                intent.putExtra(Intent.EXTRA_EMAIL,"roobaru.duniya@gmail.com");
+               // intent.putExtra(Intent.EXTRA_EMAIL,"roobaru.duniya@gmail.com");
               //  intent.putExtra(Intent.EXTRA_SUBJECT, "Subject");
                 //intent.putExtra(Intent.EXTRA_TEXT, "I'm email body.");
 
@@ -121,24 +142,62 @@ public class TrialActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-        HomeFragment homeFragment = new HomeFragment();
-        getSupportFragmentManager().beginTransaction().replace(R.id.frame, homeFragment, CURRENT_TAG).commit();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        Menu navmenu = navigationView.getMenu();
+         sentart=navmenu.findItem(R.id.nav_sent);
+       // loadNavHeader();
+
         navigationView.setNavigationItemSelectedListener(this);
+
         // Navigation view header
         navHeader = navigationView.getHeaderView(0);
         txtName = (TextView) navHeader.findViewById(R.id.name);
-        txtemail = (TextView) navHeader.findViewById(R.id.email_id);
+        txtStatus = (TextView) navHeader.findViewById(R.id.user_status);
 
         imgProfile = (ImageView) navHeader.findViewById(R.id.img_profile);
 
+     /*   if (savedInstanceState == null) {
+            navItemIndex = 0;
+            CURRENT_TAG = TAG_HOME;
+            loadHomeFragment();
+        }
+        */
+
+
 
     }
+
+    private void checkEditor() {
+        Log.d(TAG,"checkEditor 4");
+        dbEditor.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot di:dataSnapshot.getChildren())
+                {
+                    if(di.getValue().equals(uemail))
+                    {
+                        Log.d("hey", (String) di.getValue());
+                        isEditor=true;
+                       dbEditor.removeEventListener(this);
+                        break;
+
+                    }
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        Log.d("checkedit",""+isEditor);
+    }
+
     private void loadNavHeader() {
         // name, website
-        txtName.setText(uname);
-        txtemail.setText(uemail);
 
         // loading header background image
 
@@ -187,6 +246,10 @@ public class TrialActivity extends AppCompatActivity
                 break;
 
             }
+            case R.id.action_settings: {
+                AuthUI.getInstance().signOut(this);
+                return true;
+            }
 
 
 
@@ -215,6 +278,7 @@ public class TrialActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
+        Log.d(TAG,"nav selected");
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
@@ -252,6 +316,7 @@ public class TrialActivity extends AppCompatActivity
     private void loadHomeFragment() {
         // if user select the current navigation menu again, don't do anything
         // just close the navigation drawer
+        loadNavHeader();
         setToolbarTitle();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (getSupportFragmentManager().findFragmentByTag(CURRENT_TAG) != null) {
@@ -299,31 +364,82 @@ public class TrialActivity extends AppCompatActivity
     @Override
     public void onResume() {
         super.onResume();
-        FirebaseUser user=FirebaseAuth.getInstance().getCurrentUser();
+        Log.d(TAG,"resume");
+   /*    FirebaseUser user=FirebaseAuth.getInstance().getCurrentUser();
+
         if(user!=null) {
             uname = user.getDisplayName();
             photoUri = user.getPhotoUrl();
             mHandler = new Handler();
             Log.d("cname", uname);
             Log.d("curi", photoUri.toString());
+            loadNavHeader();
+            checkEditor();
+            if(isEditor)
+            {
+                sentart.setTitle(R.string.editor_unpublished);
+                txtStatus.setText("Editor");
+            }
 
-            uemail = user.getEmail();
+
+
+
         }
-        loadNavHeader();
+        */
+
+
         mAuth.addAuthStateListener(mAuthListener);
+
     }
     @Override
-    public void onPause() {
-        super.onPause();
+    public void onStop() {
+        super.onStop();
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
     }
+    public void onStart()
+    {
+        super.onStart();
+
+        Log.d(TAG,"start");
 
 
-    private void onSignedInInitialize(String username)
+
+    }
+
+
+    private void onSignedInInitialize(String username,String email,Uri photo)
     {
         mUsername=username;
+        uname = username;
+        photoUri = photo;
+        uemail=email;
+        mHandler = new Handler();
+        Log.d("cname", uname);
+        Log.d("curi", photoUri.toString());
+        loadNavHeader();
+        checkEditor();
+        if(isEditor)
+        {
+            sentart.setTitle(R.string.editor_unpublished);
+            txtStatus.setText("Editor");
+        }
+
+
+
+
+
+
+
+
+
+
+        // loadNavHeader();
+   HomeFragment homeFragment = new HomeFragment();
+
+        getSupportFragmentManager().beginTransaction().replace(R.id.frame, homeFragment, CURRENT_TAG).commit();
+
 
 
     }
@@ -340,6 +456,7 @@ public class TrialActivity extends AppCompatActivity
             fab.hide();
     }
     private Fragment getHomeFragment() {
+        Log.d(TAG,"GETFrag");
         switch (navItemIndex) {
             case 0:
                 // home

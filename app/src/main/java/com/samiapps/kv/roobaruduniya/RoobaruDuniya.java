@@ -1,10 +1,12 @@
 package com.samiapps.kv.roobaruduniya;
 
+import java.io.Serializable;
+
 /**
  * Created by KV on 18/6/17.
  */
 
-public class RoobaruDuniya {
+public class RoobaruDuniya implements Serializable {
     String title;
     String content;
     String photo;
