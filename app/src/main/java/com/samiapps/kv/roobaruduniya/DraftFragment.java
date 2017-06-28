@@ -1,6 +1,7 @@
 package com.samiapps.kv.roobaruduniya;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -35,7 +36,7 @@ public class DraftFragment extends Fragment {
 
     private imgAdapter imageAdapter;
     ArrayList<RoobaruDuniya> rubaru = new ArrayList<RoobaruDuniya>();
-    ArrayList<String> msgList = new ArrayList<String>();
+    ArrayList<String> keyList ;
 
 
     private RecyclerView mRecycleView;
@@ -61,6 +62,7 @@ public class DraftFragment extends Fragment {
        dbaseReference = firebaseDtabase.getReference().child("user").child(uid).child("articleStatus");
         // dbaseReference = firebaseDtabase.getReference().child("user").child(uid);
         msgReference = firebaseDtabase.getReference().child("messages");
+       keyList=new ArrayList<>();
 
 
         Log.d("checkt", dbaseReference.toString());
@@ -88,6 +90,27 @@ public class DraftFragment extends Fragment {
         //FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG);
 
        readmsgId();
+        imageAdapter.setOnItemClickListener(new imgAdapter.ClickListener() {
+            @Override
+            public void onItemClick(int position, View v) {
+
+                RoobaruDuniya item = rubaru.get(position);
+                String key=keyList.get(position);
+                Intent intent = new Intent(getContext(), WriteArticleActivity.class);
+                intent.putExtra("position", position);
+                intent.putExtra("Keypos",key);
+                Bundle b=new Bundle();
+                b.putSerializable(DraftFragment.TAG,item);
+                intent.putExtras(b);
+
+
+                //intent.putExtra("article",rd);
+
+                startActivity(intent);
+            }
+        });
+
+
 
 
 
@@ -96,6 +119,8 @@ public class DraftFragment extends Fragment {
 
     private void checkMessages(String key) {
         Log.d("actchk","4");
+        keyList.add(key);
+
 
                 msgReference.child(key).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -188,6 +213,7 @@ public class DraftFragment extends Fragment {
         super.onStop();
         Log.d("actchk","8");
     }
+
 
 
 

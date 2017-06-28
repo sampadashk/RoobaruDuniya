@@ -35,6 +35,7 @@ import java.util.List;
  */
 
 public class WriteArticleActivity extends AppCompatActivity {
+    FirebaseAuth firebaseAuth;
     FirebaseUser user;
     FirebaseDatabase db;
     DatabaseReference dbRefMsg;
@@ -49,14 +50,20 @@ public class WriteArticleActivity extends AppCompatActivity {
     EditText content;
     MenuItem draftButton;
     MenuItem saveButton;
+    MenuItem publishButton;
     ImageButton photoButton;
     RoobaruDuniya rbd;
+    String userProfile;
+
+
     String userPos;
     String key;
     String userId;
     User u;
     Boolean b;
+    int pos;
     List<String> uids;
+    RoobaruDuniya artsel;
 
     private static final int RC_PHOTO_PICKER = 2;
     private ValueEventListener eventListener;
@@ -66,10 +73,16 @@ public class WriteArticleActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.write_article);
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        userEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-        userId=FirebaseAuth.getInstance().getCurrentUser().getUid();
+        firebaseAuth=FirebaseAuth.getInstance();
+        user = firebaseAuth.getCurrentUser();
+        userEmail = user.getEmail();
+        userId=user.getUid();
         userPos="Blogger";
+        userProfile=user.getPhotoUrl().toString();
+
+
+
+
 
 
         db = FirebaseDatabase.getInstance();
@@ -82,6 +95,22 @@ public class WriteArticleActivity extends AppCompatActivity {
       //  FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG);
         title = (EditText) findViewById(R.id.post_title_edit);
         content = (EditText) findViewById(R.id.post_content);
+        Intent intent=getIntent();
+        try {
+            pos = intent.getIntExtra("position", -1);
+            key=intent.getStringExtra("Keypos");
+            Log.d("keypos",key);
+
+            Log.d("checkpos", "" + pos);
+            rbd= (RoobaruDuniya) intent.getSerializableExtra(DraftFragment.TAG);
+            title.setText(rbd.getTitle());
+            content.setText(rbd.getContent());
+            draftPressed+=1;
+        }
+        catch(NullPointerException e)
+        {
+            e.printStackTrace();
+        }
         dbEditor.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -122,6 +151,38 @@ public class WriteArticleActivity extends AppCompatActivity {
 
     public void onStart() {
 
+        title.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence st, int start, int before, int count) {
+                if ((st.toString().trim().length()) > 0)
+
+                {
+                    if(rbd!=null)
+                    {
+                        rbd.setTitle(st.toString());
+                        draftButton.setEnabled(true);
+
+                    }
+
+
+                }
+
+            }
+
+
+
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
         content.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -133,8 +194,15 @@ public class WriteArticleActivity extends AppCompatActivity {
                 if ((s.toString().trim().length()) > 0)
 
                 {
+                    if(rbd!=null)
+                    {
+                        rbd.setContent(s.toString());
+                    }
                     draftButton.setEnabled(true);
-                    saveButton.setEnabled(true);
+
+                    if ((s.toString().trim().length()) > 50) {
+                        publishButton.setEnabled(true);
+                    }
 
                 }
 
@@ -155,6 +223,7 @@ public class WriteArticleActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_write, menu);
         draftButton = (MenuItem)menu.findItem(R.id.draft);
         saveButton = (MenuItem)menu.findItem(R.id.savecl);
+        publishButton=(MenuItem)menu.findItem(R.id.publish);
         return true;
 
     }
@@ -166,7 +235,7 @@ public class WriteArticleActivity extends AppCompatActivity {
                 try {
 
                     if (rbd == null) {
-                        rbd = new RoobaruDuniya(title.getText().toString(), content.getText().toString(), null, user.getDisplayName().toString(), userEmail, 1, 0);
+                        rbd = new RoobaruDuniya(title.getText().toString(), content.getText().toString(), null, user.getDisplayName().toString(), userEmail,userProfile,1, 0);
 
                     } else if(rbd!=null)
                     {
@@ -182,15 +251,19 @@ public class WriteArticleActivity extends AppCompatActivity {
                         dbRefMsg.child(key).setValue(rbd);
                     }
 
-                    if (u == null) {
+                   /* if (u == null) {
                         u = new User(user.getDisplayName(), userEmail, "draft",userPos);
                     }
+                    */
 
                     Boolean b1=uids.contains(userId);
                     if (b1) {
 
                         dbRefUser.child(userId).child("articleStatus").child(key).setValue("draft");
                     } else {
+                        if (u == null) {
+                            u = new User(user.getDisplayName(), userEmail, "draft",userPos);
+                        }
                         dbRefUser.child(userId).setValue(u);
                         dbRefUser.child(userId).child("articleStatus").child(key).setValue("draft");
                     }
@@ -198,12 +271,14 @@ public class WriteArticleActivity extends AppCompatActivity {
 
                     Toast.makeText(this, "Draft saved", Toast.LENGTH_LONG).show();
                     draftButton.setEnabled(false);
+                    saveButton.setEnabled(true);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
                 break;
             }
             case R.id.savecl: {
+                saveNclose();
                 break;
             }
             case R.id.publish: {
@@ -212,7 +287,7 @@ public class WriteArticleActivity extends AppCompatActivity {
                 try {
 
                     if (rbd == null) {
-                        rbd = new RoobaruDuniya(title.getText().toString(), content.getText().toString(), null, user.getDisplayName().toString(), userEmail, 0, 1);
+                        rbd = new RoobaruDuniya(title.getText().toString(), content.getText().toString(), null, user.getDisplayName().toString(), userEmail,userProfile,0, 1);
                         key = dbRefMsg.push().getKey();
                         dbRefMsg.child(key).setValue(rbd);
 
@@ -247,7 +322,9 @@ public class WriteArticleActivity extends AppCompatActivity {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
                 Toast.makeText(this,"Article sent!will be published once it gets approved by editor",Toast.LENGTH_LONG).show();
+                saveNclose();
                 break;
 
             }
@@ -256,6 +333,15 @@ public class WriteArticleActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    private void saveNclose() {
+        draftPressed=0;
+        key=null;
+        Intent inti=new Intent(this,TrialActivity.class);
+        startActivity(inti);
+
+    }
+
     protected void onPause()
     {
         super.onPause();
@@ -299,6 +385,11 @@ public class WriteArticleActivity extends AppCompatActivity {
         }
 
     }
+    @Override
+    public void onBackPressed() {
+        saveNclose();
+
+    }
 
     public void onActivityResult(int requestcode, int resultcode, Intent data) {
 
@@ -317,11 +408,12 @@ public class WriteArticleActivity extends AppCompatActivity {
 
                             }
                             else {
-                                rbd = new RoobaruDuniya(title.getText().toString(), content.getText().toString(), downloadUrl.toString(), user.getDisplayName().toString(), userEmail, 0, 0);
+                                rbd = new RoobaruDuniya(title.getText().toString(), content.getText().toString(), downloadUrl.toString(), user.getDisplayName().toString(), userEmail,userProfile,0, 0);
 
                             }
                             draftButton.setEnabled(true);
-                            saveButton.setEnabled(true);
+
+                            publishButton.setEnabled(true);
                         } catch (NullPointerException e) {
                             Log.d("exception", "" + e);
                         }

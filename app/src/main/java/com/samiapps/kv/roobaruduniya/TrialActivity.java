@@ -53,6 +53,7 @@ public class TrialActivity extends AppCompatActivity
     private Handler mHandler;
     // index to identify current nav menu item
     public static int navItemIndex = 0;
+    String userStatus;
 
     // tags used to attach the fragments
     private static final String TAG=TrialActivity.class.getName();
@@ -79,6 +80,7 @@ public class TrialActivity extends AppCompatActivity
         setContentView(R.layout.activity_trial);
         //postponeEnterTransition();
         mUsername = ANONYMOUS;
+        userStatus="Blogger";
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -110,11 +112,13 @@ public class TrialActivity extends AppCompatActivity
 
             }
         };
+
         firebaseDtabase=FirebaseDatabase.getInstance();
      //   Logger.Level debugLevel = Logger.Level.valueOf("DEBUG");
 
 
         dbEditor=firebaseDtabase.getReference("editor");
+       // mAuth.addAuthStateListener(mAuthListener);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -172,6 +176,8 @@ public class TrialActivity extends AppCompatActivity
 
     }
 
+
+
     private void checkEditor() {
         Log.d(TAG,"checkEditor 4");
         dbEditor.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -183,11 +189,13 @@ public class TrialActivity extends AppCompatActivity
                     {
                         Log.d("hey", (String) di.getValue());
                         isEditor=true;
-                       dbEditor.removeEventListener(this);
+                        userStatus="editor";
+
                         break;
 
                     }
                 }
+
 
 
             }
@@ -199,6 +207,7 @@ public class TrialActivity extends AppCompatActivity
         });
 
         Log.d("checkedit",""+isEditor);
+        Log.d("checkstatus",userStatus);
     }
 
     private void loadNavHeader() {
@@ -208,12 +217,14 @@ public class TrialActivity extends AppCompatActivity
 
 
         // Loading profile image
+        txtStatus.setText(userStatus);
         Glide.with(this).load(photoUri)
                 .crossFade()
                 .thumbnail(0.5f)
                 .bitmapTransform(new CircleTransform(this))
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(imgProfile);
+      //  txtName.setText(uname);
 
 
     }
@@ -221,11 +232,25 @@ public class TrialActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+       DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else {
+        } else if(drawer.isDrawerOpen(GravityCompat.START)==false){
             super.onBackPressed();
+        }
+
+
+        int count = getFragmentManager().getBackStackEntryCount();
+
+        if (count == 0) {
+            super.onBackPressed();
+            //additional code
+        } else {
+            HomeFragment homeFragment = new HomeFragment();
+
+            getSupportFragmentManager().beginTransaction().replace(R.id.frame, homeFragment, CURRENT_TAG).commit();
+
         }
     }
 
@@ -321,7 +346,8 @@ public class TrialActivity extends AppCompatActivity
     private void loadHomeFragment() {
         // if user select the current navigation menu again, don't do anything
         // just close the navigation drawer
-        loadNavHeader();
+        checkEditor();
+       // loadNavHeader();
         setToolbarTitle();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (getSupportFragmentManager().findFragmentByTag(CURRENT_TAG) != null) {
@@ -424,22 +450,15 @@ public class TrialActivity extends AppCompatActivity
         Log.d("cname", uname);
         Log.d("curi", photoUri.toString());
 
-        loadNavHeader();
-        checkEditor();
+
+       checkEditor();
         if(isEditor)
         {
             sentart.setTitle(R.string.editor_unpublished);
             txtStatus.setText("Editor");
         }
 
-
-
-
-
-
-
-
-
+        loadNavHeader();
 
         // loadNavHeader();
    HomeFragment homeFragment = new HomeFragment();

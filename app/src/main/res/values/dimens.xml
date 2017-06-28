@@ -21,6 +21,13 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="profile_width">75dp</dimen>
     <dimen name="profile_height">75dp</dimen>
+    <dimen name="fab_elevation">6dp</dimen>
+    <dimen name="fab_press_translation_z">6dp</dimen>
+    <dimen name="material_layout_app_bar_height">350dp</dimen>
+    <dimen name="expanded_toolbar_height">75dp</dimen>
+    <dimen name="expanded_toolbar_title_margin_bottom">40dp</dimen>
+    <dimen name="app_bar_elevation">4dp</dimen>
+
 
 
 </resources>

@@ -11,6 +11,8 @@ public class RoobaruDuniya implements Serializable {
     String content;
     String photo;
     String email;
+    String user;
+    String userProfilePhoto;
     public RoobaruDuniya()
     {
 
@@ -24,13 +26,32 @@ public class RoobaruDuniya implements Serializable {
         this.title = title;
     }
 
-    public RoobaruDuniya(String title, String content, String photo,String user, String email, int draft, int sent) {
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    public String getUserProfilePhoto() {
+        return userProfilePhoto;
+    }
+
+    public void setUserProfilePhoto(String userProfilePhoto) {
+        this.userProfilePhoto = userProfilePhoto;
+    }
+
+    public RoobaruDuniya(String title, String content, String photo, String user, String email, String userProfilePhoto, int draft, int sent) {
         this.title = title;
         this.content = content;
         this.photo = photo;
+        this.user=user;
         this.email = email;
+        this.userProfilePhoto=userProfilePhoto;
         this.draft = draft;
         this.sent = sent;
+
     }
 
     public String getContent() {
