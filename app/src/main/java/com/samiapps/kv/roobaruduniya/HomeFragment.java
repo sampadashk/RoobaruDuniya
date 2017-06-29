@@ -38,10 +38,7 @@ public class HomeFragment extends Fragment {
     private RecyclerView mRecycleView;
     private RecyclerView.LayoutManager mLayoutManager;
      String uid;
-    String email;
-    boolean isEditor;
 
-    ArrayList<String> childkey;
     public static final String TAG=DraftFragment.class.getName();
     public HomeFragment() {
         super();
@@ -54,7 +51,7 @@ public class HomeFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         uid= FirebaseAuth.getInstance().getCurrentUser().getUid();
-        email=FirebaseAuth.getInstance().getCurrentUser().getEmail();
+
         firebaseDtabase = FirebaseDatabase.getInstance();
         dbaseReference = firebaseDtabase.getReference().child("messages");
 

@@ -244,7 +244,7 @@ public class WriteArticleActivity extends AppCompatActivity {
                 try {
 
                     if (rbd == null) {
-                        rbd = new RoobaruDuniya(title.getText().toString(), content.getText().toString(), null, user.getDisplayName().toString(), userEmail,userProfile,1, 0);
+                        rbd = new RoobaruDuniya(title.getText().toString(), content.getText().toString(), null, user.getDisplayName().toString(), userId,userProfile,1, 0);
 
                     } else if(rbd!=null)
                     {
@@ -296,14 +296,22 @@ public class WriteArticleActivity extends AppCompatActivity {
                 try {
 
                     if (rbd == null) {
-                        rbd = new RoobaruDuniya(title.getText().toString(), content.getText().toString(), null, user.getDisplayName().toString(), userEmail,userProfile,0, 1);
+                        rbd = new RoobaruDuniya(title.getText().toString(), content.getText().toString(), null, user.getDisplayName().toString(), userId,userProfile,0, 1);
                         key = dbRefMsg.push().getKey();
                         dbRefMsg.child(key).setValue(rbd);
 
-                    } else if(rbd!=null){
+                    } else if (rbd!=null){
                         rbd.setDraft(0);
                         rbd.setSent(1);
-                        dbRefMsg.child(key).setValue(rbd);
+                        Log.d("checkphoto",rbd.getPhoto());
+                        if(key==null) {
+                            key = dbRefMsg.push().getKey();
+
+                        }
+
+                            dbRefMsg.child(key).setValue(rbd);
+
+
                     }
                     if(u==null)
                     {
@@ -334,6 +342,8 @@ public class WriteArticleActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 PendingClass pending=new PendingClass(false,false,null);
+                Log.d("pendingKey",key);
+
                 dbPendingArticle.child(key).setValue(pending);
 
 
@@ -421,8 +431,8 @@ public class WriteArticleActivity extends AppCompatActivity {
                                 rbd.setPhoto(downloadUrl.toString());
 
                             }
-                            else {
-                                rbd = new RoobaruDuniya(title.getText().toString(), content.getText().toString(), downloadUrl.toString(), user.getDisplayName().toString(), userEmail,userProfile,0, 0);
+                            else if(rbd==null) {
+                                rbd = new RoobaruDuniya(title.getText().toString(), content.getText().toString(), downloadUrl.toString(), user.getDisplayName().toString(), userId,userProfile,0, 0);
 
                             }
                             draftButton.setEnabled(true);

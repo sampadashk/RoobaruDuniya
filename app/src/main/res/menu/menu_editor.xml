@@ -19,5 +19,5 @@
         android:id="@+id/saveEditor"
         android:text="SAVE"
         app:showAsAction="always"
-        android:enabled="true"/>
+        android:enabled="false"/>
 </menu>

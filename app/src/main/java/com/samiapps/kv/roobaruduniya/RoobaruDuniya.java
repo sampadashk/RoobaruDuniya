@@ -10,9 +10,11 @@ public class RoobaruDuniya implements Serializable {
     String title;
     String content;
     String photo;
-    String email;
+    String uId;
     String user;
     String userProfilePhoto;
+    int draft;
+    int sent;
     public RoobaruDuniya()
     {
 
@@ -42,12 +44,12 @@ public class RoobaruDuniya implements Serializable {
         this.userProfilePhoto = userProfilePhoto;
     }
 
-    public RoobaruDuniya(String title, String content, String photo, String user, String email, String userProfilePhoto, int draft, int sent) {
+    public RoobaruDuniya(String title, String content, String photo, String user, String uId, String userProfilePhoto, int draft, int sent) {
         this.title = title;
         this.content = content;
         this.photo = photo;
         this.user=user;
-        this.email = email;
+        this.uId = uId;
         this.userProfilePhoto=userProfilePhoto;
         this.draft = draft;
         this.sent = sent;
@@ -71,12 +73,12 @@ public class RoobaruDuniya implements Serializable {
         this.photo = photo;
     }
 
-    public String getEmail() {
-        return email;
+    public String getuserId() {
+        return uId;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setuserId(String uId) {
+        this.uId = uId;
     }
 
     public int getDraft() {
@@ -95,7 +97,6 @@ public class RoobaruDuniya implements Serializable {
         this.sent = sent;
     }
 
-    int draft;
-    int sent;
+
 
 }

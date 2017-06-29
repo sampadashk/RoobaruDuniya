@@ -27,6 +27,7 @@ public class EditorArticleActivity extends AppCompatActivity{
     DatabaseReference dbPendingArticle;
     int pos;
     String key;
+    String writerId;
     RoobaruDuniya rbd;
     MenuItem approveButton;
     MenuItem saveEditorButton;
@@ -45,10 +46,12 @@ public class EditorArticleActivity extends AppCompatActivity{
         try {
             pos = intent.getIntExtra("position", -1);
             key=intent.getStringExtra("Keypos");
+
             Log.d("keypos",key);
 
             Log.d("checkpos", "" + pos);
             rbd= (RoobaruDuniya) intent.getSerializableExtra(SentFragment.TAG);
+            writerId=rbd.getuserId();
             title.setText(rbd.getTitle());
             content.setText(rbd.getContent());
             //draftPressed+=1;
@@ -149,7 +152,7 @@ public class EditorArticleActivity extends AppCompatActivity{
                 dbPendingArticle.child(key).setValue(pc);
                 //CHANGE VALUE OF ARTICLE STATUS IN USERDB TO PUBLISHED
                 changeUserDB();
-                approveButton.setEnabled(false);
+                //approveButton.setEnabled(false);
                 saveEditorButton.setEnabled(false);
                 rejectButton.setEnabled(false);
                 close();
@@ -168,6 +171,7 @@ public class EditorArticleActivity extends AppCompatActivity{
             }
             case R.id.saveEditor:
             {
+                dbRefMsg.child(key).setValue(rbd);
                 break;
             }
 
@@ -176,6 +180,9 @@ public class EditorArticleActivity extends AppCompatActivity{
     }
 
     private void changeUserDB() {
+        Log.d("writerId",writerId);
+        dbRefUser.child(writerId).child("articleStatus").child(key).setValue("published");
+
 
     }
 

@@ -19,7 +19,7 @@ import com.google.firebase.auth.FirebaseAuth;
 public class ArticleDetail extends AppCompatActivity {
     int pos;
     RoobaruDuniya artsel;
-    String userEmail;
+
     String userName;
     String userProf;
     ImageView ivw;
@@ -40,7 +40,7 @@ public class ArticleDetail extends AppCompatActivity {
         pos=intent.getIntExtra("position",-1);
         Log.d("checkpos",""+pos);
         artsel=(RoobaruDuniya)intent.getSerializableExtra(HomeFragment.TAG);
-        userEmail=artsel.getEmail();
+
         userName=artsel.getUser();
        // Log.d("chkname",userName);
         userProf=artsel.getUserProfilePhoto();
