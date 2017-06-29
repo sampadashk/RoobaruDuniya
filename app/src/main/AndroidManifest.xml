@@ -22,6 +22,7 @@
             android:windowSoftInputMode="adjustResize"/>
 
         <activity android:name=".ArticleDetail"></activity>
+        <activity android:name=".EditorArticleActivity"></activity>
     </application>
 
 </manifest>

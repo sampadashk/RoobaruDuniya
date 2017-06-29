@@ -1,6 +1,7 @@
 package com.samiapps.kv.roobaruduniya;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -29,6 +30,7 @@ public class SentFragment extends Fragment {
     private FirebaseDatabase firebaseDtabase;
     private DatabaseReference dbaseReference;
     private DatabaseReference msgReference;
+    private DatabaseReference pendingRef;
     private ChildEventListener msgListener;
     private ChildEventListener userListener;
 
@@ -36,6 +38,7 @@ public class SentFragment extends Fragment {
     private imgAdapter imageAdapter;
     ArrayList<RoobaruDuniya> rubaru = new ArrayList<RoobaruDuniya>();
     ArrayList<String> keyList ;
+    String userStatus;
 
 
     private RecyclerView mRecycleView;
@@ -61,12 +64,16 @@ public class SentFragment extends Fragment {
         dbaseReference = firebaseDtabase.getReference().child("user").child(uid).child("articleStatus");
         // dbaseReference = firebaseDtabase.getReference().child("user").child(uid);
         msgReference = firebaseDtabase.getReference().child("messages");
+        pendingRef=firebaseDtabase.getReference().child("pending");
         keyList=new ArrayList<>();
+        userStatus=TrialActivity.userStatus;
 
 
         Log.d("checkt", dbaseReference.toString());
         Log.d("msgkt", msgReference.toString());
         Log.d("actchk","1");
+        Log.d("userStatus",TrialActivity.userStatus);
+
 
 
 
@@ -87,8 +94,53 @@ public class SentFragment extends Fragment {
 
         mRecycleView.setAdapter(imageAdapter);
         //FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG);
+        if(userStatus.equals("Blogger")) {
 
-        readmsgId();
+            readmsgId();
+            imageAdapter.setOnItemClickListener(new imgAdapter.ClickListener() {
+                @Override
+                public void onItemClick(int position, View v) {
+
+                    RoobaruDuniya item = rubaru.get(position);
+                    Intent intent = new Intent(getContext(), ArticleDetail.class);
+                    intent.putExtra("position", position);
+                    Bundle b=new Bundle();
+                    b.putSerializable(HomeFragment.TAG,item);
+                    intent.putExtras(b);
+
+
+                    //intent.putExtra("article",rd);
+
+                    startActivity(intent);
+                }
+            });
+
+        }
+        else
+        {
+
+            readmsgEditor();
+            imageAdapter.setOnItemClickListener(new imgAdapter.ClickListener() {
+                @Override
+                public void onItemClick(int position, View v) {
+
+                    RoobaruDuniya item = rubaru.get(position);
+                    String key=keyList.get(position);
+                    Intent intent = new Intent(getContext(), EditorArticleActivity.class);
+                    intent.putExtra("position", position);
+                    intent.putExtra("Keypos",key);
+                    Bundle b=new Bundle();
+                    b.putSerializable(SentFragment.TAG,item);
+                    intent.putExtras(b);
+
+
+                    //intent.putExtra("article",rd);
+
+                    startActivity(intent);
+                }
+            });
+        }
+
 
 
 
@@ -97,6 +149,59 @@ public class SentFragment extends Fragment {
 
         return rootView;
     }
+
+    private void readmsgEditor() {
+        try {
+            pendingRef.addListenerForSingleValueEvent(new ValueEventListener() {
+
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for(DataSnapshot dt:dataSnapshot.getChildren())
+                    {
+                        String key=dt.getKey();
+                        Log.d("editmsgkey",key);
+                        Log.d("checkcheckedval",""+dt.child("checked").getValue());
+
+                        if(dt.child("checked").getValue().equals(false))
+                        {
+                            displayUnchecked(key);
+                        }
+
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void displayUnchecked(String key) {
+        keyList.add(key);
+        msgReference.child(key).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                RoobaruDuniya rbd = dataSnapshot.getValue(RoobaruDuniya.class);
+
+                rubaru.add(rbd);
+                imageAdapter.notifyDataSetChanged();
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
 
     private void checkMessages(String key) {
         Log.d("actchk","4");

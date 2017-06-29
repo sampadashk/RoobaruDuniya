@@ -39,9 +39,11 @@ public class WriteArticleActivity extends AppCompatActivity {
     FirebaseUser user;
     FirebaseDatabase db;
     DatabaseReference dbRefMsg;
-    DatabaseReference dbRefMsgList;
+
     DatabaseReference dbRefUser;
     DatabaseReference dbEditor;
+    DatabaseReference dbPendingArticle;
+
     int draftPressed=0;
     String userEmail;
     private FirebaseStorage firebaseStorage;
@@ -78,7 +80,13 @@ public class WriteArticleActivity extends AppCompatActivity {
         userEmail = user.getEmail();
         userId=user.getUid();
         userPos="Blogger";
-        userProfile=user.getPhotoUrl().toString();
+        try {
+            userProfile = user.getPhotoUrl().toString();
+        }
+        catch(NullPointerException e)
+        {
+            e.printStackTrace();
+        }
 
 
 
@@ -87,9 +95,10 @@ public class WriteArticleActivity extends AppCompatActivity {
 
         db = FirebaseDatabase.getInstance();
         dbRefMsg = db.getReference("messages");
-        dbRefMsgList = db.getReference("msg_list");
+
         dbEditor=db.getReference("editor");
         dbRefUser = db.getReference("user");
+        dbPendingArticle=db.getReference("pending");
         firebaseStorage = FirebaseStorage.getInstance();
         storageReference = firebaseStorage.getReference().child("article_photo");
       //  FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG);
@@ -291,7 +300,7 @@ public class WriteArticleActivity extends AppCompatActivity {
                         key = dbRefMsg.push().getKey();
                         dbRefMsg.child(key).setValue(rbd);
 
-                    } else {
+                    } else if(rbd!=null){
                         rbd.setDraft(0);
                         rbd.setSent(1);
                         dbRefMsg.child(key).setValue(rbd);
@@ -300,8 +309,9 @@ public class WriteArticleActivity extends AppCompatActivity {
                     {
                         u=new User(user.getDisplayName(), userEmail,"sent",userPos);
                     }
-                    else
+                    else {
                         u.setArticleStatus("sent");
+                    }
                     Log.d("chkuse",u.getarticleStatus());
                     Boolean b2=uids.contains(userId);
                     if (b2) {
@@ -310,6 +320,7 @@ public class WriteArticleActivity extends AppCompatActivity {
                         dbRefUser.child(userId).child("articleStatus").child(key).setValue("sent");
                     } else {
                         dbRefUser.child(userId).setValue(u);
+                        dbRefUser.child(userId).child("articleStatus").child(key).setValue("sent");
                     }
 
 
@@ -322,6 +333,9 @@ public class WriteArticleActivity extends AppCompatActivity {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                PendingClass pending=new PendingClass(false,false,null);
+                dbPendingArticle.child(key).setValue(pending);
+
 
                 Toast.makeText(this,"Article sent!will be published once it gets approved by editor",Toast.LENGTH_LONG).show();
                 saveNclose();

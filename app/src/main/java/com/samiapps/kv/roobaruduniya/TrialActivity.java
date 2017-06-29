@@ -53,7 +53,7 @@ public class TrialActivity extends AppCompatActivity
     private Handler mHandler;
     // index to identify current nav menu item
     public static int navItemIndex = 0;
-    String userStatus;
+    public static String userStatus;
 
     // tags used to attach the fragments
     private static final String TAG=TrialActivity.class.getName();
@@ -190,6 +190,8 @@ public class TrialActivity extends AppCompatActivity
                         Log.d("hey", (String) di.getValue());
                         isEditor=true;
                         userStatus="editor";
+                        sentart.setTitle(R.string.editor_unpublished);
+                        txtStatus.setText("Editor");
 
                         break;
 
@@ -218,12 +220,14 @@ public class TrialActivity extends AppCompatActivity
 
         // Loading profile image
         txtStatus.setText(userStatus);
-        Glide.with(this).load(photoUri)
-                .crossFade()
-                .thumbnail(0.5f)
-                .bitmapTransform(new CircleTransform(this))
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(imgProfile);
+        if(photoUri!=null) {
+            Glide.with(this).load(photoUri)
+                    .crossFade()
+                    .thumbnail(0.5f)
+                    .bitmapTransform(new CircleTransform(this))
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(imgProfile);
+        }
       //  txtName.setText(uname);
 
 
@@ -442,26 +446,27 @@ public class TrialActivity extends AppCompatActivity
 
     private void onSignedInInitialize(String username,String email,Uri photo)
     {
-        mUsername=username;
-        uname = username;
-        photoUri = photo;
-        uemail=email;
-        mHandler = new Handler();
-        Log.d("cname", uname);
-        Log.d("curi", photoUri.toString());
+        try {
+            mUsername = username;
+            uname = username;
+            photoUri = photo;
+            uemail = email;
+            mHandler = new Handler();
+            Log.d("cname", uname);
+            Log.d("curi", photoUri.toString());
 
 
-       checkEditor();
-        if(isEditor)
-        {
-            sentart.setTitle(R.string.editor_unpublished);
-            txtStatus.setText("Editor");
+
         }
+        catch(NullPointerException e)
+        {
+            e.printStackTrace();
+        }
+        checkEditor();
 
         loadNavHeader();
 
-        // loadNavHeader();
-   HomeFragment homeFragment = new HomeFragment();
+        HomeFragment homeFragment = new HomeFragment();
 
         getSupportFragmentManager().beginTransaction().replace(R.id.frame, homeFragment, CURRENT_TAG).commit();
 
@@ -471,6 +476,8 @@ public class TrialActivity extends AppCompatActivity
     private void onSignedOutCleanup()
     {
         mUsername=ANONYMOUS;
+        userStatus="Blogger";
+
 
 
     }
