@@ -78,23 +78,16 @@
             android:layout_height="50dp"
             android:background="@android:drawable/ic_menu_gallery" />
         <Button
-            android:id="@+id/bold_button"
+            android:id="@+id/writer_detail"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:textStyle="bold"
             android:textSize="24sp"
             android:layout_alignParentBottom="true"
             android:layout_toRightOf="@id/photoPickerButton"
-            android:text="B"/>
-        <Button
-            android:id="@+id/italic_button"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:textSize="24sp"
-            android:text="I"
-            android:textStyle="italic"
-            android:layout_alignParentBottom="true"
-            android:layout_toRightOf="@id/bold_button"/>
+            android:text="Writer Details"
+            android:visibility="invisible"/>
+
 
     </RelativeLayout>
 </LinearLayout>

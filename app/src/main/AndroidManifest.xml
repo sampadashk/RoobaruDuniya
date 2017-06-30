@@ -19,7 +19,9 @@
 
         </activity>
         <activity android:name=".WriteArticleActivity"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize"
+
+            />
 
         <activity android:name=".ArticleDetail"></activity>
         <activity android:name=".EditorArticleActivity"></activity>

@@ -27,6 +27,7 @@ import java.util.ArrayList;
 public class HomeFragment extends Fragment {
     private FirebaseDatabase firebaseDtabase;
     private DatabaseReference dbaseReference;
+    private DatabaseReference publishedRef;
 
 
 
@@ -54,6 +55,7 @@ public class HomeFragment extends Fragment {
 
         firebaseDtabase = FirebaseDatabase.getInstance();
         dbaseReference = firebaseDtabase.getReference().child("messages");
+        publishedRef=firebaseDtabase.getReference("published");
 
         Log.d("checkt",dbaseReference.toString());
 
@@ -77,7 +79,8 @@ public class HomeFragment extends Fragment {
 
         // mLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         // mRecycleView.setHasFixedSize(true);
-        displayArticles();
+        checkPublishedKey();
+        //displayArticles();
 
 
 
@@ -139,11 +142,48 @@ public class HomeFragment extends Fragment {
         return rootView;
     }
 
-    private void displayArticles() {
+    private void checkPublishedKey() {
+        publishedRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChildren()) {
+                    for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                        displayArticles(postSnapshot.getKey());
+
+
+                    }
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void displayArticles(String key) {
+        dbaseReference.child(key).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                RoobaruDuniya rbd = dataSnapshot.getValue(RoobaruDuniya.class);
+                Log.d("titleck", rbd.getTitle());
+                rubaru.add(rbd);
+                imageAdapter.notifyDataSetChanged();
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
 
 
-        dbaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+      /*  dbaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -169,6 +209,7 @@ public class HomeFragment extends Fragment {
                 System.out.println("The read failed: " + databaseError.getCode());
             }
         });
+        */
     }
 
     public void onStart() {
