@@ -1,5 +1,6 @@
 package com.samiapps.kv.roobaruduniya;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -54,6 +55,7 @@ public class PublishedFragment extends Fragment {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
 
         uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         firebaseDtabase = FirebaseDatabase.getInstance();
@@ -88,6 +90,25 @@ public class PublishedFragment extends Fragment {
         //FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG);
 
         readmsgId();
+        imageAdapter.setOnItemClickListener(new imgAdapter.ClickListener() {
+            @Override
+            public void onItemClick(int position, View v) {
+
+                RoobaruDuniya item = rubaru.get(position);
+                Intent intent = new Intent(getContext(), ArticleDetail.class);
+                String key=keyList.get(position);
+                intent.putExtra("keySelected",key);
+                intent.putExtra("position", position);
+                Bundle b=new Bundle();
+                b.putSerializable(ArticleDetail.TAG,item);
+                intent.putExtras(b);
+
+
+                //intent.putExtra("article",rd);
+
+                startActivity(intent);
+            }
+        });
 
 
 
@@ -183,7 +204,7 @@ public class PublishedFragment extends Fragment {
 
         Log.d("actchk","7");
         super.onPause();
-        rubaru.clear();
+
 
 
 
@@ -192,6 +213,7 @@ public class PublishedFragment extends Fragment {
     {
         super.onStop();
         Log.d("actchk","8");
+        rubaru.clear();
     }
 
 }

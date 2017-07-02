@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -79,6 +80,7 @@ public class WriteArticleActivity extends AppCompatActivity {
     int pos;
     List<String> uids;
     RoobaruDuniya artsel;
+    ProgressBar progressBar;
 
     private static final int RC_PHOTO_PICKER = 2;
     private ValueEventListener eventListener;
@@ -94,6 +96,7 @@ public class WriteArticleActivity extends AppCompatActivity {
         userId = user.getUid();
         //userPos = "Blogger";
         userPos=TrialActivity.userStatus;
+        progressBar=(ProgressBar)findViewById(R.id.pbar);
 
         try {
             userProfile = user.getPhotoUrl().toString();
@@ -154,13 +157,19 @@ public class WriteArticleActivity extends AppCompatActivity {
         uids = new ArrayList<>();
         photoButton = (ImageButton) findViewById(R.id.photoPickerButton);
         writerDetail = (Button) findViewById(R.id.writer_detail);
+        photoButton.setEnabled(false);
+
         photoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType("image/jpeg");
-                intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-                startActivityForResult(Intent.createChooser(intent, "Complete action using"), RC_PHOTO_PICKER);
+
+
+
+                    Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                    intent.setType("image/jpeg");
+                    intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+                    startActivityForResult(Intent.createChooser(intent, "Complete action using"), RC_PHOTO_PICKER);
+
 
             }
         });
@@ -196,6 +205,10 @@ public class WriteArticleActivity extends AppCompatActivity {
                         // sign in the user ...
 
                         wName = writerName.getText().toString();
+                        if(downloadProfileUrl!=null)
+                        {
+                            Log.d("checkdownload",downloadProfileUrl.toString());
+                        }
                         if (rbd != null) {
                             rbd.setUser(wName);
                             if(downloadProfileUrl!=null)
@@ -286,6 +299,7 @@ public class WriteArticleActivity extends AppCompatActivity {
                         rbd.setContent(s.toString());
                     }
                     draftButton.setEnabled(true);
+                    photoButton.setEnabled(true);
 
                     if ((s.toString().trim().length()) > 50) {
                         publishButton.setEnabled(true);
@@ -380,7 +394,7 @@ public class WriteArticleActivity extends AppCompatActivity {
                     } else if (rbd != null) {
                         rbd.setDraft(0);
                         rbd.setSent(1);
-                        Log.d("checkphoto", rbd.getPhoto());
+                      //  Log.d("checkphoto", rbd.getPhoto());
                         if (key == null) {
                             key = dbRefMsg.push().getKey();
 
@@ -517,13 +531,17 @@ public class WriteArticleActivity extends AppCompatActivity {
 
         if (requestcode == RC_PHOTO_PICKER && resultcode == RESULT_OK) {
             final Uri SelectedImageUri = data.getData();
-            if (content.toString() != null) {
+            Toast.makeText(this,"Please wait!Photo uploading to server",Toast.LENGTH_LONG).show();
+            progressBar.setEnabled(true);
+            progressBar.setVisibility(View.VISIBLE);
+
                 StorageReference photoref = storageReference.child(SelectedImageUri.getLastPathSegment());
                 photoref.putFile(SelectedImageUri).addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
 
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         Uri downloadUrl = taskSnapshot.getDownloadUrl();
+
                         try {
                             if (rbd != null) {
                                 rbd.setPhoto(downloadUrl.toString());
@@ -534,18 +552,22 @@ public class WriteArticleActivity extends AppCompatActivity {
                             }
                             draftButton.setEnabled(true);
 
-                            publishButton.setEnabled(true);
+                          //  publishButton.setEnabled(true);
                         } catch (NullPointerException e) {
                             Log.d("exception", "" + e);
                         }
                     }
                 });
+
+              //TODO use progressbar
+
+                    progressBar.setVisibility(View.GONE);
+
+
                 Toast.makeText(this, "Photo uploaded", Toast.LENGTH_LONG).show();
 
 
-            } else {
-                Toast.makeText(this, "Please write content first!", Toast.LENGTH_LONG).show();
-            }
+
         } else if (requestcode == RC_PROFILE_PICKER && resultcode == RESULT_OK) {
             final Uri SelectedProfileUri = data.getData();
             StorageReference picref = storageReference.child(SelectedProfileUri.getLastPathSegment());
@@ -558,6 +580,12 @@ public class WriteArticleActivity extends AppCompatActivity {
 
 
             });
+
+
+
+
+
+
             Toast.makeText(this, "Photo uploaded", Toast.LENGTH_LONG).show();
         }
     }

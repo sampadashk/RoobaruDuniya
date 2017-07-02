@@ -1,10 +1,14 @@
 package com.samiapps.kv.roobaruduniya;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,6 +22,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class ArticleDetail extends AppCompatActivity {
     int pos;
+    public static final String TAG=ArticleDetail.class.getName();
     RoobaruDuniya artsel;
 
     String userName;
@@ -29,6 +34,9 @@ public class ArticleDetail extends AppCompatActivity {
     ImageView imgProfile;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    FloatingActionButton favButton;
+    String keySel;
+    boolean isFav;
     // ArrayList<RoobaruDuniya> rbd;
 
     public void onCreate(Bundle savedInstanceState)
@@ -39,7 +47,10 @@ public class ArticleDetail extends AppCompatActivity {
         Intent intent=getIntent();
         pos=intent.getIntExtra("position",-1);
         Log.d("checkpos",""+pos);
-        artsel=(RoobaruDuniya)intent.getSerializableExtra(HomeFragment.TAG);
+        artsel=(RoobaruDuniya)intent.getSerializableExtra(ArticleDetail.TAG);
+        keySel=intent.getStringExtra("keySelected");
+        Log.d("keysel",keySel);
+
 
         userName=artsel.getUser();
        // Log.d("chkname",userName);
@@ -52,11 +63,42 @@ public class ArticleDetail extends AppCompatActivity {
         ivw=(ImageView) findViewById(R.id.display_image);
         tvtitle=(TextView)findViewById(R.id.post_title);
         tvcontent=(TextView)findViewById(R.id.post_con);
+        favButton=(FloatingActionButton) findViewById(R.id.share_fab);
+        FavDb favRef=new FavDb(ArticleDetail.this);
+        SQLiteDatabase sqldb=favRef.getReadableDatabase();
+        Cursor cursor=favRef.queryKey(sqldb,keySel);
+        if(cursor.getCount()>0)
+        {
+            favButton.setImageResource(R.drawable.ic_favorite);
+            isFav=true;
+        }
+
+
+
 
         Glide.with(this).load(artsel.getPhoto()).into(ivw);
         tvtitle.setText(artsel.getTitle());
         tvcontent.setText(artsel.getContent());
         txtName.setText(userName);
+        favButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FavDb favdbRef=new FavDb(ArticleDetail.this);
+                SQLiteDatabase db=favdbRef.getWritableDatabase();
+                if(isFav)
+                {
+                    favdbRef.deleteKey(db,keySel);
+                    favButton.setImageResource(R.drawable.ic_favorite_border);
+                    isFav=false;
+                }
+                else
+                {
+                    favdbRef.insertKey(db,keySel);
+                    favButton.setImageResource(R.drawable.ic_favorite);
+                    isFav=true;
+                }
+            }
+        });
         Uri uri=Uri.parse(userProf);
         // Loading profile image
         Glide.with(this).load(uri)
@@ -70,6 +112,12 @@ public class ArticleDetail extends AppCompatActivity {
         // Log.d("chkobj",""+artsel);
 
 
+
+    }
+    public void onBackPressed()
+    {
+        Intent intent=new Intent(ArticleDetail.this,TrialActivity.class);
+        startActivity(intent);
 
     }
 }

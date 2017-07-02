@@ -31,9 +31,10 @@ public class HomeFragment extends Fragment {
 
 
 
+
     private imgAdapter imageAdapter;
     ArrayList<RoobaruDuniya> rubaru=new ArrayList<RoobaruDuniya>();
-    ArrayList<String> editors=new ArrayList<>();
+    ArrayList<String> keys=new ArrayList<>();
 
 
     private RecyclerView mRecycleView;
@@ -51,6 +52,7 @@ public class HomeFragment extends Fragment {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
         uid= FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         firebaseDtabase = FirebaseDatabase.getInstance();
@@ -89,10 +91,12 @@ public class HomeFragment extends Fragment {
                     public void onItemClick(int position, View v) {
 
                         RoobaruDuniya item = rubaru.get(position);
+                        String key=keys.get(position);
                         Intent intent = new Intent(getContext(), ArticleDetail.class);
                         intent.putExtra("position", position);
+                        intent.putExtra("keySelected",key);
                         Bundle b=new Bundle();
-                        b.putSerializable(HomeFragment.TAG,item);
+                        b.putSerializable(ArticleDetail.TAG,item);
                         intent.putExtras(b);
 
 
@@ -165,6 +169,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void displayArticles(String key) {
+        keys.add(key);
         dbaseReference.child(key).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

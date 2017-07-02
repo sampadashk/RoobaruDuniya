@@ -103,9 +103,11 @@ public class SentFragment extends Fragment {
 
                     RoobaruDuniya item = rubaru.get(position);
                     Intent intent = new Intent(getContext(), ArticleDetail.class);
+                    String key=keyList.get(position);
+                    intent.putExtra("keySelected",key);
                     intent.putExtra("position", position);
                     Bundle b=new Bundle();
-                    b.putSerializable(HomeFragment.TAG,item);
+                    b.putSerializable(ArticleDetail.TAG,item);
                     intent.putExtras(b);
 
 

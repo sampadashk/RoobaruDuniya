@@ -56,6 +56,7 @@ public class DraftFragment extends Fragment {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
 
         uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
       firebaseDtabase = FirebaseDatabase.getInstance();

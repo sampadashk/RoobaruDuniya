@@ -1,6 +1,7 @@
 package com.samiapps.kv.roobaruduniya;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -63,12 +64,14 @@ public class TrialActivity extends AppCompatActivity
     private static final String TAG_PUBLISHED = "published";
     private static final String TAG_SENT = "sent";
     public static String CURRENT_TAG = TAG_HOME;
+    boolean shouldLoadHomeFragOnBackPress=true;
     FloatingActionButton fab;
     public static boolean isEditor;
     FirebaseDatabase firebaseDtabase;
     DatabaseReference dbEditor;
     NavigationView navigationView;
     MenuItem sentart;
+    ActionBarDrawerToggle toggle;
 
 
 
@@ -93,6 +96,7 @@ public class TrialActivity extends AppCompatActivity
 
 
                     onSignedInInitialize(user.getDisplayName(),user.getEmail(),user.getPhotoUrl());
+
                     Toast.makeText(TrialActivity.this,"Welcome!",Toast.LENGTH_LONG).show();
 
                 }
@@ -112,6 +116,8 @@ public class TrialActivity extends AppCompatActivity
 
             }
         };
+
+
 
         firebaseDtabase=FirebaseDatabase.getInstance();
      //   Logger.Level debugLevel = Logger.Level.valueOf("DEBUG");
@@ -145,7 +151,7 @@ public class TrialActivity extends AppCompatActivity
         });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+         toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
@@ -171,6 +177,7 @@ public class TrialActivity extends AppCompatActivity
             loadHomeFragment();
         }
         */
+
 
 
 
@@ -244,18 +251,20 @@ public class TrialActivity extends AppCompatActivity
             super.onBackPressed();
         }
 
-
-        int count = getFragmentManager().getBackStackEntryCount();
-
-        if (count == 0) {
-            super.onBackPressed();
-            //additional code
-        } else {
-            HomeFragment homeFragment = new HomeFragment();
-
-            getSupportFragmentManager().beginTransaction().replace(R.id.frame, homeFragment, CURRENT_TAG).commit();
-
+        if (shouldLoadHomeFragOnBackPress) {
+            // checking if user is on other navigation menu
+            // rather than home
+            if (navItemIndex != 0) {
+                navItemIndex = 0;
+                CURRENT_TAG = TAG_HOME;
+                getSupportActionBar().setTitle(activityTitles[navItemIndex]);
+                loadHomeFragment();
+                return;
+            }
         }
+
+
+
     }
 
     @Override
@@ -466,9 +475,9 @@ public class TrialActivity extends AppCompatActivity
 
         loadNavHeader();
 
-        HomeFragment homeFragment = new HomeFragment();
+       HomeFragment homeFragment = new HomeFragment();
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.frame, homeFragment, CURRENT_TAG).commit();
+       getSupportFragmentManager().beginTransaction().replace(R.id.frame, homeFragment, CURRENT_TAG).commit();
 
 
 
@@ -496,6 +505,8 @@ public class TrialActivity extends AppCompatActivity
                 return homeFragment;
             case 1:
                 // fav
+                FavFragment favFragment=new FavFragment();
+                return favFragment;
 
             case 2:
                 // draft fragment
@@ -516,5 +527,18 @@ public class TrialActivity extends AppCompatActivity
     }
     private void setToolbarTitle() {
         getSupportActionBar().setTitle(activityTitles[navItemIndex]);
+    }
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        toggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // Pass any configuration change to the drawer toggles
+       toggle.onConfigurationChanged(newConfig);
     }
 }
