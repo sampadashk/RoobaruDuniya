@@ -6,8 +6,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -37,6 +41,7 @@ public class ArticleDetail extends AppCompatActivity {
     FloatingActionButton favButton;
     String keySel;
     boolean isFav;
+    private ShareActionProvider mShareActionProvider;
     // ArrayList<RoobaruDuniya> rbd;
 
     public void onCreate(Bundle savedInstanceState)
@@ -114,10 +119,23 @@ public class ArticleDetail extends AppCompatActivity {
 
 
     }
-    public void onBackPressed()
-    {
-        Intent intent=new Intent(ArticleDetail.this,TrialActivity.class);
-        startActivity(intent);
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
 
+        getMenuInflater().inflate(R.menu.menu_detail, menu);
+        MenuItem item = menu.findItem(R.id.menu_item_share);
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+        //create the sharing intent
+        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+        sharingIntent.setType("text/plain");
+        String shareBody = "here goes your share content body";
+        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, artsel.getTitle());
+        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, artsel.getContent());
+
+        //then set the sharingIntent
+        mShareActionProvider.setShareIntent(sharingIntent);
+        return true;
     }
+
+
 }

@@ -79,6 +79,7 @@ public class TrialActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         Log.d(TAG,"ONCREATE 1");
         setContentView(R.layout.activity_trial);
         //postponeEnterTransition();
@@ -116,6 +117,7 @@ public class TrialActivity extends AppCompatActivity
 
             }
         };
+
 
 
 
@@ -218,6 +220,7 @@ public class TrialActivity extends AppCompatActivity
         Log.d("checkedit",""+isEditor);
         Log.d("checkstatus",userStatus);
     }
+
 
     private void loadNavHeader() {
         // name, website
@@ -438,8 +441,10 @@ public class TrialActivity extends AppCompatActivity
     @Override
     public void onStop() {
         super.onStop();
+        Log.d(TAG,"onStop()");
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
+
         }
     }
     public void onStart()

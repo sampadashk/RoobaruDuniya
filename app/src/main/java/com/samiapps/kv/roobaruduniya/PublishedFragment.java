@@ -55,8 +55,6 @@ public class PublishedFragment extends Fragment {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
-
         uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         firebaseDtabase = FirebaseDatabase.getInstance();
         dbaseReference = firebaseDtabase.getReference().child("user").child(uid).child("articleStatus");

@@ -34,11 +34,14 @@ public class FavFragment extends Fragment {
     private imgAdapter imageAdapter;
     ArrayList<RoobaruDuniya> rubaru = new ArrayList<RoobaruDuniya>();
     ArrayList<String> kList;
+    Cursor c;
 
 
     private RecyclerView mRecycleView;
     private RecyclerView.LayoutManager mLayoutManager;
     String uid;
+    FavDb favRef;
+    SQLiteDatabase db;
     ArrayList<String> childkey;
     public static final String TAG = FavFragment.class.getName();
     // ProgressBar pgbar;
@@ -50,8 +53,8 @@ public class FavFragment extends Fragment {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG,"favonCreate");
         setRetainInstance(true);
-
 
         uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         firebaseDbase = FirebaseDatabase.getInstance();
@@ -59,9 +62,27 @@ public class FavFragment extends Fragment {
         // dbaseReference = firebaseDtabase.getReference().child("user").child(uid);
         mReference = firebaseDbase.getReference().child("messages");
         kList = new ArrayList<>();
-        FavDb favRef = new FavDb(getContext());
-        SQLiteDatabase db = favRef.getReadableDatabase();
-        Cursor c = favRef.getKey(db);
+        favRef = new FavDb(getContext());
+       db = favRef.getReadableDatabase();
+
+
+    }
+    public void onActivityCreated(Bundle savedInstanceState)
+    {
+        super.onActivityCreated(savedInstanceState);
+        Log.d(TAG,"activitycreated");
+        if(savedInstanceState!=null)
+        {
+
+        }
+        else {
+            c = favRef.getKey(db);
+            computeCursor();
+        }
+    }
+
+    private void computeCursor() {
+
         if (c.getCount() != 0) {
 
             while (c.moveToNext()) {
@@ -71,8 +92,6 @@ public class FavFragment extends Fragment {
                 kList.add(key);
             }
         }
-
-
     }
 
     private void displayFav(String key) {
@@ -101,12 +120,15 @@ public class FavFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.headlinelayout, container, false);
+        Log.d(TAG,"favonCreateView");
         mRecycleView = (RecyclerView) rootView.findViewById(R.id.editor_recycleview);
         imageAdapter = new imgAdapter(rubaru, getContext());
         mRecycleView.setLayoutManager(new GridLayoutManager(getContext(), 2));
         mRecycleView.setItemAnimator(new DefaultItemAnimator());
-
         mRecycleView.setAdapter(imageAdapter);
+
+
+
         imageAdapter.setOnItemClickListener(new imgAdapter.ClickListener() {
             @Override
             public void onItemClick(int position, View v) {
@@ -130,12 +152,41 @@ public class FavFragment extends Fragment {
 
         return rootView;
     }
+
+
+
     @Override
     public void onStop() {
         super.onStop();
-        Log.d("actck","stop");
-        rubaru.clear();
+        Log.d(TAG,"favstop");
+       // rubaru.clear();
 
     }
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d(TAG,"favpause");
+        // rubaru.clear();
+
+    }
+    public void onResume()
+    {
+        super.onResume();
+
+        Log.d(TAG,"favresume");
+        // rubaru.clear();
+
+
+    }
+    public void onDestroy()
+    {
+        super.onDestroy();
+
+        Log.d(TAG,"favdestroy");
+        // rubaru.clear();
+
+
+    }
+
 
 }
