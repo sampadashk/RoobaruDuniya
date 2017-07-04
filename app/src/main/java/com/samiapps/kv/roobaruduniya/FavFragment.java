@@ -23,6 +23,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+import static com.samiapps.kv.roobaruduniya.TrialActivity.activityTitles;
+import static com.samiapps.kv.roobaruduniya.TrialActivity.navItemIndex;
+
 /**
  * Created by KV on 2/7/17.
  */
@@ -70,7 +73,8 @@ public class FavFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState)
     {
         super.onActivityCreated(savedInstanceState);
-        Log.d(TAG,"activitycreated");
+
+        getActivity().setTitle(activityTitles[navItemIndex]);
         if(savedInstanceState!=null)
         {
 
@@ -79,6 +83,7 @@ public class FavFragment extends Fragment {
             c = favRef.getKey(db);
             computeCursor();
         }
+
     }
 
     private void computeCursor() {

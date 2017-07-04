@@ -1,7 +1,6 @@
 package com.samiapps.kv.roobaruduniya;
 
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -45,13 +44,14 @@ public class TrialActivity extends AppCompatActivity
     private static final int RC_SIGN_IN = 123;
     Uri photoUri;
     private View navHeader;
-    private String[] activityTitles;
-    private ImageView imgNavHeaderBg, imgProfile;
+    public static String[] activityTitles;
+    private ImageView imgProfile;
     private TextView txtName, txtStatus;
     private Toolbar toolbar;
     String uname;
     String uemail;
     private Handler mHandler;
+    DrawerLayout drawer;
     // index to identify current nav menu item
     public static int navItemIndex = 0;
     public static String userStatus;
@@ -77,7 +77,7 @@ public class TrialActivity extends AppCompatActivity
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         Log.d(TAG,"ONCREATE 1");
@@ -96,7 +96,7 @@ public class TrialActivity extends AppCompatActivity
                     Log.d(TAG,"Signed in 3");
 
 
-                    onSignedInInitialize(user.getDisplayName(),user.getEmail(),user.getPhotoUrl());
+                    onSignedInInitialize(user.getDisplayName(),user.getEmail(),user.getPhotoUrl(),savedInstanceState);
 
                     Toast.makeText(TrialActivity.this,"Welcome!",Toast.LENGTH_LONG).show();
 
@@ -128,7 +128,7 @@ public class TrialActivity extends AppCompatActivity
         dbEditor=firebaseDtabase.getReference("editor");
        // mAuth.addAuthStateListener(mAuthListener);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         // load toolbar titles from string resources
         activityTitles = getResources().getStringArray(R.array.nav_item_activity_titles);
@@ -152,7 +152,7 @@ public class TrialActivity extends AppCompatActivity
             }
         });
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
          toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
@@ -238,7 +238,7 @@ public class TrialActivity extends AppCompatActivity
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(imgProfile);
         }
-      //  txtName.setText(uname);
+       txtName.setText(uname);
 
 
     }
@@ -246,25 +246,29 @@ public class TrialActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-
-       DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+//TODO TEST 1
+      // DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
+            return;
         } else if(drawer.isDrawerOpen(GravityCompat.START)==false){
-            super.onBackPressed();
+
         }
 
         if (shouldLoadHomeFragOnBackPress) {
             // checking if user is on other navigation menu
             // rather than home
             if (navItemIndex != 0) {
+                navigationView.getMenu().getItem(navItemIndex).setChecked(false);
                 navItemIndex = 0;
+                navigationView.getMenu().getItem(navItemIndex).setChecked(true);
                 CURRENT_TAG = TAG_HOME;
                 getSupportActionBar().setTitle(activityTitles[navItemIndex]);
                 loadHomeFragment();
                 return;
             }
         }
+        super.onBackPressed();
 
 
 
@@ -352,8 +356,9 @@ public class TrialActivity extends AppCompatActivity
         } else if (id == R.id.nav_about_us) {
 
         }
+        //TODO TEST 2
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+       // DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         loadHomeFragment();
         return true;
@@ -362,10 +367,10 @@ public class TrialActivity extends AppCompatActivity
     private void loadHomeFragment() {
         // if user select the current navigation menu again, don't do anything
         // just close the navigation drawer
-        checkEditor();
+       // checkEditor();
        // loadNavHeader();
         setToolbarTitle();
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+       // DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (getSupportFragmentManager().findFragmentByTag(CURRENT_TAG) != null) {
             drawer.closeDrawers();
 
@@ -446,6 +451,13 @@ public class TrialActivity extends AppCompatActivity
             mAuth.removeAuthStateListener(mAuthListener);
 
         }
+
+    }
+    public void onDestroy()
+    {
+        super.onDestroy();
+        Log.d(TAG,"onDestroy()");
+
     }
     public void onStart()
     {
@@ -458,7 +470,7 @@ public class TrialActivity extends AppCompatActivity
     }
 
 
-    private void onSignedInInitialize(String username,String email,Uri photo)
+    private void onSignedInInitialize(String username, String email, Uri photo, Bundle savedInstanceState)
     {
         try {
             mUsername = username;
@@ -479,10 +491,15 @@ public class TrialActivity extends AppCompatActivity
         checkEditor();
 
         loadNavHeader();
+        if (savedInstanceState == null) {
+            navItemIndex = 0;
+            CURRENT_TAG = TAG_HOME;
+            loadHomeFragment();
+        }
 
-       HomeFragment homeFragment = new HomeFragment();
+       // homeFragment = new HomeFragment();
 
-       getSupportFragmentManager().beginTransaction().replace(R.id.frame, homeFragment, CURRENT_TAG).commit();
+       //getSupportFragmentManager().beginTransaction().replace(R.id.frame, homeFragment, CURRENT_TAG).commit();
 
 
 
@@ -531,8 +548,10 @@ public class TrialActivity extends AppCompatActivity
         }
     }
     private void setToolbarTitle() {
+        Log.d(TAG,"checknavIndextitle"+navItemIndex);
         getSupportActionBar().setTitle(activityTitles[navItemIndex]);
     }
+    /*
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -546,4 +565,5 @@ public class TrialActivity extends AppCompatActivity
         // Pass any configuration change to the drawer toggles
        toggle.onConfigurationChanged(newConfig);
     }
+    */
 }

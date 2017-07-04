@@ -52,6 +52,7 @@ public class HomeFragment extends Fragment {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
 
         uid= FirebaseAuth.getInstance().getCurrentUser().getUid();
 
@@ -74,7 +75,7 @@ public class HomeFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.headlinelayout, container, false);
         mRecycleView = (RecyclerView) rootView.findViewById(R.id.editor_recycleview);
         imageAdapter=new imgAdapter(rubaru,getContext());
-        mRecycleView.setLayoutManager(new GridLayoutManager(getContext(),2));
+        mRecycleView.setLayoutManager(new GridLayoutManager(getContext(),3));
         mRecycleView.setItemAnimator(new DefaultItemAnimator());
 
         mRecycleView.setAdapter(imageAdapter);

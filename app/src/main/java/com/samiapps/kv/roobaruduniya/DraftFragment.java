@@ -22,6 +22,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+import static com.samiapps.kv.roobaruduniya.TrialActivity.activityTitles;
+import static com.samiapps.kv.roobaruduniya.TrialActivity.navItemIndex;
+
 /**
  * Created by KV on 21/6/17.
  */
@@ -56,6 +59,7 @@ public class DraftFragment extends Fragment {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
 
 
         uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -213,6 +217,11 @@ public class DraftFragment extends Fragment {
     {
         super.onStop();
         Log.d("actchk","8");
+    }
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        getActivity().setTitle(activityTitles[navItemIndex]);
     }
 
 
