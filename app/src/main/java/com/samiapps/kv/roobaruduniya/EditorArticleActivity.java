@@ -22,6 +22,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.text.SimpleDateFormat;
+import java.util.Random;
 
 /**
  * Created by KV on 29/6/17.
@@ -46,6 +47,9 @@ public class EditorArticleActivity extends AppCompatActivity{
     MenuItem rejectButton;
     private FirebaseStorage firebaseStorage;
     private StorageReference storageReference;
+    private StorageReference defaultPhoto;
+    private boolean titleChanged;
+    private boolean contentChanged;
     private static final int RC_PHOTO_PICK = 3;
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +64,7 @@ public class EditorArticleActivity extends AppCompatActivity{
         publishedRef=db.getReference("published");
         firebaseStorage = FirebaseStorage.getInstance();
         storageReference = firebaseStorage.getReference().child("article_photo");
+        defaultPhoto=firebaseStorage.getReference().child("default");
         Intent intent=getIntent();
         try {
             pos = intent.getIntExtra("position", -1);
@@ -113,6 +118,7 @@ public class EditorArticleActivity extends AppCompatActivity{
 
             @Override
             public void onTextChanged(CharSequence st, int start, int before, int count) {
+                titleChanged=true;
                 if ((st.toString().trim().length()) > 0)
 
                 {
@@ -145,6 +151,7 @@ public class EditorArticleActivity extends AppCompatActivity{
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                contentChanged=true;
                 if ((s.toString().trim().length()) > 0)
 
                 {
@@ -156,7 +163,10 @@ public class EditorArticleActivity extends AppCompatActivity{
 
                     if ((s.toString().trim().length()) > 50) {
                         saveEditorButton.setEnabled(true);
+                        approveButton.setEnabled(true);
                     }
+                    else
+                        approveButton.setEnabled(false);
 
                 }
 
@@ -179,6 +189,38 @@ public class EditorArticleActivity extends AppCompatActivity{
         {
             case R.id.approved:
             {
+                 //TODO: photo displaying late\
+
+
+                //check if photo is null
+                if(rbd.getPhoto()==null)
+                {
+                    //select random photo from storage and put in rbd object and firebase database
+
+                            Random rand = new Random();
+                    int value = rand.nextInt(4);
+                    String st=value+".jpg";
+                    Log.d("image",st);
+                    defaultPhoto.child(st).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>()
+                    {
+
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            Log.d("imageuri",uri.toString());
+                            rbd.setPhoto(uri.toString());
+                            dbRefMsg.child(key).child("photo").setValue(rbd.getPhoto());
+                        }
+                    });
+
+                }
+                if(contentChanged||titleChanged)
+                {
+                    rbd.setTitle(title.getText().toString());
+                    rbd.setContent(content.getText().toString());
+                    dbRefMsg.child(key).setValue(rbd);
+
+                }
+
                 PendingClass pc=new PendingClass(true,true,TrialActivity.mUsername);
                 dbPendingArticle.child(key).setValue(pc);
                 addPublishedDatabase();
@@ -198,6 +240,7 @@ public class EditorArticleActivity extends AppCompatActivity{
                 dbPendingArticle.child(key).setValue(pc);
                 approveButton.setEnabled(false);
                 saveEditorButton.setEnabled(false);
+                removeDB();
                 //TODO REMOVE FROM DB
                 close();
                break;
@@ -212,6 +255,13 @@ public class EditorArticleActivity extends AppCompatActivity{
         return super.onOptionsItemSelected(menuItem);
     }
 
+    private void removeDB() {
+        dbRefUser.child(writerId).child("articleStatus").child(key).removeValue();
+        dbRefMsg.child(key).removeValue();
+        dbPendingArticle.child(key).removeValue();
+
+    }
+
     private void addPublishedDatabase() {
         long date = System.currentTimeMillis();
 
@@ -224,6 +274,8 @@ public class EditorArticleActivity extends AppCompatActivity{
     private void changeUserDB() {
         Log.d("writerId",writerId);
         dbRefUser.child(writerId).child("articleStatus").child(key).setValue("published");
+
+
 
 
     }

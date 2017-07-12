@@ -110,9 +110,8 @@ public class TrialActivity extends AppCompatActivity
                                     .createSignInIntentBuilder()
                                     .setIsSmartLockEnabled(false).setAvailableProviders(Arrays.asList(new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
 
-                                    new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build()) ).setTheme(R.style.FullscreenTheme)
-                                    .build(),
-                            RC_SIGN_IN);
+                                    new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build(),new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build()) ).setTheme(R.style.FullscreenTheme)
+                                    .build(), RC_SIGN_IN);
                 }
 
             }

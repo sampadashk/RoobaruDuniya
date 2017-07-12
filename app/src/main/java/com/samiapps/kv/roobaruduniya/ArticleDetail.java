@@ -121,11 +121,12 @@ public class ArticleDetail extends AppCompatActivity {
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
+//TODO sharing in FB
         getMenuInflater().inflate(R.menu.menu_detail, menu);
         MenuItem item = menu.findItem(R.id.menu_item_share);
         mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
         //create the sharing intent
+
         Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
         sharingIntent.setType("text/plain");
         String shareBody = "here goes your share content body";

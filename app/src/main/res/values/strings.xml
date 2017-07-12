@@ -31,10 +31,14 @@
     <string name="privacy_policy">Privacy Policy</string>
     <string name="title_activity_trial">TrialActivity</string>
 
+    <string name="facebook_application_id" translatable="false">1948414998767993</string>
+    <string name="facebook_login_protocol_scheme" translatable="false">fbAPP_ID</string>
+
     <string name="action_settings">Settings</string>
     <string name="editor_unpublished">UnPublished Articles</string>
     <string name="username">Enter Writer name</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
+    <string name="no_photo">No Photo Alert</string>
 
 </resources>

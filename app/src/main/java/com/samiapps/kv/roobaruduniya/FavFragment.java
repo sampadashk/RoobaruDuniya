@@ -57,6 +57,7 @@ public class FavFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG,"favonCreate");
+        // for retaining fragment;like on screen rotation want same screen to be displayed
         setRetainInstance(true);
 
         uid = FirebaseAuth.getInstance().getCurrentUser().getUid();

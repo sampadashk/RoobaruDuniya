@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -36,6 +37,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 
 /**
@@ -59,6 +61,7 @@ public class WriteArticleActivity extends AppCompatActivity {
 
     int draftPressed = 0;
     String userEmail;
+    String uStatus;
     private FirebaseStorage firebaseStorage;
     private StorageReference storageReference;
     EditText title;
@@ -70,6 +73,8 @@ public class WriteArticleActivity extends AppCompatActivity {
     RoobaruDuniya rbd;
     String userProfile;
     Uri downloadProfileUrl;
+    private StorageReference defaultPhoto;
+
 
 
     String userPos;
@@ -94,6 +99,9 @@ public class WriteArticleActivity extends AppCompatActivity {
         user = firebaseAuth.getCurrentUser();
         userEmail = user.getEmail();
         userId = user.getUid();
+        uStatus=TrialActivity.userStatus;
+        firebaseStorage=FirebaseStorage.getInstance();
+        defaultPhoto=firebaseStorage.getReference().child("default");
         //userPos = "Blogger";
         userPos=TrialActivity.userStatus;
         progressBar=(ProgressBar)findViewById(R.id.pbar);
@@ -175,6 +183,7 @@ public class WriteArticleActivity extends AppCompatActivity {
         });
 
 
+
     }
 
     public Dialog onCreateDialog() {
@@ -224,6 +233,13 @@ public class WriteArticleActivity extends AppCompatActivity {
                                 rbd.setUserProfilePhoto(downloadProfileUrl.toString());
                             }
                         }
+                        if(downloadProfileUrl==null)
+                        {
+                            String add="firebasestorage.googleapis.com/v0/b/roobaru-duniya-86f7d.appspot.com/o/default-profilepic%2Fdefaultprof.jpg?alt=media&token=aeca7a55-05e4-4c02-938f-061624f5c8b4";
+                            Uri defaultuserpicUrl= Uri.parse("https://" +add);
+                            rbd.setUserProfilePhoto(defaultuserpicUrl.toString());
+                        }
+
 
                     }
                 })
@@ -236,24 +252,26 @@ public class WriteArticleActivity extends AppCompatActivity {
     }
 
     public void onStart() {
-        if (TrialActivity.userStatus.equals("editor")) {
-            writerDetail.setVisibility(View.VISIBLE);
-            writerDetail.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Dialog d = onCreateDialog();
-                    d.show();
+        try {
+            if (uStatus.equals("editor")) {
+                writerDetail.setVisibility(View.VISIBLE);
+                writerDetail.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Dialog d = onCreateDialog();
+                        d.show();
 
-                }
-            });
-            try {
+                    }
+                });
+
                 Log.d("writername", wName);
-            } catch (NullPointerException e) {
+            }
+        }catch (NullPointerException e) {
                 e.printStackTrace();
             }
 
 
-        }
+
 
         title.addTextChangedListener(new TextWatcher() {
             @Override
@@ -386,12 +404,15 @@ public class WriteArticleActivity extends AppCompatActivity {
 
          //       try {
 
+
                     if (rbd == null) {
                         rbd = new RoobaruDuniya(title.getText().toString(), content.getText().toString(), null, user.getDisplayName().toString(), userId, userProfile, 0, 1);
                         key = dbRefMsg.push().getKey();
                         dbRefMsg.child(key).setValue(rbd);
 
-                    } else if (rbd != null) {
+                    }
+                    //when photo is selected
+                else if (rbd != null) {
                         rbd.setDraft(0);
                         rbd.setSent(1);
                       //  Log.d("checkphoto", rbd.getPhoto());
@@ -404,6 +425,31 @@ public class WriteArticleActivity extends AppCompatActivity {
 
 
                     }
+                if(rbd.getPhoto()==null)
+                {
+
+
+                    //select random photo from storage and put in rbd object and firebase database
+
+                   /* Random rand = new Random();
+                    int value = rand.nextInt(4);
+                    String st=value+".jpg";
+                    Log.d("image",st);
+                    defaultPhoto.child(st).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>()
+                    {
+
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            Log.d("imageuri",uri.toString());
+                            rbd.setPhoto(uri.toString());
+                            dbRefMsg.child(key).child("photo").setValue(rbd.getPhoto());
+                        }
+                    });
+                    */
+
+
+
+                }
                     if (userPos.equals("editor")) {
                         //TODO: publish editor
                         publishEditor();
@@ -587,6 +633,39 @@ public class WriteArticleActivity extends AppCompatActivity {
 
 
             Toast.makeText(this, "Photo uploaded", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    class AsyncUpload extends AsyncTask<Object, Object, Void>
+    {
+
+        @Override
+        protected Void doInBackground(Object... params) {
+             uploaddefaultImage();
+            return null;
+        }
+
+        private void uploaddefaultImage() {
+            Random rand = new Random();
+            int value = rand.nextInt(4);
+            String st=value+".jpg";
+            Log.d("image",st);
+            defaultPhoto.child(st).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>()
+            {
+
+                @Override
+                public void onSuccess(Uri uri) {
+                    Log.d("imageuri",uri.toString());
+                    rbd.setPhoto(uri.toString());
+                    dbRefMsg.child(key).child("photo").setValue(uri.toString());
+                }
+            });
+        }
+        @Override
+        protected void onPostExecute(Void res)
+        {
+            super.onPostExecute(res);
+            Toast.makeText(WriteArticleActivity.this,"Please wait!",Toast.LENGTH_LONG).show();
         }
     }
 }

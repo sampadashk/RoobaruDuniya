@@ -32,6 +32,8 @@ public class HomeFragment extends Fragment {
 
 
 
+
+
     private imgAdapter imageAdapter;
     ArrayList<RoobaruDuniya> rubaru=new ArrayList<RoobaruDuniya>();
     ArrayList<String> keys=new ArrayList<>();
@@ -52,13 +54,14 @@ public class HomeFragment extends Fragment {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
+        //setRetainInstance(true);
 
         uid= FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         firebaseDtabase = FirebaseDatabase.getInstance();
         dbaseReference = firebaseDtabase.getReference().child("messages");
         publishedRef=firebaseDtabase.getReference("published");
+
 
         Log.d("checkt",dbaseReference.toString());
 
@@ -93,6 +96,7 @@ public class HomeFragment extends Fragment {
 
                         RoobaruDuniya item = rubaru.get(position);
                         String key=keys.get(position);
+                        Log.d("keyselected",key);
                         Intent intent = new Intent(getContext(), ArticleDetail.class);
                         intent.putExtra("position", position);
                         intent.putExtra("keySelected",key);
@@ -148,11 +152,13 @@ public class HomeFragment extends Fragment {
     }
 
     private void checkPublishedKey() {
+        //checking the published key in published node
         publishedRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.hasChildren()) {
                     for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+
                         displayArticles(postSnapshot.getKey());
 
 
@@ -176,6 +182,7 @@ public class HomeFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 RoobaruDuniya rbd = dataSnapshot.getValue(RoobaruDuniya.class);
                 Log.d("titleck", rbd.getTitle());
+
                 rubaru.add(rbd);
                 imageAdapter.notifyDataSetChanged();
 
@@ -232,8 +239,14 @@ public class HomeFragment extends Fragment {
     public void onStop() {
         super.onStop();
         Log.d("actck","stop");
-        rubaru.clear();
 
+
+    }
+    @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
+        rubaru.clear();
     }
     @Override
     public void onPause() {

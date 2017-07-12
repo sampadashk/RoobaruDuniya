@@ -37,7 +37,7 @@ public class PublishedFragment extends Fragment {
 
 
     private imgAdapter imageAdapter;
-    ArrayList<RoobaruDuniya> rubaru = new ArrayList<RoobaruDuniya>();
+    ArrayList<RoobaruDuniya> rubarup = new ArrayList<RoobaruDuniya>();
     ArrayList<String> keyList ;
 
 
@@ -81,7 +81,7 @@ public class PublishedFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.headlinelayout, container, false);
         mRecycleView = (RecyclerView) rootView.findViewById(R.id.editor_recycleview);
-        imageAdapter = new imgAdapter(rubaru, getContext());
+        imageAdapter = new imgAdapter(rubarup, getContext());
         //   pgbar=(ProgressBar) rootView.findViewById(R.id.pbar);
         //  noDraftText=(TextView) rootView.findViewById(R.id.nodraftText);
         mRecycleView.setLayoutManager(new GridLayoutManager(getContext(), 2));
@@ -91,12 +91,12 @@ public class PublishedFragment extends Fragment {
         mRecycleView.setAdapter(imageAdapter);
         //FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG);
 
-        readmsgId();
+       // readmsgId();
         imageAdapter.setOnItemClickListener(new imgAdapter.ClickListener() {
             @Override
             public void onItemClick(int position, View v) {
 
-                RoobaruDuniya item = rubaru.get(position);
+                RoobaruDuniya item = rubarup.get(position);
                 Intent intent = new Intent(getContext(), ArticleDetail.class);
                 String key=keyList.get(position);
                 intent.putExtra("keySelected",key);
@@ -119,6 +119,21 @@ public class PublishedFragment extends Fragment {
 
         return rootView;
     }
+    //onActivity is called after oncreateview;we are calling readmsgId here,so that it doesnt display data multiple time as we are checking if the bundle is not null
+    public void onActivityCreated(Bundle savedInstanceState)
+    {
+        super.onActivityCreated(savedInstanceState);
+
+        getActivity().setTitle(activityTitles[navItemIndex]);
+        if(savedInstanceState!=null)
+        {
+
+        }
+        else {
+            readmsgId();
+        }
+
+    }
 
     private void checkMessages(String key) {
         Log.d("actchk","4");
@@ -130,7 +145,7 @@ public class PublishedFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 RoobaruDuniya rbd = dataSnapshot.getValue(RoobaruDuniya.class);
                 Log.d("titleck", rbd.getTitle());
-                rubaru.add(rbd);
+                rubarup.add(rbd);
                 imageAdapter.notifyDataSetChanged();
 
             }
@@ -211,16 +226,17 @@ public class PublishedFragment extends Fragment {
 
 
     }
+    public void onDestroy()
+    {
+        super.onDestroy();
+        rubarup.clear();
+    }
     public void onStop()
     {
         super.onStop();
         Log.d("actchk","8");
-        rubaru.clear();
-    }
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
 
-        getActivity().setTitle(activityTitles[navItemIndex]);
     }
+
 
 }
