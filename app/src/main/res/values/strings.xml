@@ -30,6 +30,7 @@
     <string name="activity_title_privacy_policy">Privacy Policy</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="title_activity_trial">TrialActivity</string>
+    <string name="error_no_network">No network connectivity! Will load articles when the network is available.</string>
 
     <string name="facebook_application_id" translatable="false">1948414998767993</string>
     <string name="facebook_login_protocol_scheme" translatable="false">fbAPP_ID</string>
@@ -40,5 +41,9 @@
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="no_photo">No Photo Alert</string>
+    <string name="unknown_error">Unknown error</string>
+    <string name="no_data">No data</string>
+    <string name="toast_no_connectivity">No network</string>
+    <string name="wait_msg">Please wait!</string>
 
 </resources>

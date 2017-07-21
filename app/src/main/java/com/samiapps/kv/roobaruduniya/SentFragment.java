@@ -105,12 +105,12 @@ public class SentFragment extends Fragment {
                 public void onItemClick(int position, View v) {
 
                     RoobaruDuniya item = rubaru.get(position);
-                    Intent intent = new Intent(getContext(), ArticleDetail.class);
+                    Intent intent = new Intent(getContext(), publishDetail.class);
                     String key=keyList.get(position);
                     intent.putExtra("keySelected",key);
                     intent.putExtra("position", position);
                     Bundle b=new Bundle();
-                    b.putSerializable(ArticleDetail.TAG,item);
+                    b.putSerializable(publishDetail.TAG,item);
                     intent.putExtras(b);
 
 

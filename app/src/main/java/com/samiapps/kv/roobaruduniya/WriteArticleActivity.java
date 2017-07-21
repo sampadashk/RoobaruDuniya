@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -18,7 +19,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -52,6 +55,7 @@ public class WriteArticleActivity extends AppCompatActivity {
     DatabaseReference dbRefMsg;
 
 
+
     DatabaseReference dbRefUser;
     DatabaseReference dbEditor;
     DatabaseReference dbPendingArticle;
@@ -74,6 +78,8 @@ public class WriteArticleActivity extends AppCompatActivity {
     String userProfile;
     Uri downloadProfileUrl;
     private StorageReference defaultPhoto;
+    ScrollView sv;
+    LinearLayout llout;
 
 
 
@@ -95,6 +101,10 @@ public class WriteArticleActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.write_article);
+
+        sv=(ScrollView) findViewById(R.id.scroll_v);
+        llout=(LinearLayout) findViewById(R.id.linearlout);
+
         firebaseAuth = FirebaseAuth.getInstance();
         user = firebaseAuth.getCurrentUser();
         userEmail = user.getEmail();
@@ -111,6 +121,12 @@ public class WriteArticleActivity extends AppCompatActivity {
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
+      if(userProfile==null)
+        {
+            String add="firebasestorage.googleapis.com/v0/b/roobaru-duniya-86f7d.appspot.com/o/default-profilepic%2Fdefaultprof.jpg?alt=media&token=aeca7a55-05e4-4c02-938f-061624f5c8b4";
+            userProfile= Uri.parse("https://" +add).toString();
+        }
+
 
 
         db = FirebaseDatabase.getInstance();
@@ -400,7 +416,14 @@ public class WriteArticleActivity extends AppCompatActivity {
                 break;
             }
             case R.id.publish: {
+                if(content.length()<300)
+                {
+                    Snackbar.make(llout,"Please write 300 words to publish",Snackbar.LENGTH_LONG).show();
+                    break;
+                }
+
                 draftButton.setEnabled(false);
+
 
          //       try {
 
@@ -425,11 +448,19 @@ public class WriteArticleActivity extends AppCompatActivity {
 
 
                     }
-                if(rbd.getPhoto()==null)
-                {
+
+                    if (userPos.equals("editor")) {
+
+                        //TODO: publish editor
+                        if(rbd.getPhoto()==null)
+                        {
+                            String add="https://firebasestorage.googleapis.com/v0/b/roobaru-duniya-86f7d.appspot.com/o/default%2F3.jpg?alt=media&token=c223a998-7f03-483e-af98-12e0f8c3aa43";
+                            rbd.setPhoto(add);
+                            dbRefMsg.child(key).child("photo").setValue(rbd.getPhoto());
 
 
-                    //select random photo from storage and put in rbd object and firebase database
+
+                            //select random photo from storage and put in rbd object and firebase database
 
                    /* Random rand = new Random();
                     int value = rand.nextInt(4);
@@ -449,9 +480,7 @@ public class WriteArticleActivity extends AppCompatActivity {
 
 
 
-                }
-                    if (userPos.equals("editor")) {
-                        //TODO: publish editor
+                        }
                         publishEditor();
                     } else {
 

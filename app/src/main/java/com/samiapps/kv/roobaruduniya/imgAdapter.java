@@ -45,13 +45,21 @@ public class imgAdapter extends RecyclerView.Adapter<imgAdapter.ViewHolder> {
         String text=item.getTitle();
         Log.d("adapterchk",text);
         String image=item.getPhoto();
+        holder.textView.setText(text);
+        if(image!=null) {
 
 
-       holder.textView.setText(text);
 
-        Glide.with(context)
-                .load(image)
-                .into(holder.imageViewIcon);
+
+            Glide.with(context)
+                    .load(image)
+                    .into(holder.imageViewIcon);
+        }
+       /* else
+        {
+            holder.imageViewIcon.setImageResource(R.drawable.sparrow);
+        }
+        */
 
 
     }

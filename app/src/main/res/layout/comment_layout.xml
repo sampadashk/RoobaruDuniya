@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+       >
+        <ImageView
+            android:id="@+id/img_profile"
+            android:layout_width="@dimen/profile_width"
+            android:layout_height="@dimen/profile_height"
+
+            app:srcCompat="@android:drawable/sym_def_app_icon" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="userName"
+            android:layout_toRightOf="@id/img_profile"
+            android:paddingTop="20dp"
+            android:id="@+id/uc_name"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/cmt_data"
+            android:text="10 sep 2016"
+            android:layout_toRightOf="@id/img_profile"
+            android:layout_below="@id/uc_name"/>
+
+    </RelativeLayout>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:text="comment"
+        android:id="@+id/uc_comment"/>
+
+
+</LinearLayout>

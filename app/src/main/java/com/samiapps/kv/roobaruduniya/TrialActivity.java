@@ -1,6 +1,9 @@
 package com.samiapps.kv.roobaruduniya;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,8 +19,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,12 +37,15 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.Arrays;
 
 public class TrialActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private FirebaseAuth mAuth;
+    static Button notifCount;
+    static int mNotifCount = 0;
     private FirebaseAuth.AuthStateListener mAuthListener;
     public static String mUsername;
     public static final String ANONYMOUS = "anonymous";
@@ -72,6 +80,8 @@ public class TrialActivity extends AppCompatActivity
     NavigationView navigationView;
     MenuItem sentart;
     ActionBarDrawerToggle toggle;
+    private BroadcastReceiver mReceiver;
+
 
 
 
@@ -98,7 +108,7 @@ public class TrialActivity extends AppCompatActivity
 
                     onSignedInInitialize(user.getDisplayName(),user.getEmail(),user.getPhotoUrl(),savedInstanceState);
 
-                    Toast.makeText(TrialActivity.this,"Welcome!",Toast.LENGTH_LONG).show();
+
 
                 }
                 else
@@ -110,7 +120,7 @@ public class TrialActivity extends AppCompatActivity
                                     .createSignInIntentBuilder()
                                     .setIsSmartLockEnabled(false).setAvailableProviders(Arrays.asList(new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
 
-                                    new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build(),new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build()) ).setTheme(R.style.FullscreenTheme)
+                                    new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build(),new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build()) ).setLogo(R.drawable.roobaru_logo)
                                     .build(), RC_SIGN_IN);
                 }
 
@@ -229,6 +239,13 @@ public class TrialActivity extends AppCompatActivity
 
         // Loading profile image
         txtStatus.setText(userStatus);
+        if(photoUri==null)
+        {
+            String add="firebasestorage.googleapis.com/v0/b/roobaru-duniya-86f7d.appspot.com/o/default-profilepic%2Fdefaultprof.jpg?alt=media&token=aeca7a55-05e4-4c02-938f-061624f5c8b4";
+            photoUri= Uri.parse("https://" +add);
+
+
+        }
         if(photoUri!=null) {
             Glide.with(this).load(photoUri)
                     .crossFade()
@@ -276,8 +293,22 @@ public class TrialActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
+
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main,menu);
+        View count = menu.findItem(R.id.badge).getActionView();
+        notifCount = (Button) count.findViewById(R.id.notif_count);
+        notifCount.setText(String.valueOf(mNotifCount));
+
+      //  View count = menu.findItem(R.id.badge).getActionView();
+       // notifCount = (Button) count.findViewById(R.id.notif_count);
+       // notifCount.setText(String.valueOf(mNotifCount));
+        return super.onCreateOptionsMenu(menu);
+
+    }
+    public void setNotifCount(int count){
+        mNotifCount = count;
+        invalidateOptionsMenu();
     }
 
     @Override
@@ -416,6 +447,23 @@ public class TrialActivity extends AppCompatActivity
     public void onResume() {
         super.onResume();
         Log.d(TAG,"resume");
+        IntentFilter intentFilter = new IntentFilter(
+                "android.intent.action.BADGE_COUNT_UPDATE");
+
+        mReceiver = new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                //extract our message from intent
+                int count=intent.getIntExtra("badge_count",0);
+                //log our message value
+                Log.i("checknotifcount",""+count);
+                setNotifCount(count);
+
+            }
+        };
+        //registering our receiver
+        this.registerReceiver(mReceiver, intentFilter);
    /*    FirebaseUser user=FirebaseAuth.getInstance().getCurrentUser();
 
         if(user!=null) {
@@ -487,6 +535,16 @@ public class TrialActivity extends AppCompatActivity
         {
             e.printStackTrace();
         }
+        String FCMToken= null;
+        try {
+            FCMToken = FirebaseInstanceId.getInstance().getToken();
+            DatabaseReference dbToken=firebaseDtabase.getReference("FCMToken");
+            dbToken.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(FCMToken);
+
+            /** Store this token to firebase database along with user id **/
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         checkEditor();
 
         loadNavHeader();
@@ -550,6 +608,7 @@ public class TrialActivity extends AppCompatActivity
         Log.d(TAG,"checknavIndextitle"+navItemIndex);
         getSupportActionBar().setTitle(activityTitles[navItemIndex]);
     }
+
     /*
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {

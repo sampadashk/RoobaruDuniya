@@ -226,6 +226,7 @@ public class EditorArticleActivity extends AppCompatActivity{
                 addPublishedDatabase();
                 //CHANGE VALUE OF ARTICLE STATUS IN USERDB TO PUBLISHED
                 changeUserDB();
+               // FirebaseMessagingService
                 //approveButton.setEnabled(false);
                 saveEditorButton.setEnabled(false);
                 rejectButton.setEnabled(false);
@@ -256,6 +257,7 @@ public class EditorArticleActivity extends AppCompatActivity{
     }
 
     private void removeDB() {
+        //remove data from firebase msg ref,user ref,pending ref
         dbRefUser.child(writerId).child("articleStatus").child(key).removeValue();
         dbRefMsg.child(key).removeValue();
         dbPendingArticle.child(key).removeValue();
@@ -269,6 +271,8 @@ public class EditorArticleActivity extends AppCompatActivity{
         String dateString = sdf.format(date);
         Log.d("checkDate",dateString);
         publishedRef.child(key).child("dateCreated").setValue(dateString);
+        publishedRef.child(key).child("likes").setValue(0);
+
     }
 
     private void changeUserDB() {
