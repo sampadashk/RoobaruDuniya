@@ -131,6 +131,72 @@ public class ArticleDetail extends AppCompatActivity {
         notificationRef.keepSynced(true);
         msgReference = db.getReference("messages");
         msgReference.keepSynced(true);
+        commentAdapter.setOnItemClickListener(new CommentAdapter.ClickListener()
+        {
+
+            @Override
+            public void onItemClick(final int position, View v) {
+                Comment c=commentList.get(position);
+                //only give delete right to the person who wrote the comment;Than only delete button will be visisble
+                if(c.commentorName.equals(TrialActivity.mUsername))
+                {
+                    ImageButton deleteButton= (ImageButton) v.findViewById(R.id.delete_button);
+                    deleteButton.setVisibility(View.VISIBLE);
+                    deleteButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+
+                            Comment cmt=commentList.get(position);
+                            commentList.remove(cmt);  // remove the item from list
+                            commentAdapter.notifyItemRemoved(position);
+                            //deleteing from firebase
+                            publishedRef.child(keySel).child("comments").addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    Iterator<DataSnapshot> iterator = dataSnapshot.getChildren().iterator();
+                                    int length = (int) dataSnapshot.getChildrenCount();
+                                    int i = 0;
+                                    // String[] sampleString = new String[length];
+                                    //TODO DELETE
+                                    while (i < position) {
+                                        if(iterator.hasNext()) {
+                                            iterator.next();
+                                            i += 1;
+                                        }
+                                    }
+                                    try {
+                                        //get the key using iterator and than delete it
+
+                                        String key = iterator.next().getKey();
+                                        Log.d("keydel", key);
+                                        dataSnapshot.child(key).getRef().removeValue();
+                                        Toast.makeText(ArticleDetail.this,"Comment deleted",Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
+                                    catch(NoSuchElementException e)
+                                    {
+                                        e.printStackTrace();
+                                    }
+                                    catch(Exception ee)
+                                    {
+                                        ee.printStackTrace();
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+
+
+                        }
+                    });
+
+                }
+            }
+        });
 
 
 
@@ -202,72 +268,9 @@ public class ArticleDetail extends AppCompatActivity {
             //   Log.d("keysel", keySel);
         }
         //Deleting comments;
-        commentAdapter.setOnItemClickListener(new CommentAdapter.ClickListener()
-        {
-
-            @Override
-            public void onItemClick(final int position, View v) {
-                Comment c=commentList.get(position);
-                //only give delete right to the person who wrote the comment;Than only delete button will be visisble
-                if(c.commentorName.equals(TrialActivity.mUsername))
-                {
-                    ImageButton deleteButton= (ImageButton) v.findViewById(R.id.delete_button);
-                    deleteButton.setVisibility(View.VISIBLE);
-                    deleteButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
 
 
-                            Comment cmt=commentList.get(position);
-                            commentList.remove(cmt);  // remove the item from list
-                         commentAdapter.notifyItemRemoved(position);
-                            //deleteing from firebase
-                            publishedRef.child(keySel).child("comments").addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    Iterator<DataSnapshot> iterator = dataSnapshot.getChildren().iterator();
-                                    int length = (int) dataSnapshot.getChildrenCount();
-                                    int i = 0;
-                                    // String[] sampleString = new String[length];
-                                    //TODO DELETE
-                                    while (i < position) {
-                                        if(iterator.hasNext()) {
-                                            iterator.next();
-                                            i += 1;
-                                        }
-                                    }
-                                    try {
-                                        //get the key using iterator and than delete it
 
-                                        String key = iterator.next().getKey();
-                                        Log.d("keydel", key);
-                                        dataSnapshot.child(key).getRef().removeValue();
-                                        Toast.makeText(ArticleDetail.this,"Comment deleted",Toast.LENGTH_SHORT).show();
-                                        return;
-                                    }
-                                    catch(NoSuchElementException e)
-                                    {
-                                        e.printStackTrace();
-                                    }
-                                    catch(Exception ee)
-                                    {
-                                        ee.printStackTrace();
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-
-                                }
-                            });
-
-
-                        }
-                    });
-
-                }
-            }
-        });
         FavDb favRef = new FavDb(ArticleDetail.this);
         SQLiteDatabase sqldb = favRef.getReadableDatabase();
         Cursor cursor = favRef.queryKey(sqldb, keySel);
