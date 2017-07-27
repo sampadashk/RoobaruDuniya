@@ -86,12 +86,16 @@ exports.sNotification=func.database.ref('/notification/{user_id}/{msg_id}').onWr
       const payload = {
         notification: {
           title : `New ${from_type}`,
-          body: `${userName} has ${from_type} your post ${msgTitle} `,
+          body :`New ${from_type} on your article ${msgTitle} by ${userName}`,
+          //body: `${userName} has ${from_type} your post ${msgTitle} `,
           icon: "default",
          // click_action : "in.tvac.akshaye.lapitchat_TARGET_NOTIFICATION"
         },
         data : {
-          from_user_id : from_user_id
+          from_user_id : from_user_id,
+          msgid : msg_id,
+          userid : user_id
+
         }
       };
       return admin.messaging().sendToDevice(token_id, payload).then(response => {

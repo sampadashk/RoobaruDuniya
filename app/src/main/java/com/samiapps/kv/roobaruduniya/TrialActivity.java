@@ -39,6 +39,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class TrialActivity extends AppCompatActivity
@@ -46,6 +50,11 @@ public class TrialActivity extends AppCompatActivity
     private FirebaseAuth mAuth;
     static Button notifCount;
     static int mNotifCount = 0;
+    String notificationMessage;
+    ArrayList<Notification> notificationArrList;
+    ArrayList<NotificationJson> notificationJsonList;
+    private static  String LAST_OPENED_FRAGMENT_REF ;
+
     private FirebaseAuth.AuthStateListener mAuthListener;
     public static String mUsername;
     public static final String ANONYMOUS = "anonymous";
@@ -72,7 +81,7 @@ public class TrialActivity extends AppCompatActivity
     private static final String TAG_PUBLISHED = "published";
     private static final String TAG_SENT = "sent";
     public static String CURRENT_TAG = TAG_HOME;
-    boolean shouldLoadHomeFragOnBackPress=true;
+    public static boolean shouldLoadHomeFragOnBackPress;
     FloatingActionButton fab;
     public static boolean isEditor;
     FirebaseDatabase firebaseDtabase;
@@ -81,9 +90,7 @@ public class TrialActivity extends AppCompatActivity
     MenuItem sentart;
     ActionBarDrawerToggle toggle;
     private BroadcastReceiver mReceiver;
-
-
-
+    private JSONObject json_object;
 
 
     @Override
@@ -92,9 +99,15 @@ public class TrialActivity extends AppCompatActivity
 
         Log.d(TAG,"ONCREATE 1");
         setContentView(R.layout.activity_trial);
+      //  if (savedInstanceState != null) {
+           // CURRENT_TAG = savedInstanceState.getString(LAST_OPENED_FRAGMENT_REF);
+           // Log.d("checktag",CURRENT_TAG);
+          //  loadHomeFragment();
+       // }
         //postponeEnterTransition();
         mUsername = ANONYMOUS;
         userStatus="Blogger";
+        shouldLoadHomeFragOnBackPress=true;
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -130,12 +143,16 @@ public class TrialActivity extends AppCompatActivity
 
 
 
+
         firebaseDtabase=FirebaseDatabase.getInstance();
+
      //   Logger.Level debugLevel = Logger.Level.valueOf("DEBUG");
 
 
         dbEditor=firebaseDtabase.getReference("editor");
        // mAuth.addAuthStateListener(mAuthListener);
+        notificationArrList=new ArrayList<>();
+        notificationJsonList=new ArrayList<>();
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -182,12 +199,7 @@ public class TrialActivity extends AppCompatActivity
         imgProfile = (ImageView) navHeader.findViewById(R.id.img_profile);
 
 
-     /*   if (savedInstanceState == null) {
-            navItemIndex = 0;
-            CURRENT_TAG = TAG_HOME;
-            loadHomeFragment();
-        }
-        */
+
 
 
 
@@ -299,6 +311,29 @@ public class TrialActivity extends AppCompatActivity
         View count = menu.findItem(R.id.badge).getActionView();
         notifCount = (Button) count.findViewById(R.id.notif_count);
         notifCount.setText(String.valueOf(mNotifCount));
+        notifCount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+
+                    setNotifCount(0);
+                    Intent intent1 = new Intent(getApplicationContext(), NotificationList.class);
+                    intent1.putExtra("msgNotification", notificationMessage);
+                    // Bundle args=new Bundle();
+                    //args.putSerializable("ARRAYLIST",(Serializable)notificationArrList);
+                    intent1.putExtra("passObject", notificationArrList);
+                    intent1.putExtra("passdataObject", notificationJsonList);
+                    intent1.putExtra("jsondetail", json_object.toString());
+
+                    startActivity(intent1);
+                    notificationArrList.clear();
+                    notificationJsonList.clear();
+
+
+
+            }
+        });
 
       //  View count = menu.findItem(R.id.badge).getActionView();
        // notifCount = (Button) count.findViewById(R.id.notif_count);
@@ -328,8 +363,9 @@ public class TrialActivity extends AppCompatActivity
             }
             case R.id.action_settings: {
                 AuthUI.getInstance().signOut(this);
-                return true;
+                break;
             }
+
 
 
 
@@ -394,6 +430,8 @@ public class TrialActivity extends AppCompatActivity
         return true;
     }
 
+
+
     private void loadHomeFragment() {
         // if user select the current navigation menu again, don't do anything
         // just close the navigation drawer
@@ -421,6 +459,8 @@ public class TrialActivity extends AppCompatActivity
                 fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
                         android.R.anim.fade_out);
                 fragmentTransaction.replace(R.id.frame, fragment, CURRENT_TAG);
+              //  fragmentTransaction.addToBackStack(null);
+
                 fragmentTransaction.commitAllowingStateLoss();
             }
         };
@@ -447,23 +487,7 @@ public class TrialActivity extends AppCompatActivity
     public void onResume() {
         super.onResume();
         Log.d(TAG,"resume");
-        IntentFilter intentFilter = new IntentFilter(
-                "android.intent.action.BADGE_COUNT_UPDATE");
 
-        mReceiver = new BroadcastReceiver() {
-
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                //extract our message from intent
-                int count=intent.getIntExtra("badge_count",0);
-                //log our message value
-                Log.i("checknotifcount",""+count);
-                setNotifCount(count);
-
-            }
-        };
-        //registering our receiver
-        this.registerReceiver(mReceiver, intentFilter);
    /*    FirebaseUser user=FirebaseAuth.getInstance().getCurrentUser();
 
         if(user!=null) {
@@ -499,11 +523,18 @@ public class TrialActivity extends AppCompatActivity
 
         }
 
+
+
+
     }
     public void onDestroy()
     {
         super.onDestroy();
         Log.d(TAG,"onDestroy()");
+        if(mReceiver!=null)
+        {
+            unregisterReceiver(mReceiver);
+        }
 
     }
     public void onStart()
@@ -511,6 +542,41 @@ public class TrialActivity extends AppCompatActivity
         super.onStart();
 
         Log.d(TAG,"start");
+        IntentFilter intentFilter = new IntentFilter(
+                "android.intent.action.BADGE_COUNT_UPDATE");
+
+        mReceiver = new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                //extract our message from intent
+                notificationMessage=intent.getStringExtra("badge_count_msg");
+                try {
+                    json_object = new JSONObject(intent.getStringExtra("badge_jsondata"));
+                    NotificationJson notificationJson = new NotificationJson(json_object.get("msgid").toString(), json_object.get("userid").toString());
+                    notificationJsonList.add(notificationJson);
+
+                    Notification n = new Notification(notificationMessage);
+                    notificationArrList.add(n);
+
+                    Log.d("chknsize", "" + notificationArrList);
+                    int count = intent.getIntExtra("badge_count", 0);
+                    //log our message value
+                    Log.d("checknotifcount", "" + count);
+                    setNotifCount(count);
+                }
+                catch(NullPointerException e)
+                {
+                    e.printStackTrace();
+                }
+                catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        };
+        //registering our receiver
+        this.registerReceiver(mReceiver, intentFilter);
 
 
 
@@ -608,6 +674,36 @@ public class TrialActivity extends AppCompatActivity
         Log.d(TAG,"checknavIndextitle"+navItemIndex);
         getSupportActionBar().setTitle(activityTitles[navItemIndex]);
     }
+    public void onPause()
+    {
+        super.onPause();
+        //unregisterReceiver(mReceiver);
+    }
+    @Override
+    public void onNewIntent(Intent intent)
+    {
+        super.onNewIntent(intent);
+
+        String get_Fragment=intent.getStringExtra("menuFragment");
+        Log.d("getnotif",get_Fragment);
+        if(get_Fragment.equals("HomeFragment"))
+        {
+            HomeFragment hmFragment = new HomeFragment();
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.replace(R.id.frame,hmFragment).commit();
+        }
+    }
+    /*
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putString(LAST_OPENED_FRAGMENT_REF,CURRENT_TAG);
+        Log.d("checksaved",CURRENT_TAG);
+    }
+    */
+
 
     /*
     @Override

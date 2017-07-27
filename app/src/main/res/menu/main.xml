@@ -13,6 +13,9 @@
         app:actionLayout="@layout/feed_update_count"
         android:icon="@drawable/shape_notification"
         android:title="notification"
+        android:enabled="true"
+
+
         app:showAsAction="always">
     </item>
 

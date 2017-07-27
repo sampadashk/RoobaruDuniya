@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHolder> {
     Context context;
+    private static CommentAdapter.ClickListener clickListener;
     private ArrayList<Comment> comments;
     CommentAdapter(Context context,ArrayList<Comment> comments)
     {
@@ -33,7 +35,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder,final int position) {
         Comment cmt=comments.get(position);
         String cmtName=cmt.getCommentorName();
         String commnt=cmt.getComment();
@@ -45,21 +47,38 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         Glide.with(context)
                 .load(imgCommentor)
                 .into(holder.uPhotoView);
+        holder.deleteButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+               // ListsDatabaseList theRemovedItem = list.get(position);
+                // remove your item from data base
+                Comment cmt=comments.get(position);
+                comments.remove(cmt);  // remove the item from list
+                notifyItemRemoved(position); // notify the adapter about the removed item
+            }
+        });
 
     }
+    public void setOnItemClickListener(CommentAdapter.ClickListener clickListener) {
+        CommentAdapter.clickListener = clickListener;
+    }
 
-    @Override
+
+        @Override
     public int getItemCount() {
         Log.d("checkcosize",""+comments.size());
         return comments.size();
 
     }
+    public interface ClickListener {
+        void onItemClick(int position, View v);
+    }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView cName;
         public TextView cmnt;
         public TextView dateTextView;
         public ImageView uPhotoView;
+        public ImageButton deleteButton;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -67,6 +86,14 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
             cmnt=(TextView)itemView.findViewById(R.id.uc_comment);
             dateTextView=(TextView)itemView.findViewById(R.id.cmt_data);
             uPhotoView=(ImageView)itemView.findViewById(R.id.img_profile);
+            deleteButton=(ImageButton)itemView.findViewById(R.id.delete_button);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            clickListener.onItemClick(getAdapterPosition(), v);
+
         }
     }
 }

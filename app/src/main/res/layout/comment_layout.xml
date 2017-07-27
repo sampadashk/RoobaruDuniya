@@ -11,7 +11,7 @@
         <ImageView
             android:id="@+id/img_profile"
             android:layout_width="@dimen/profile_width"
-            android:layout_height="@dimen/profile_height"
+            android:layout_height="50dp"
 
             app:srcCompat="@android:drawable/sym_def_app_icon" />
         <TextView
@@ -19,25 +19,71 @@
             android:layout_height="wrap_content"
             android:text="userName"
             android:layout_toRightOf="@id/img_profile"
-            android:paddingTop="20dp"
+            android:paddingTop="5dp"
+            android:textStyle="bold"
+            android:textSize="12dp"
             android:id="@+id/uc_name"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/cmt_data"
             android:text="10 sep 2016"
+            android:textSize="12dp"
             android:layout_toRightOf="@id/img_profile"
             android:layout_below="@id/uc_name"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="comment"
+            android:layout_below="@id/cmt_data"
+            android:layout_toRightOf="@id/img_profile"
+            android:id="@+id/uc_comment"/>
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/delete_button"
+            android:background="@android:drawable/ic_delete"
+            android:layout_alignParentRight="true"
+            android:visibility="gone"
+
+            />
+        <ProgressBar
+            android:layout_height="42dp"
+            android:layout_width="42dp"
+            android:layout_gravity="center"
+            android:visibility="invisible"
+
+            />
+
 
     </RelativeLayout>
+    <!--
+
+   <LinearLayout
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:orientation="horizontal">
 
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:text="comment"
-        android:id="@+id/uc_comment"/>
+
+       <View
+           android:layout_width="0dp"
+           android:layout_height="0dp"
+           android:layout_weight="1"
+           />
+       <ImageButton
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:id="@+id/delete_button"
+           android:background="@android:drawable/ic_delete"
+           android:visibility="gone"
+
+
+
+           />
+   </LinearLayout>
+   -->
 
 
 </LinearLayout>

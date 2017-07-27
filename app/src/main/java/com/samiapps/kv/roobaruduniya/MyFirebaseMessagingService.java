@@ -12,7 +12,10 @@ import android.util.Log;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import org.json.JSONObject;
+
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by KV on 18/7/17.
@@ -27,19 +30,30 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         String notification_title = remoteMessage.getNotification().getTitle();
         String notification_body = remoteMessage.getNotification().getBody();
+
         String click_action = remoteMessage.getNotification().getClickAction();
+     // = remoteMessage.getData().values();
+        Map<String, String> params = remoteMessage.getData();
+        JSONObject object = new JSONObject(params);
+        Log.d("JSON_OBJECT", object.toString());
+
+
         int countNo = TrialActivity.mNotifCount;
         countNo += 1;
-        setBadge(getApplicationContext(), countNo);
+        setBadge(getApplicationContext(),countNo,notification_body,object);
 
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.roobaru_logo)
                         .setContentTitle(notification_title)
-                        .setContentText(notification_body);
+                        .setContentText(notification_body)
+                        .setAutoCancel(true)
+                ;
 
         Intent resultIntent = new Intent(click_action);
+        resultIntent.putExtra("menuFragment","HomeFragment");
+        resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
 // Because clicking the notification opens a new ("special") activity, there's
 // no need to create an artificial back stack.
@@ -48,8 +62,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         this,
                         0,
                         resultIntent,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                );
+                        PendingIntent.FLAG_CANCEL_CURRENT)
+                ;
         mBuilder.setContentIntent(resultPendingIntent);
 
 
@@ -74,7 +88,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     }
 
-    public static void setBadge(Context applicationContext, int countNo) {
+    public static void setBadge(Context applicationContext, int countNo,String msg,JSONObject ob) {
         String launcherClassName = getLauncherClassName(applicationContext);
         if (launcherClassName == null) {
             Log.e("classname", "null");
@@ -84,6 +98,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         intent.putExtra("badge_count", countNo);
         intent.putExtra("badge_count_package_name", applicationContext.getPackageName());
         intent.putExtra("badge_count_class_name", launcherClassName);
+        intent.putExtra("badge_count_msg",msg);
+        intent.putExtra("badge_jsondata",ob.toString());
         applicationContext.sendBroadcast(intent);
     }
 
