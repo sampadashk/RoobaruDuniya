@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -79,6 +80,7 @@ public class ArticleDetail extends AppCompatActivity {
     Button sendCmt;
     ValueEventListener likeListener;
     ValueEventListener msgListener;
+    ValueEventListener delcmtListener;
     ArrayList<Comment> commentList;
     CommentAdapter commentAdapter;
     private ShareActionProvider mShareActionProvider;
@@ -147,83 +149,54 @@ public class ArticleDetail extends AppCompatActivity {
                         public void onClick(View v) {
 
 
-                            Comment cmt=commentList.get(position);
+                            Comment cmt = commentList.get(position);
+
                             commentList.remove(cmt);  // remove the item from list
                             commentAdapter.notifyItemRemoved(position);
+                            new MyAsync().execute(Integer.toString(position));
+
+                          //  publishedRef.child(keySel).child("comments").keepSynced(true);
+
                             //deleteing from firebase
-                            publishedRef.child(keySel).child("comments").addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    Iterator<DataSnapshot> iterator = dataSnapshot.getChildren().iterator();
-                                    int length = (int) dataSnapshot.getChildrenCount();
-                                    int i = 0;
-                                    // String[] sampleString = new String[length];
-                                    //TODO DELETE
-                                    while (i < position) {
-                                        if(iterator.hasNext()) {
-                                            iterator.next();
-                                            i += 1;
-                                        }
-                                    }
-                                    try {
-                                        //get the key using iterator and than delete it
 
-                                        String key = iterator.next().getKey();
-                                        Log.d("keydel", key);
-                                        dataSnapshot.child(key).getRef().removeValue();
-                                        Toast.makeText(ArticleDetail.this,"Comment deleted",Toast.LENGTH_SHORT).show();
-                                        return;
-                                    }
-                                    catch(NoSuchElementException e)
-                                    {
-                                        e.printStackTrace();
-                                    }
-                                    catch(Exception ee)
-                                    {
-                                        ee.printStackTrace();
-                                    }
-                                }
 
+
+
+                        }
+                    });
+
+
+                }
+
+            }
+        });
+
+
+
+                            // FirebaseAuth.getInstance().
+
+                            sharedButton.setOnClickListener(new View.OnClickListener() {
                                 @Override
-                                public void onCancelled(DatabaseError databaseError) {
+                                public void onClick(View v) {
+                                    Intent shareintent = new Intent(Intent.ACTION_SEND);
+                                    shareintent.setType("text/plain");
+
+
+                                    // shareintent.putExtra(Intent.EXTRA_TEXT, artsel.getContent());
+                                    shareintent.putExtra(android.content.Intent.EXTRA_SUBJECT, artsel.getTitle());
+                                    shareintent.putExtra(android.content.Intent.EXTRA_TEXT, artsel.getContent());
+                                    // shareintent.putExtra(Intent.EXTRA_TEXT, s1);
+                                    // String sendmsg = s1 + uri;
+                                    shareintent.putExtra(Intent.EXTRA_TEXT, artsel.getContent());
+                                    startActivity(Intent.createChooser(shareintent, "Share using"));
+
 
                                 }
                             });
 
 
                         }
-                    });
 
-                }
-            }
-        });
-
-
-
-
-        // FirebaseAuth.getInstance().
-
-        sharedButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent shareintent = new Intent(Intent.ACTION_SEND);
-                shareintent.setType("text/plain");
-
-
-                // shareintent.putExtra(Intent.EXTRA_TEXT, artsel.getContent());
-                shareintent.putExtra(android.content.Intent.EXTRA_SUBJECT, artsel.getTitle());
-                shareintent.putExtra(android.content.Intent.EXTRA_TEXT, artsel.getContent());
-                // shareintent.putExtra(Intent.EXTRA_TEXT, s1);
-                // String sendmsg = s1 + uri;
-                shareintent.putExtra(Intent.EXTRA_TEXT, artsel.getContent());
-                startActivity(Intent.createChooser(shareintent, "Share using"));
-
-
-            }
-        });
-
-
-    }
 
     @Override
     public void onStart() {
@@ -601,6 +574,7 @@ public class ArticleDetail extends AppCompatActivity {
         return true;
     }
     */
+
     public void onDestroy() {
         super.onDestroy();
         commentList.clear();
@@ -621,6 +595,66 @@ public class ArticleDetail extends AppCompatActivity {
             msgReference.child(keySel).removeEventListener(msgListener);
             msgListener = null;
         }
+        if(delcmtListener!=null)
+        {
+            publishedRef.child(keySel).child("comments").removeEventListener(delcmtListener);
+            delcmtListener=null;
+        }
+
+
+    }
+    public class MyAsync extends AsyncTask<String,Void,Void>
+    {
+
+        protected Void doInBackground(String... params) {
+           final int position=Integer.parseInt(params[0]);
+            delcmtListener=publishedRef.child(keySel).child("comments").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Iterator<DataSnapshot> iterator = dataSnapshot.getChildren().iterator();
+
+                    int i = 0;
+                    // String[] sampleString = new String[length];
+                    //TODO DELETE
+                    while (i < position) {
+                        if(iterator.hasNext()) {
+                            iterator.next();
+                            i += 1;
+                        }
+                    }
+                    try {
+                        //get the key using iterator and than delete it
+
+                        String key = iterator.next().getKey();
+                        Log.d("keydel", key);
+                        dataSnapshot.child(key).getRef().removeValue();
+
+                        return;
+                    }
+                    catch(NoSuchElementException e)
+                    {
+                        e.printStackTrace();
+                    }
+                    catch(Exception ee)
+                    {
+                        ee.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+            return null;
+        }
+        protected void onPostExecute(Void result)
+        {
+            super.onPostExecute(result);
+            Toast.makeText(ArticleDetail.this,"Comment deleted",Toast.LENGTH_SHORT).show();
+        }
+
+
     }
 
 
