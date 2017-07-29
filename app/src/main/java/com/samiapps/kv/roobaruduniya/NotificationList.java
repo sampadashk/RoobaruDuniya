@@ -1,6 +1,7 @@
 package com.samiapps.kv.roobaruduniya;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -63,8 +64,10 @@ public class NotificationList extends AppCompatActivity {
 
         notifiadapter=new notificationAdapter(this,notificationArrayList);
         RecyclerView.LayoutManager layoutManager=new LinearLayoutManager(getApplicationContext());
-        SpacesItemDecoration s=new SpacesItemDecoration(1);
-       notificationRecyclerView.addItemDecoration(s);
+        SeparatorDecoration decoration = new SeparatorDecoration(this, Color.GRAY, 1.5f);
+        notificationRecyclerView.addItemDecoration(decoration);
+        //SpacesItemDecoration s=new SpacesItemDecoration(1);
+      // notificationRecyclerView.addItemDecoration(s);
         notificationRecyclerView.setLayoutManager(layoutManager);
         notificationRecyclerView.setItemAnimator(new DefaultItemAnimator());
 

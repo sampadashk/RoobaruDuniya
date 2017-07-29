@@ -99,11 +99,8 @@ public class TrialActivity extends AppCompatActivity
 
         Log.d(TAG,"ONCREATE 1");
         setContentView(R.layout.activity_trial);
-      //  if (savedInstanceState != null) {
-           // CURRENT_TAG = savedInstanceState.getString(LAST_OPENED_FRAGMENT_REF);
-           // Log.d("checktag",CURRENT_TAG);
-          //  loadHomeFragment();
-       // }
+
+
         //postponeEnterTransition();
         mUsername = ANONYMOUS;
         userStatus="Blogger";
@@ -197,6 +194,43 @@ public class TrialActivity extends AppCompatActivity
         txtStatus = (TextView) navHeader.findViewById(R.id.user_status);
 
         imgProfile = (ImageView) navHeader.findViewById(R.id.img_profile);
+        //registering broadcast receiver
+        IntentFilter intentFilter = new IntentFilter(
+                "android.intent.action.BADGE_COUNT_UPDATE");
+
+        mReceiver = new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                //extract our message from intent
+                notificationMessage=intent.getStringExtra("badge_count_msg");
+                try {
+                    json_object = new JSONObject(intent.getStringExtra("badge_jsondata"));
+                    NotificationJson notificationJson = new NotificationJson(json_object.get("msgid").toString(), json_object.get("userid").toString());
+                    notificationJsonList.add(notificationJson);
+
+                    Notification n = new Notification(notificationMessage);
+                    notificationArrList.add(n);
+
+                    Log.d("chknsize", "" + notificationArrList);
+                    int count = intent.getIntExtra("badge_count", 0);
+                    //log our message value
+                    Log.d("checknotifcount", "" + count);
+                    setNotifCount(count);
+                }
+                catch(NullPointerException e)
+                {
+                    e.printStackTrace();
+                }
+                catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        };
+        //registering our receiver
+        this.registerReceiver(mReceiver, intentFilter);
+
 
 
 
@@ -459,8 +493,8 @@ public class TrialActivity extends AppCompatActivity
                 fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
                         android.R.anim.fade_out);
                 fragmentTransaction.replace(R.id.frame, fragment, CURRENT_TAG);
-              //  fragmentTransaction.addToBackStack(null);
-
+             // fragmentTransaction.addToBackStack(null);
+                //fragmentTransaction.commit();
                 fragmentTransaction.commitAllowingStateLoss();
             }
         };
@@ -515,7 +549,8 @@ public class TrialActivity extends AppCompatActivity
 
     }
     @Override
-    public void onStop() {
+    public void onStop()
+   {
         super.onStop();
         Log.d(TAG,"onStop()");
         if (mAuthListener != null) {
@@ -534,6 +569,7 @@ public class TrialActivity extends AppCompatActivity
         if(mReceiver!=null)
         {
             unregisterReceiver(mReceiver);
+            mReceiver=null;
         }
 
     }
@@ -542,41 +578,7 @@ public class TrialActivity extends AppCompatActivity
         super.onStart();
 
         Log.d(TAG,"start");
-        IntentFilter intentFilter = new IntentFilter(
-                "android.intent.action.BADGE_COUNT_UPDATE");
 
-        mReceiver = new BroadcastReceiver() {
-
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                //extract our message from intent
-                notificationMessage=intent.getStringExtra("badge_count_msg");
-                try {
-                    json_object = new JSONObject(intent.getStringExtra("badge_jsondata"));
-                    NotificationJson notificationJson = new NotificationJson(json_object.get("msgid").toString(), json_object.get("userid").toString());
-                    notificationJsonList.add(notificationJson);
-
-                    Notification n = new Notification(notificationMessage);
-                    notificationArrList.add(n);
-
-                    Log.d("chknsize", "" + notificationArrList);
-                    int count = intent.getIntExtra("badge_count", 0);
-                    //log our message value
-                    Log.d("checknotifcount", "" + count);
-                    setNotifCount(count);
-                }
-                catch(NullPointerException e)
-                {
-                    e.printStackTrace();
-                }
-                catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        };
-        //registering our receiver
-        this.registerReceiver(mReceiver, intentFilter);
 
 
 
@@ -679,6 +681,7 @@ public class TrialActivity extends AppCompatActivity
         super.onPause();
         //unregisterReceiver(mReceiver);
     }
+
     @Override
     public void onNewIntent(Intent intent)
     {
@@ -690,19 +693,14 @@ public class TrialActivity extends AppCompatActivity
         {
             HomeFragment hmFragment = new HomeFragment();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.addToBackStack(null);
+          //fragmentTransaction.addToBackStack(null);
             fragmentTransaction.replace(R.id.frame,hmFragment).commit();
         }
     }
-    /*
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
 
-        outState.putString(LAST_OPENED_FRAGMENT_REF,CURRENT_TAG);
-        Log.d("checksaved",CURRENT_TAG);
-    }
-    */
+
+
+
 
 
     /*

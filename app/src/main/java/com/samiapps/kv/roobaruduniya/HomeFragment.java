@@ -303,7 +303,7 @@ public class HomeFragment extends Fragment  {
         NetworkInfo networkInfo=cm.getActiveNetworkInfo();
         return networkInfo != null && networkInfo.isConnectedOrConnecting();
     }
-    private final BroadcastReceiver MyReceiver=new BroadcastReceiver() {
+    private BroadcastReceiver MyReceiver=new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context context, Intent intent){
@@ -369,8 +369,11 @@ public class HomeFragment extends Fragment  {
 
     @Override
     public void onDestroy() {
+        if(MyReceiver!=null) {
 
-        getContext().unregisterReceiver(MyReceiver);
+            getContext().unregisterReceiver(MyReceiver);
+            MyReceiver=null;
+        }
         rubaru.clear();
         super.onDestroy();
     }
