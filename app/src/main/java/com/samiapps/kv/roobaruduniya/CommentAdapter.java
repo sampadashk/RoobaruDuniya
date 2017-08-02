@@ -2,7 +2,6 @@ package com.samiapps.kv.roobaruduniya;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,7 +64,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
 
         @Override
     public int getItemCount() {
-        Log.d("checkcosize",""+comments.size());
+       // Log.d("checkcosize",""+comments.size());
         return comments.size();
 
     }

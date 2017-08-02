@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,9 +67,9 @@ public class PublishedFragment extends Fragment {
         keyList=new ArrayList<>();
 
 
-        Log.d("checkt", dbaseReference.toString());
-        Log.d("msgkt", msgReference.toString());
-        Log.d("actchk","1");
+      //  Log.d("checkt", dbaseReference.toString());
+      //  Log.d("msgkt", msgReference.toString());
+      //  Log.d("actchk","1");
 
 
 
@@ -87,7 +86,7 @@ public class PublishedFragment extends Fragment {
         //  noDraftText=(TextView) rootView.findViewById(R.id.nodraftText);
         mRecycleView.setLayoutManager(new GridLayoutManager(getContext(), 2));
         mRecycleView.setItemAnimator(new DefaultItemAnimator());
-        Log.d("actchk","2");
+       // Log.d("actchk","2");
 
         mRecycleView.setAdapter(imageAdapter);
         //FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG);
@@ -137,7 +136,7 @@ public class PublishedFragment extends Fragment {
     }
 
     private void checkMessages(String key) {
-        Log.d("actchk","4");
+       // Log.d("actchk","4");
         keyList.add(key);
 
 
@@ -145,7 +144,7 @@ public class PublishedFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 RoobaruDuniya rbd = dataSnapshot.getValue(RoobaruDuniya.class);
-                Log.d("titleck", rbd.getTitle());
+              //  Log.d("titleck", rbd.getTitle());
                 rubarup.add(rbd);
                 imageAdapter.notifyDataSetChanged();
 
@@ -163,19 +162,19 @@ public class PublishedFragment extends Fragment {
     private void readmsgId()
     {
 
-        Log.d("actchk","3");
+       // Log.d("actchk","3");
 
         dbaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.hasChildren()) {
-                    Log.d("actchk", "dbchk");
+                  //  Log.d("actchk", "dbchk");
                     for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                        Log.d("valck",ds.getValue()+"");
+                      //  Log.d("valck",ds.getValue()+"");
                         if (ds.getValue().equals("published")) {
 
                             //msgList.add(ds.getKey());
-                            Log.d("keyck", ds.getKey());
+                          //  Log.d("keyck", ds.getKey());
                             checkMessages(ds.getKey());
 
 
@@ -206,7 +205,7 @@ public class PublishedFragment extends Fragment {
     public void onStart()
     {
         super.onStart();
-        Log.d("actchk","5");
+       // Log.d("actchk","5");
         //readmsgId();
 
 
@@ -214,13 +213,13 @@ public class PublishedFragment extends Fragment {
     public void onResume()
     {
         super.onResume();
-        Log.d("actchk","6");
+       // Log.d("actchk","6");
 
     }
 
     public void onPause() {
 
-        Log.d("actchk","7");
+      //  Log.d("actchk","7");
         super.onPause();
 
 
@@ -235,7 +234,7 @@ public class PublishedFragment extends Fragment {
     public void onStop()
     {
         super.onStop();
-        Log.d("actchk","8");
+      //  Log.d("actchk","8");
 
     }
 

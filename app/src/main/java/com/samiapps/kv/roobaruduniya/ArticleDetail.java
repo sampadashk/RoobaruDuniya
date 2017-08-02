@@ -33,6 +33,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -267,7 +270,41 @@ public class ArticleDetail extends AppCompatActivity {
 
 //                Log.d("titleck", rbd.getTitle());
 
-        } else {
+        }
+        else if(intent.getStringExtra("bkgnotification")!=null)
+        {
+            JSONObject obj = null;
+            try {
+                obj = new JSONObject(intent.getStringExtra("bkgnotification"));
+                keySel = obj.get("msgid").toString();
+
+                Log.d("chkrecikey", keySel);
+                msgListener = msgReference.child(keySel).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if(dataSnapshot.exists()) {
+                            artsel = dataSnapshot.getValue(RoobaruDuniya.class);
+                            //updating UI when you have article
+                            loadUI();
+                        }
+
+//                        Log.d("artchktit", artsel.getTitle());
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                      //  Log.d("dberror", databaseError.toString());
+                    }
+                });
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+
+        }
+        else
+            {
             pos = intent.getIntExtra("position", -1);
             //  Log.d("checkpos", "" + pos);
             artsel = (RoobaruDuniya) intent.getSerializableExtra(ArticleDetail.TAG);
@@ -292,13 +329,13 @@ public class ArticleDetail extends AppCompatActivity {
                 if (dataSnapshot.exists()) {
                     date = dataSnapshot.child("dateCreated").getValue().toString();
                     datetvw.setText(date);
-                    Log.d("ckdate", date);
+                  //  Log.d("ckdate", date);
                     if (dataSnapshot.child("likes").exists()) {
                         String n_Likes = dataSnapshot.child("likes").getValue().toString();
                         nLikes = Integer.parseInt(n_Likes);
 
 
-                        num_Of_likes.setText(n_Likes + "likes");
+                        num_Of_likes.setText(n_Likes + "like");
                     }
 
 
@@ -328,8 +365,14 @@ public class ArticleDetail extends AppCompatActivity {
 
                             Comment c = ds.getValue(Comment.class);
                             commentList.add(c);
-                            Log.d("checkcname", c.commentorName);
-                            Log.d("checkcmt", c.comment);
+                            try {
+                             //   Log.d("checkcname", c.commentorName);
+                               // Log.d("checkcmt", c.comment);
+                            }
+                            catch(NullPointerException e)
+                            {
+                                e.printStackTrace();
+                            }
                             commentAdapter.notifyDataSetChanged();
                         }
 
@@ -521,7 +564,7 @@ public class ArticleDetail extends AppCompatActivity {
                         favButton.setImageResource(R.drawable.ic_favorite);
                         HashMap<String, String> notificationData = new HashMap<String, String>();
                         notificationData.put("from", mAuth.getCurrentUser().getUid());
-                        notificationData.put("type", "likes");
+                        notificationData.put("type", "like");
                         notificationRef.child(artsel.getuserId()).child(keySel).setValue(notificationData);
                         isFav = true;
                         nLikes += 1;
@@ -639,12 +682,14 @@ public class ArticleDetail extends AppCompatActivity {
 
     }
 
-  /*  @Override
+  @Override
     public void onBackPressed() {
 
         super.onBackPressed();
+      Intent it=new Intent(ArticleDetail.this,TrialActivity.class);
+      startActivity(it);
     }
-    */
+
 }
 
 

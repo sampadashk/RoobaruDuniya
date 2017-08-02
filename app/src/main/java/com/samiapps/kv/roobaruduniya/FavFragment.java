@@ -9,7 +9,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,7 +55,7 @@ public class FavFragment extends Fragment {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG,"favonCreate");
+       // Log.d(TAG,"favonCreate");
         // for retaining fragment;like on screen rotation want same screen to be displayed
         setRetainInstance(true);
 
@@ -105,7 +104,7 @@ public class FavFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 RoobaruDuniya rbd = dataSnapshot.getValue(RoobaruDuniya.class);
-                Log.d("titleck", rbd.getTitle());
+             //   Log.d("titleck", rbd.getTitle());
                 rubaru.add(rbd);
                 imageAdapter.notifyDataSetChanged();
 
@@ -126,7 +125,7 @@ public class FavFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.headlinelayout, container, false);
-        Log.d(TAG,"favonCreateView");
+      //  Log.d(TAG,"favonCreateView");
         mRecycleView = (RecyclerView) rootView.findViewById(R.id.editor_recycleview);
         imageAdapter = new imgAdapter(rubaru, getContext());
         mRecycleView.setLayoutManager(new GridLayoutManager(getContext(), 2));
@@ -164,14 +163,14 @@ public class FavFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        Log.d(TAG,"favstop");
+       // Log.d(TAG,"favstop");
        // rubaru.clear();
 
     }
     @Override
     public void onPause() {
         super.onPause();
-        Log.d(TAG,"favpause");
+       // Log.d(TAG,"favpause");
         // rubaru.clear();
 
     }
@@ -179,7 +178,7 @@ public class FavFragment extends Fragment {
     {
         super.onResume();
 
-        Log.d(TAG,"favresume");
+      //  Log.d(TAG,"favresume");
         // rubaru.clear();
 
 
@@ -188,7 +187,7 @@ public class FavFragment extends Fragment {
     {
         super.onDestroy();
 
-        Log.d(TAG,"favdestroy");
+       // Log.d(TAG,"favdestroy");
         // rubaru.clear();
 
 

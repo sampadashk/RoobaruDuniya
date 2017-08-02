@@ -11,7 +11,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -100,6 +99,8 @@ public class WriteArticleActivity extends AppCompatActivity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //TODO Screen rotation
+        //TODO PHOTO LOAD ASYNC
         setContentView(R.layout.write_article);
 
         sv=(ScrollView) findViewById(R.id.scroll_v);
@@ -145,9 +146,9 @@ public class WriteArticleActivity extends AppCompatActivity {
         try {
             pos = intent.getIntExtra("position", -1);
             key = intent.getStringExtra("Keypos");
-            Log.d("keypos", key);
+           // Log.d("keypos", key);
 
-            Log.d("checkpos", "" + pos);
+          //  Log.d("checkpos", "" + pos);
             rbd = (RoobaruDuniya) intent.getSerializableExtra(DraftFragment.TAG);
             title.setText(rbd.getTitle());
             content.setText(rbd.getContent());
@@ -232,7 +233,7 @@ public class WriteArticleActivity extends AppCompatActivity {
                         wName = writerName.getText().toString();
                         if(downloadProfileUrl!=null)
                         {
-                            Log.d("checkdownload",downloadProfileUrl.toString());
+                          //  Log.d("checkdownload",downloadProfileUrl.toString());
                         }
                         if (rbd != null) {
                             rbd.setUser(wName);
@@ -280,7 +281,7 @@ public class WriteArticleActivity extends AppCompatActivity {
                     }
                 });
 
-                Log.d("writername", wName);
+               // Log.d("writername", wName);
             }
         }catch (NullPointerException e) {
                 e.printStackTrace();
@@ -416,9 +417,15 @@ public class WriteArticleActivity extends AppCompatActivity {
                 break;
             }
             case R.id.publish: {
-                if(content.length()<300)
+                if(content.length()<500)
                 {
-                    Snackbar.make(llout,"Please write 300 words to publish",Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(llout,"Please write altleast 500 words to publish",Snackbar.LENGTH_LONG).show();
+                    break;
+                }
+                if(title.length()<5)
+                {
+                   // Log.d("chktitle","we r here");
+                    Snackbar.make(llout,"Please give your article a title",Snackbar.LENGTH_SHORT).show();
                     break;
                 }
 
@@ -448,6 +455,7 @@ public class WriteArticleActivity extends AppCompatActivity {
 
 
                     }
+
 
                     if (userPos.equals("editor")) {
 
@@ -490,11 +498,11 @@ public class WriteArticleActivity extends AppCompatActivity {
                         } else if (u != null) {
                             u.setArticleStatus("sent");
                         }
-                        Log.d("chkuse", u.getarticleStatus());
+                       // Log.d("chkuse", u.getarticleStatus());
                         Boolean b2 = uids.contains(userId);
                         if (b2) {
-                            Log.d("pubbool", "" + b2);
-                            Log.d("pubkey", key);
+                          //  Log.d("pubbool", "" + b2);
+                          //  Log.d("pubkey", key);
                             dbRefUser.child(userId).child("articleStatus").child(key).setValue("sent");
                         } else {
                             dbRefUser.child(userId).setValue(u);
@@ -506,7 +514,7 @@ public class WriteArticleActivity extends AppCompatActivity {
                         //   e.printStackTrace();
                         //  }
                         PendingClass pending = new PendingClass(false, false, null);
-                        Log.d("pendingKey", key);
+                      //  Log.d("pendingKey", key);
 
                         dbPendingArticle.child(key).setValue(pending);
                         Toast.makeText(this, "Article sent!will be published once it gets approved by editor", Toast.LENGTH_LONG).show();
@@ -532,11 +540,11 @@ public class WriteArticleActivity extends AppCompatActivity {
     } else if(u!=null) {
         u.setArticleStatus("published");
     }
-                    Log.d("chkuse", u.getarticleStatus());
+                  //  Log.d("chkuse", u.getarticleStatus());
     Boolean b2 = uids.contains(userId);
                     if (b2) {
-        Log.d("pubbool", "" + b2);
-        Log.d("pubkey", key);
+       // Log.d("pubbool", "" + b2);
+       // Log.d("pubkey", key);
         dbRefUser.child(userId).child("articleStatus").child(key).setValue("published");
     } else {
         dbRefUser.child(userId).setValue(u);
@@ -545,7 +553,7 @@ public class WriteArticleActivity extends AppCompatActivity {
         long date = System.currentTimeMillis();
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         String dateString = sdf.format(date);
-        Log.d("checkDate",dateString);
+       // Log.d("checkDate",dateString);
         publishedRef.child(key).child("dateCreated").setValue(dateString);
     }
 
@@ -576,7 +584,7 @@ public class WriteArticleActivity extends AppCompatActivity {
 
                     for (DataSnapshot uid : iterable) {
                         String s = uid.getKey();
-                        Log.d("ckk", s);
+                      //  Log.d("ckk", s);
                         uids.add(s);
 
                     }
@@ -625,11 +633,12 @@ public class WriteArticleActivity extends AppCompatActivity {
                                 rbd = new RoobaruDuniya(title.getText().toString(), content.getText().toString(), downloadUrl.toString(), user.getDisplayName().toString(), userId, userProfile, 0, 0);
 
                             }
+                        //    Log.d("chkphotoup",rbd.getPhoto());
                             draftButton.setEnabled(true);
 
                           //  publishButton.setEnabled(true);
                         } catch (NullPointerException e) {
-                            Log.d("exception", "" + e);
+                           // Log.d("exception", "" + e);
                         }
                     }
                 });
@@ -678,13 +687,13 @@ public class WriteArticleActivity extends AppCompatActivity {
             Random rand = new Random();
             int value = rand.nextInt(4);
             String st=value+".jpg";
-            Log.d("image",st);
+           // Log.d("image",st);
             defaultPhoto.child(st).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>()
             {
 
                 @Override
                 public void onSuccess(Uri uri) {
-                    Log.d("imageuri",uri.toString());
+                   // Log.d("imageuri",uri.toString());
                     rbd.setPhoto(uri.toString());
                     dbRefMsg.child(key).child("photo").setValue(uri.toString());
                 }
@@ -696,6 +705,8 @@ public class WriteArticleActivity extends AppCompatActivity {
             super.onPostExecute(res);
             Toast.makeText(WriteArticleActivity.this,"Please wait!",Toast.LENGTH_LONG).show();
         }
+
+
     }
 }
 

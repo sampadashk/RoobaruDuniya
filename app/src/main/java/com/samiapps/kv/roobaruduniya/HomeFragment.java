@@ -13,7 +13,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -75,7 +74,7 @@ public class HomeFragment extends Fragment  {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
+       // setRetainInstance(true);
         column=calculateNoOfColumns(getContext());
 
 
@@ -87,7 +86,7 @@ public class HomeFragment extends Fragment  {
         getContext().registerReceiver(MyReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
 
-        Log.d("checkt",dbaseReference.toString());
+      //  Log.d("checkt",dbaseReference.toString());
 
 
 
@@ -132,7 +131,7 @@ public class HomeFragment extends Fragment  {
 
                         RoobaruDuniya item = rubaru.get(position);
                         String key=keys.get(position);
-                        Log.d("keyselected",key);
+                      //  Log.d("keyselected",key);
                         Intent intent = new Intent(getContext(), ArticleDetail.class);
                         intent.putExtra("position", position);
                         intent.putExtra("keySelected",key);
@@ -229,6 +228,7 @@ public class HomeFragment extends Fragment  {
 //                Log.d("titleck", rbd.getTitle());
 
                 rubaru.add(rbd);
+                error.setVisibility(View.GONE);
 
                 mLoadingIndicator.setVisibility(View.INVISIBLE);
 
@@ -287,7 +287,7 @@ public class HomeFragment extends Fragment  {
     @Override
     public void onStop() {
         super.onStop();
-        Log.d("actck","stop");
+       // Log.d("actck","stop");
 
 
     }
@@ -295,7 +295,7 @@ public class HomeFragment extends Fragment  {
     @Override
     public void onPause() {
         super.onPause();
-        Log.d("actck","pause");
+       // Log.d("actck","pause");
     }
     public boolean isNetworkUp()
     {
@@ -308,7 +308,7 @@ public class HomeFragment extends Fragment  {
         @Override
         public void onReceive(Context context, Intent intent){
             if (!isNetworkUp()) {
-                Log.d("hi","show");
+               // Log.d("hi","show");
                 snackbar = Snackbar.make(homeLayout,
                         getString(R.string.error_no_network),
                         Snackbar.LENGTH_INDEFINITE);
@@ -341,7 +341,8 @@ public class HomeFragment extends Fragment  {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.hasChildren()) {
                          error.setText(R.string.wait_msg);
-                        } else error.setText(R.string.no_data);
+                        } else
+                            error.setText(R.string.no_data);
                     }
 
                     @Override

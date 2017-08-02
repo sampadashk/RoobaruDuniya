@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 /**
  * Created by KV on 2/7/17.
@@ -21,7 +20,7 @@ public class FavDb extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         final String SQL_CREATE_Fav_TABLE = "CREATE TABLE " +RoobaruContract.tableName+"(" +RoobaruContract.COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +RoobaruContract.COLUMN_KEY+ " TEXT NOT NULL);";
-        Log.d("checksql",SQL_CREATE_Fav_TABLE);
+       // Log.d("checksql",SQL_CREATE_Fav_TABLE);
         db.execSQL(SQL_CREATE_Fav_TABLE);
     }
 
@@ -36,7 +35,7 @@ public class FavDb extends SQLiteOpenHelper {
         ContentValues cv=new ContentValues();
         cv.put(RoobaruContract.COLUMN_KEY,key);
         db.insert(RoobaruContract.tableName,null,cv);
-        Log.d("insertkey","key inserted");
+       // Log.d("insertkey","key inserted");
 
     }
     public void deleteKey(SQLiteDatabase db,String key)
@@ -45,7 +44,7 @@ public class FavDb extends SQLiteOpenHelper {
         cv.put(RoobaruContract.COLUMN_KEY,key);
 
         db.delete(RoobaruContract.tableName,"key=?",new String[]{key});
-        Log.d("deletedkey","key");
+       // Log.d("deletedkey","key");
 
     }
     public Cursor getKey(SQLiteDatabase db)

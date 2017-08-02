@@ -10,9 +10,10 @@ exports.sendNotification = functions.database.ref('/published/{msg_id}').onWrite
   }
   const msg_id = event.params.msg_id;
 
-  const msg_val=admin.database().ref(`messages/${msg_id}/title`).once('value');
+  const msg_val=admin.database().ref(`messages/${msg_id}`).once('value');
   return msg_val.then(msgResult =>{
-    const msg_title=msgResult.val();
+    const msg_title=msgResult.val().title;
+    const user_id=msgResult.val().userId;
     console.log('msg title is',msg_title);
      console.log('We have a new article : ', msg_id);
  // const deviceToken = admin.database().ref('/FCMToken/{user_id}').once('value');
@@ -28,10 +29,14 @@ admin.database().ref('/FCMToken').on("child_added", function(snapshot)
       notification:
       {
         title:"New Article",
-        body:`${msg_title}`,
+        body:`New Article ${msg_title}`,
         icon:"default",
-        click_action:"android.intent.action.MAIN"
-      }
+        click_action:"com.samiapps.kv.roobaruduniya.getNotif"
+      },
+       data : {
+          msgid : msg_id,
+          userid : user_id
+        }
     };
     return admin.messaging().sendToDevice(token_id,payload).then(response=>{
       console.log("This was notification feature")
@@ -89,10 +94,10 @@ exports.sNotification=func.database.ref('/notification/{user_id}/{msg_id}').onWr
           body :`New ${from_type} on your article ${msgTitle} by ${userName}`,
           //body: `${userName} has ${from_type} your post ${msgTitle} `,
           icon: "default",
-         // click_action : "in.tvac.akshaye.lapitchat_TARGET_NOTIFICATION"
+          click_action : "com.samiapps.kv.roobaruduniya.getNotif"
+          
         },
         data : {
-          from_user_id : from_user_id,
           msgid : msg_id,
           userid : user_id
 

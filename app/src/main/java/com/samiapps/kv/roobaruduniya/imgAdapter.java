@@ -2,7 +2,6 @@ package com.samiapps.kv.roobaruduniya;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,7 +42,7 @@ public class imgAdapter extends RecyclerView.Adapter<imgAdapter.ViewHolder> {
         RoobaruDuniya item = articles.get(listPosition);
         Context context = holder.imageViewIcon.getContext();
         String text=item.getTitle();
-        Log.d("adapterchk",text);
+       // Log.d("adapterchk",text);
         String image=item.getPhoto();
         holder.textView.setText(text);
         if(image!=null) {

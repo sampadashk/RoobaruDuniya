@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 
 import org.json.JSONException;
@@ -41,7 +40,7 @@ public class NotificationList extends AppCompatActivity {
         }
         //JSONObject resjson= (JSONObject) i.getSerializableExtra("jsondetail");
         try {
-            Log.d("checkvjson1",resjson.get("msgid").toString());
+           // Log.d("checkvjson1",resjson.get("msgid").toString());
             String msgid=resjson.get("msgid").toString();
             String userid=resjson.get("userid").toString();
 
@@ -55,7 +54,7 @@ public class NotificationList extends AppCompatActivity {
         //i.getSerializableExtra("passObject");
         // Notification notification=new Notification(msg);
         //notificationArrayList.add(notification);
-        Log.d("sizechk",""+notificationArrayList.size());
+       // Log.d("sizechk",""+notificationArrayList.size());
        // notifiadapter.notifyDataSetChanged();
 
 
@@ -80,7 +79,7 @@ public class NotificationList extends AppCompatActivity {
                 Intent intent=new Intent(NotificationList.this,ArticleDetail.class);
                 intent.putExtra("intentNotification","NotificationDetail");
                 intent.putExtra("NotificationObject",nj);
-                Log.d("chknj",nj.getMsg_id());
+               // Log.d("chknj",nj.getMsg_id());
 
                 startActivity(intent);
 

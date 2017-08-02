@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -81,10 +80,10 @@ public class publishDetail extends AppCompatActivity {
         // FirebaseAuth.getInstance().
         Intent intent=getIntent();
         pos=intent.getIntExtra("position",-1);
-        Log.d("checkpos",""+pos);
+       // Log.d("checkpos",""+pos);
         artpub=(RoobaruDuniya)intent.getSerializableExtra(publishDetail.TAG);
         keySel=intent.getStringExtra("keySelected");
-        Log.d("keysel",keySel);
+       // Log.d("keysel",keySel);
 
 
 
@@ -97,7 +96,7 @@ public class publishDetail extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 try {
                     date = dataSnapshot.getValue().toString();
-                    Log.d("ckdate", date);
+                  //  Log.d("ckdate", date);
                 }
                 catch (NullPointerException e)
                 {

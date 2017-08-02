@@ -30,9 +30,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         String notification_title = remoteMessage.getNotification().getTitle();
         String notification_body = remoteMessage.getNotification().getBody();
-
-        String click_action = remoteMessage.getNotification().getClickAction();
-     // = remoteMessage.getData().values();
+        //TODO new article notification
+      String click_action = remoteMessage.getNotification().getClickAction();
         Map<String, String> params = remoteMessage.getData();
         JSONObject object = new JSONObject(params);
         Log.d("JSON_OBJECT", object.toString());
@@ -51,8 +50,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         .setAutoCancel(true)
                 ;
 
-        Intent resultIntent = new Intent(click_action);
-        resultIntent.putExtra("menuFragment","HomeFragment");
+        Intent resultIntent = new Intent(this,ArticleDetail.class);
+       // Log.d("getAction",click_action);
+        resultIntent.putExtra("bkgnotification",object.toString());
         resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
 // Because clicking the notification opens a new ("special") activity, there's
@@ -62,7 +62,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         this,
                         0,
                         resultIntent,
-                        PendingIntent.FLAG_CANCEL_CURRENT)
+                        PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_ONE_SHOT)
                 ;
         mBuilder.setContentIntent(resultPendingIntent);
 
@@ -79,7 +79,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // If the application is in the foreground handle both data and notification messages here.
         // Also if you intend on generating your own notifications as a result of a received FCM
         // message, here is where that should be initiated.
-        Log.d(TAG, "From: " + remoteMessage.getFrom());
+       Log.d(TAG, "From: " + remoteMessage.getFrom());
         Log.d(TAG, "Notification Message Body: " + remoteMessage.getNotification().getBody());
         // FirebaseDatabase db=FirebaseDatabase.getInstance();
         // DatabaseReference dbref=db.getReference("notification");
@@ -91,7 +91,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public static void setBadge(Context applicationContext, int countNo,String msg,JSONObject ob) {
         String launcherClassName = getLauncherClassName(applicationContext);
         if (launcherClassName == null) {
-            Log.e("classname", "null");
+         Log.e("classname", "null");
             return;
         }
         Intent intent = new Intent("android.intent.action.BADGE_COUNT_UPDATE");
@@ -100,6 +100,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         intent.putExtra("badge_count_class_name", launcherClassName);
         intent.putExtra("badge_count_msg",msg);
         intent.putExtra("badge_jsondata",ob.toString());
+     Log.d("ckjso",ob.toString());
         applicationContext.sendBroadcast(intent);
     }
 
@@ -115,7 +116,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             String pkgName = resolveInfo.activityInfo.applicationInfo.packageName;
             if (pkgName.equalsIgnoreCase(context.getPackageName())) {
                 String className = resolveInfo.activityInfo.name;
-                Log.d("classNme",className);
+              //  Log.d("classNme",className);
                 return className;
             }
         }

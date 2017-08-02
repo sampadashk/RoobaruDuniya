@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -70,9 +69,9 @@ public class EditorArticleActivity extends AppCompatActivity{
             pos = intent.getIntExtra("position", -1);
             key=intent.getStringExtra("Keypos");
 
-            Log.d("keypos",key);
+           // Log.d("keypos",key);
 
-            Log.d("checkpos", "" + pos);
+           // Log.d("checkpos", "" + pos);
             rbd= (RoobaruDuniya) intent.getSerializableExtra(SentFragment.TAG);
             writerId=rbd.getuserId();
             title.setText(rbd.getTitle());
@@ -87,7 +86,7 @@ public class EditorArticleActivity extends AppCompatActivity{
         photoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("ckphtot","photoslected");
+               // Log.d("ckphtot","photoslected");
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                 intent.setType("image/jpeg");
                 intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
@@ -200,13 +199,13 @@ public class EditorArticleActivity extends AppCompatActivity{
                             Random rand = new Random();
                     int value = rand.nextInt(4);
                     String st=value+".jpg";
-                    Log.d("image",st);
+                   // Log.d("image",st);
                     defaultPhoto.child(st).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>()
                     {
 
                         @Override
                         public void onSuccess(Uri uri) {
-                            Log.d("imageuri",uri.toString());
+                          //  Log.d("imageuri",uri.toString());
                             rbd.setPhoto(uri.toString());
                             dbRefMsg.child(key).child("photo").setValue(rbd.getPhoto());
                         }
@@ -269,14 +268,14 @@ public class EditorArticleActivity extends AppCompatActivity{
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         String dateString = sdf.format(date);
-        Log.d("checkDate",dateString);
+       // Log.d("checkDate",dateString);
         publishedRef.child(key).child("dateCreated").setValue(dateString);
         publishedRef.child(key).child("likes").setValue(0);
 
     }
 
     private void changeUserDB() {
-        Log.d("writerId",writerId);
+      //  Log.d("writerId",writerId);
         dbRefUser.child(writerId).child("articleStatus").child(key).setValue("published");
 
 
@@ -308,7 +307,7 @@ public class EditorArticleActivity extends AppCompatActivity{
 
 
                         } catch (NullPointerException e) {
-                            Log.d("exception", "" + e);
+                          //  Log.d("exception", "" + e);
                         }
                     }
                 });

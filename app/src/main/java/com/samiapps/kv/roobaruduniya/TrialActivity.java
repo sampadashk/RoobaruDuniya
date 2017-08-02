@@ -97,7 +97,7 @@ public class TrialActivity extends AppCompatActivity
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.d(TAG,"ONCREATE 1");
+        //  Log.d(TAG,"ONCREATE 1");
         setContentView(R.layout.activity_trial);
 
 
@@ -113,7 +113,7 @@ public class TrialActivity extends AppCompatActivity
                 // String s=firebaseAuth.getCurrentUser().getUid();
                 if(user!=null)
                 {
-                    Log.d(TAG,"Signed in 3");
+                    //  Log.d(TAG,"Signed in 3");
 
 
                     onSignedInInitialize(user.getDisplayName(),user.getEmail(),user.getPhotoUrl(),savedInstanceState);
@@ -123,7 +123,7 @@ public class TrialActivity extends AppCompatActivity
                 }
                 else
                 {
-                    Log.d(TAG,"Signed in 2");
+                    //   Log.d(TAG,"Signed in 2");
                     onSignedOutCleanup();
                     startActivityForResult(
                             AuthUI.getInstance()
@@ -143,11 +143,11 @@ public class TrialActivity extends AppCompatActivity
 
         firebaseDtabase=FirebaseDatabase.getInstance();
 
-     //   Logger.Level debugLevel = Logger.Level.valueOf("DEBUG");
+        //   Logger.Level debugLevel = Logger.Level.valueOf("DEBUG");
 
 
         dbEditor=firebaseDtabase.getReference("editor");
-       // mAuth.addAuthStateListener(mAuthListener);
+        // mAuth.addAuthStateListener(mAuthListener);
         notificationArrList=new ArrayList<>();
         notificationJsonList=new ArrayList<>();
 
@@ -164,27 +164,27 @@ public class TrialActivity extends AppCompatActivity
             public void onClick(View view) {
                 String email ="roobaru.duniya@gmail.com";
                 Intent intent=new Intent(Intent.ACTION_SENDTO,Uri.parse("mailto:" +email));
-              //  intent.putExtra(Intent.EXTRA_EMAIL,"roobaru.duniya@gmail.com");
+                //  intent.putExtra(Intent.EXTRA_EMAIL,"roobaru.duniya@gmail.com");
                 // intent.setType("text/html");
 
-               // intent.putExtra(Intent.EXTRA_EMAIL,"roobaru.duniya@gmail.com");
-              //  intent.putExtra(Intent.EXTRA_SUBJECT, "Subject");
+                // intent.putExtra(Intent.EXTRA_EMAIL,"roobaru.duniya@gmail.com");
+                //  intent.putExtra(Intent.EXTRA_SUBJECT, "Subject");
                 //intent.putExtra(Intent.EXTRA_TEXT, "I'm email body.");
 
                 startActivity(Intent.createChooser(intent, "Send Email"));
             }
         });
 
-         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-         toggle = new ActionBarDrawerToggle(
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         Menu navmenu = navigationView.getMenu();
-         sentart=navmenu.findItem(R.id.nav_sent);
-       // loadNavHeader();
+        sentart=navmenu.findItem(R.id.nav_sent);
+        // loadNavHeader();
 
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -205,11 +205,14 @@ public class TrialActivity extends AppCompatActivity
                 //extract our message from intent
                 notificationMessage=intent.getStringExtra("badge_count_msg");
                 try {
-                    json_object = new JSONObject(intent.getStringExtra("badge_jsondata"));
+                    json_object = new JSONObject(intent.getExtras().getString("badge_jsondata"));
                     NotificationJson notificationJson = new NotificationJson(json_object.get("msgid").toString(), json_object.get("userid").toString());
+                    Log.d("ckjsonob",json_object.get("msgid").toString());
+                    Log.d("ckjsonobdev",json_object.get("userid").toString());
                     notificationJsonList.add(notificationJson);
 
                     Notification n = new Notification(notificationMessage);
+                    Log.d("getmsg",n.getMessage());
                     notificationArrList.add(n);
 
                     Log.d("chknsize", "" + notificationArrList);
@@ -222,6 +225,7 @@ public class TrialActivity extends AppCompatActivity
                 {
                     e.printStackTrace();
                 }
+
                 catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -238,12 +242,14 @@ public class TrialActivity extends AppCompatActivity
 
 
 
+
+
     }
 
 
 
     private void checkEditor() {
-        Log.d(TAG,"checkEditor 4");
+        // Log.d(TAG,"checkEditor 4");
         dbEditor.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -251,9 +257,10 @@ public class TrialActivity extends AppCompatActivity
                 {
                     if(di.getValue().equals(uemail))
                     {
-                        Log.d("hey", (String) di.getValue());
+                        //   Log.d("hey", (String) di.getValue());
                         isEditor=true;
                         userStatus="editor";
+                        activityTitles[4]=getString(R.string.editor_unpublished);
                         sentart.setTitle(R.string.editor_unpublished);
                         txtStatus.setText("Editor");
 
@@ -272,8 +279,8 @@ public class TrialActivity extends AppCompatActivity
             }
         });
 
-        Log.d("checkedit",""+isEditor);
-        Log.d("checkstatus",userStatus);
+        //  Log.d("checkedit",""+isEditor);
+        //   Log.d("checkstatus",userStatus);
     }
 
 
@@ -300,7 +307,7 @@ public class TrialActivity extends AppCompatActivity
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(imgProfile);
         }
-       txtName.setText(uname);
+        txtName.setText(uname);
 
 
     }
@@ -309,7 +316,7 @@ public class TrialActivity extends AppCompatActivity
     @Override
     public void onBackPressed() {
 //TODO TEST 1
-      // DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        // DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
             return;
@@ -345,33 +352,44 @@ public class TrialActivity extends AppCompatActivity
         View count = menu.findItem(R.id.badge).getActionView();
         notifCount = (Button) count.findViewById(R.id.notif_count);
         notifCount.setText(String.valueOf(mNotifCount));
+
+
         notifCount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d("ckjsoncl",json_object.toString());
 
 
 
-                    setNotifCount(0);
-                    Intent intent1 = new Intent(getApplicationContext(), NotificationList.class);
-                    intent1.putExtra("msgNotification", notificationMessage);
-                    // Bundle args=new Bundle();
-                    //args.putSerializable("ARRAYLIST",(Serializable)notificationArrList);
-                    intent1.putExtra("passObject", notificationArrList);
-                    intent1.putExtra("passdataObject", notificationJsonList);
-                    intent1.putExtra("jsondetail", json_object.toString());
+                setNotifCount(0);
+                Intent intent1 = new Intent(getApplicationContext(), NotificationList.class);
+                intent1.putExtra("msgNotification", notificationMessage);
+                // Bundle args=new Bundle();
+                //args.putSerializable("ARRAYLIST",(Serializable)notificationArrList);
+                intent1.putExtra("passObject", notificationArrList);
+                intent1.putExtra("passdataObject", notificationJsonList);
+                intent1.putExtra("jsondetail", json_object.toString());
+                try {
+                    Log.d("ckjs", json_object.get("userid").toString());
+                }
+                catch (JSONException e)
+                {
+                    e.printStackTrace();
+                }
 
-                    startActivity(intent1);
-                    notificationArrList.clear();
-                    notificationJsonList.clear();
+                startActivity(intent1);
+                notificationArrList.clear();
+                notificationJsonList.clear();
 
 
 
             }
         });
 
-      //  View count = menu.findItem(R.id.badge).getActionView();
-       // notifCount = (Button) count.findViewById(R.id.notif_count);
-       // notifCount.setText(String.valueOf(mNotifCount));
+
+        //  View count = menu.findItem(R.id.badge).getActionView();
+        // notifCount = (Button) count.findViewById(R.id.notif_count);
+        // notifCount.setText(String.valueOf(mNotifCount));
         return super.onCreateOptionsMenu(menu);
 
     }
@@ -428,7 +446,7 @@ public class TrialActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-        Log.d(TAG,"nav selected");
+        // Log.d(TAG,"nav selected");
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
@@ -454,11 +472,13 @@ public class TrialActivity extends AppCompatActivity
             CURRENT_TAG=TAG_SENT;
 
         } else if (id == R.id.nav_about_us) {
+            Intent intent =new Intent(TrialActivity.this,AboutUsActivity.class);
+            startActivity(intent);
 
         }
         //TODO TEST 2
 
-       // DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        // DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         loadHomeFragment();
         return true;
@@ -469,10 +489,10 @@ public class TrialActivity extends AppCompatActivity
     private void loadHomeFragment() {
         // if user select the current navigation menu again, don't do anything
         // just close the navigation drawer
-       // checkEditor();
-       // loadNavHeader();
+        // checkEditor();
+        // loadNavHeader();
         setToolbarTitle();
-       // DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        // DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (getSupportFragmentManager().findFragmentByTag(CURRENT_TAG) != null) {
             drawer.closeDrawers();
 
@@ -493,7 +513,7 @@ public class TrialActivity extends AppCompatActivity
                 fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
                         android.R.anim.fade_out);
                 fragmentTransaction.replace(R.id.frame, fragment, CURRENT_TAG);
-             // fragmentTransaction.addToBackStack(null);
+                // fragmentTransaction.addToBackStack(null);
                 //fragmentTransaction.commit();
                 fragmentTransaction.commitAllowingStateLoss();
             }
@@ -520,7 +540,7 @@ public class TrialActivity extends AppCompatActivity
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(TAG,"resume");
+        //  Log.d(TAG,"resume");
 
    /*    FirebaseUser user=FirebaseAuth.getInstance().getCurrentUser();
 
@@ -550,9 +570,9 @@ public class TrialActivity extends AppCompatActivity
     }
     @Override
     public void onStop()
-   {
+    {
         super.onStop();
-        Log.d(TAG,"onStop()");
+        // Log.d(TAG,"onStop()");
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
 
@@ -565,11 +585,12 @@ public class TrialActivity extends AppCompatActivity
     public void onDestroy()
     {
         super.onDestroy();
-        Log.d(TAG,"onDestroy()");
+        //  Log.d(TAG,"onDestroy()");
         if(mReceiver!=null)
         {
             unregisterReceiver(mReceiver);
             mReceiver=null;
+
         }
 
     }
@@ -577,7 +598,7 @@ public class TrialActivity extends AppCompatActivity
     {
         super.onStart();
 
-        Log.d(TAG,"start");
+        // Log.d(TAG,"start");
 
 
 
@@ -593,8 +614,8 @@ public class TrialActivity extends AppCompatActivity
             photoUri = photo;
             uemail = email;
             mHandler = new Handler();
-            Log.d("cname", uname);
-            Log.d("curi", photoUri.toString());
+            // Log.d("cname", uname);
+            // Log.d("curi", photoUri.toString());
 
 
 
@@ -622,9 +643,9 @@ public class TrialActivity extends AppCompatActivity
             loadHomeFragment();
         }
 
-       // homeFragment = new HomeFragment();
+        // homeFragment = new HomeFragment();
 
-       //getSupportFragmentManager().beginTransaction().replace(R.id.frame, homeFragment, CURRENT_TAG).commit();
+        //getSupportFragmentManager().beginTransaction().replace(R.id.frame, homeFragment, CURRENT_TAG).commit();
 
 
 
@@ -644,7 +665,7 @@ public class TrialActivity extends AppCompatActivity
             fab.hide();
     }
     private Fragment getHomeFragment() {
-        Log.d(TAG,"GETFrag");
+        // Log.d(TAG,"GETFrag");
         switch (navItemIndex) {
             case 0:
                 // home
@@ -668,12 +689,14 @@ public class TrialActivity extends AppCompatActivity
                 // sent fragment
                 SentFragment sentFragment = new SentFragment();
                 return sentFragment;
+
+
             default:
                 return new HomeFragment();
         }
     }
     private void setToolbarTitle() {
-        Log.d(TAG,"checknavIndextitle"+navItemIndex);
+        // Log.d(TAG,"checknavIndextitle"+navItemIndex);
         getSupportActionBar().setTitle(activityTitles[navItemIndex]);
     }
     public void onPause()
@@ -688,12 +711,12 @@ public class TrialActivity extends AppCompatActivity
         super.onNewIntent(intent);
 
         String get_Fragment=intent.getStringExtra("menuFragment");
-        Log.d("getnotif",get_Fragment);
+        // Log.d("getnotif",get_Fragment);
         if(get_Fragment.equals("HomeFragment"))
         {
             HomeFragment hmFragment = new HomeFragment();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-          //fragmentTransaction.addToBackStack(null);
+            //fragmentTransaction.addToBackStack(null);
             fragmentTransaction.replace(R.id.frame,hmFragment).commit();
         }
     }

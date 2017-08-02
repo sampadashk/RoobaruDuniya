@@ -37,6 +37,7 @@ public class notificationAdapter extends RecyclerView.Adapter<notificationAdapte
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Notification n=notifications.get(position);
+
         /*String type=n.getType();
         String articleTitle=n.getArticle();
         String by=n.getByPerson();
