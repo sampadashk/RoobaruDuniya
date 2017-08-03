@@ -53,7 +53,7 @@ public class TrialActivity extends AppCompatActivity
     String notificationMessage;
     ArrayList<Notification> notificationArrList;
     ArrayList<NotificationJson> notificationJsonList;
-    private static  String LAST_OPENED_FRAGMENT_REF ;
+    private static String LAST_OPENED_FRAGMENT_REF;
 
     private FirebaseAuth.AuthStateListener mAuthListener;
     public static String mUsername;
@@ -74,7 +74,7 @@ public class TrialActivity extends AppCompatActivity
     public static String userStatus;
 
     // tags used to attach the fragments
-    private static final String TAG=TrialActivity.class.getName();
+    private static final String TAG = TrialActivity.class.getName();
     private static final String TAG_HOME = "home";
     private static final String TAG_FAV = "favorites";
     private static final String TAG_DRAFTS = "drafts";
@@ -103,26 +103,22 @@ public class TrialActivity extends AppCompatActivity
 
         //postponeEnterTransition();
         mUsername = ANONYMOUS;
-        userStatus="Blogger";
-        shouldLoadHomeFragOnBackPress=true;
+        userStatus = "Blogger";
+        shouldLoadHomeFragOnBackPress = true;
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user=firebaseAuth.getCurrentUser();
+                FirebaseUser user = firebaseAuth.getCurrentUser();
                 // String s=firebaseAuth.getCurrentUser().getUid();
-                if(user!=null)
-                {
+                if (user != null) {
                     //  Log.d(TAG,"Signed in 3");
 
 
-                    onSignedInInitialize(user.getDisplayName(),user.getEmail(),user.getPhotoUrl(),savedInstanceState);
+                    onSignedInInitialize(user.getDisplayName(), user.getEmail(), user.getPhotoUrl(), savedInstanceState);
 
 
-
-                }
-                else
-                {
+                } else {
                     //   Log.d(TAG,"Signed in 2");
                     onSignedOutCleanup();
                     startActivityForResult(
@@ -130,7 +126,7 @@ public class TrialActivity extends AppCompatActivity
                                     .createSignInIntentBuilder()
                                     .setIsSmartLockEnabled(false).setAvailableProviders(Arrays.asList(new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
 
-                                    new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build(),new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build()) ).setLogo(R.drawable.roobaru_logo)
+                                    new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build(), new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build())).setLogo(R.drawable.roobaru_logo)
                                     .build(), RC_SIGN_IN);
                 }
 
@@ -138,18 +134,15 @@ public class TrialActivity extends AppCompatActivity
         };
 
 
-
-
-
-        firebaseDtabase=FirebaseDatabase.getInstance();
+        firebaseDtabase = FirebaseDatabase.getInstance();
 
         //   Logger.Level debugLevel = Logger.Level.valueOf("DEBUG");
 
 
-        dbEditor=firebaseDtabase.getReference("editor");
+        dbEditor = firebaseDtabase.getReference("editor");
         // mAuth.addAuthStateListener(mAuthListener);
-        notificationArrList=new ArrayList<>();
-        notificationJsonList=new ArrayList<>();
+        notificationArrList = new ArrayList<>();
+        notificationJsonList = new ArrayList<>();
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -162,8 +155,8 @@ public class TrialActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String email ="roobaru.duniya@gmail.com";
-                Intent intent=new Intent(Intent.ACTION_SENDTO,Uri.parse("mailto:" +email));
+                String email = "roobaru.duniya@gmail.com";
+                Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + email));
                 //  intent.putExtra(Intent.EXTRA_EMAIL,"roobaru.duniya@gmail.com");
                 // intent.setType("text/html");
 
@@ -183,7 +176,7 @@ public class TrialActivity extends AppCompatActivity
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         Menu navmenu = navigationView.getMenu();
-        sentart=navmenu.findItem(R.id.nav_sent);
+        sentart = navmenu.findItem(R.id.nav_sent);
         // loadNavHeader();
 
         navigationView.setNavigationItemSelectedListener(this);
@@ -203,16 +196,16 @@ public class TrialActivity extends AppCompatActivity
             @Override
             public void onReceive(Context context, Intent intent) {
                 //extract our message from intent
-                notificationMessage=intent.getStringExtra("badge_count_msg");
+                notificationMessage = intent.getStringExtra("badge_count_msg");
                 try {
                     json_object = new JSONObject(intent.getExtras().getString("badge_jsondata"));
                     NotificationJson notificationJson = new NotificationJson(json_object.get("msgid").toString(), json_object.get("userid").toString());
-                    Log.d("ckjsonob",json_object.get("msgid").toString());
-                    Log.d("ckjsonobdev",json_object.get("userid").toString());
+                    Log.d("ckjsonob", json_object.get("msgid").toString());
+                    Log.d("ckjsonobdev", json_object.get("userid").toString());
                     notificationJsonList.add(notificationJson);
 
                     Notification n = new Notification(notificationMessage);
-                    Log.d("getmsg",n.getMessage());
+                    Log.d("getmsg", n.getMessage());
                     notificationArrList.add(n);
 
                     Log.d("chknsize", "" + notificationArrList);
@@ -220,13 +213,9 @@ public class TrialActivity extends AppCompatActivity
                     //log our message value
                     Log.d("checknotifcount", "" + count);
                     setNotifCount(count);
-                }
-                catch(NullPointerException e)
-                {
+                } catch (NullPointerException e) {
                     e.printStackTrace();
-                }
-
-                catch (JSONException e) {
+                } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
@@ -236,16 +225,7 @@ public class TrialActivity extends AppCompatActivity
         this.registerReceiver(mReceiver, intentFilter);
 
 
-
-
-
-
-
-
-
-
     }
-
 
 
     private void checkEditor() {
@@ -253,14 +233,12 @@ public class TrialActivity extends AppCompatActivity
         dbEditor.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot di:dataSnapshot.getChildren())
-                {
-                    if(di.getValue().equals(uemail))
-                    {
+                for (DataSnapshot di : dataSnapshot.getChildren()) {
+                    if (di.getValue().equals(uemail)) {
                         //   Log.d("hey", (String) di.getValue());
-                        isEditor=true;
-                        userStatus="editor";
-                        activityTitles[4]=getString(R.string.editor_unpublished);
+                        isEditor = true;
+                        userStatus = "editor";
+                        activityTitles[4] = getString(R.string.editor_unpublished);
                         sentart.setTitle(R.string.editor_unpublished);
                         txtStatus.setText("Editor");
 
@@ -268,7 +246,6 @@ public class TrialActivity extends AppCompatActivity
 
                     }
                 }
-
 
 
             }
@@ -292,14 +269,13 @@ public class TrialActivity extends AppCompatActivity
 
         // Loading profile image
         txtStatus.setText(userStatus);
-        if(photoUri==null)
-        {
-            String add="firebasestorage.googleapis.com/v0/b/roobaru-duniya-86f7d.appspot.com/o/default-profilepic%2Fdefaultprof.jpg?alt=media&token=aeca7a55-05e4-4c02-938f-061624f5c8b4";
-            photoUri= Uri.parse("https://" +add);
+        if (photoUri == null) {
+            String add = "firebasestorage.googleapis.com/v0/b/roobaru-duniya-86f7d.appspot.com/o/default-profilepic%2Fdefaultprof.jpg?alt=media&token=aeca7a55-05e4-4c02-938f-061624f5c8b4";
+            photoUri = Uri.parse("https://" + add);
 
 
         }
-        if(photoUri!=null) {
+        if (photoUri != null) {
             Glide.with(this).load(photoUri)
                     .crossFade()
                     .thumbnail(0.5f)
@@ -320,7 +296,7 @@ public class TrialActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
             return;
-        } else if(drawer.isDrawerOpen(GravityCompat.START)==false){
+        } else if (drawer.isDrawerOpen(GravityCompat.START) == false) {
 
         }
 
@@ -340,7 +316,6 @@ public class TrialActivity extends AppCompatActivity
         super.onBackPressed();
 
 
-
     }
 
     @Override
@@ -348,7 +323,7 @@ public class TrialActivity extends AppCompatActivity
         // Inflate the menu; this adds items to the action bar if it is present.
 
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main,menu);
+        inflater.inflate(R.menu.main, menu);
         View count = menu.findItem(R.id.badge).getActionView();
         notifCount = (Button) count.findViewById(R.id.notif_count);
         notifCount.setText(String.valueOf(mNotifCount));
@@ -357,30 +332,32 @@ public class TrialActivity extends AppCompatActivity
         notifCount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("ckjsoncl",json_object.toString());
-
-
-
-                setNotifCount(0);
-                Intent intent1 = new Intent(getApplicationContext(), NotificationList.class);
-                intent1.putExtra("msgNotification", notificationMessage);
-                // Bundle args=new Bundle();
-                //args.putSerializable("ARRAYLIST",(Serializable)notificationArrList);
-                intent1.putExtra("passObject", notificationArrList);
-                intent1.putExtra("passdataObject", notificationJsonList);
-                intent1.putExtra("jsondetail", json_object.toString());
                 try {
                     Log.d("ckjs", json_object.get("userid").toString());
+
+
+                    setNotifCount(0);
+                    Intent intent1 = new Intent(getApplicationContext(), NotificationList.class);
+                    intent1.putExtra("msgNotification", notificationMessage);
+                    // Bundle args=new Bundle();
+                    //args.putSerializable("ARRAYLIST",(Serializable)notificationArrList);
+                    intent1.putExtra("passObject", notificationArrList);
+                    intent1.putExtra("passdataObject", notificationJsonList);
+                    intent1.putExtra("jsondetail", json_object.toString());
+
+
+                    startActivity(intent1);
                 }
-                catch (JSONException e)
+                catch(NullPointerException ne)
                 {
+                    ne.printStackTrace();
+                }
+                catch (JSONException e) {
                     e.printStackTrace();
                 }
 
-                startActivity(intent1);
                 notificationArrList.clear();
                 notificationJsonList.clear();
-
 
 
             }
@@ -393,7 +370,8 @@ public class TrialActivity extends AppCompatActivity
         return super.onCreateOptionsMenu(menu);
 
     }
-    public void setNotifCount(int count){
+
+    public void setNotifCount(int count) {
         mNotifCount = count;
         invalidateOptionsMenu();
     }
@@ -419,24 +397,18 @@ public class TrialActivity extends AppCompatActivity
             }
 
 
-
-
         }
         return super.onOptionsItemSelected(item);
     }
-    public void onActivityResult(int requestcode,int resultcode,Intent data)
-    {
-        super.onActivityResult(requestcode,resultcode,data);
-        if(requestcode==RC_SIGN_IN)
-        {
-            if(resultcode==RESULT_OK)
-            {
-                Toast.makeText(this,"Signed in!",Toast.LENGTH_SHORT).show();
 
-            }
-            else if(resultcode==RESULT_CANCELED)
-            {
-                Toast.makeText(this,"Signed OUT!",Toast.LENGTH_SHORT).show();
+    public void onActivityResult(int requestcode, int resultcode, Intent data) {
+        super.onActivityResult(requestcode, resultcode, data);
+        if (requestcode == RC_SIGN_IN) {
+            if (resultcode == RESULT_OK) {
+                Toast.makeText(this, "Signed in!", Toast.LENGTH_SHORT).show();
+
+            } else if (resultcode == RESULT_CANCELED) {
+                Toast.makeText(this, "Signed OUT!", Toast.LENGTH_SHORT).show();
                 finish();
             }
         }
@@ -450,29 +422,28 @@ public class TrialActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
-            navItemIndex=0;
+            navItemIndex = 0;
             CURRENT_TAG = TAG_HOME;
 
         } else if (id == R.id.nav_favorites) {
-            navItemIndex=1;
-            CURRENT_TAG=TAG_FAV;
+            navItemIndex = 1;
+            CURRENT_TAG = TAG_FAV;
 
         } else if (id == R.id.nav_draft) {
-            navItemIndex=2;
-            CURRENT_TAG=TAG_DRAFTS;
-
+            navItemIndex = 2;
+            CURRENT_TAG = TAG_DRAFTS;
 
 
         } else if (id == R.id.nav_published) {
-            navItemIndex=3;
-            CURRENT_TAG=TAG_PUBLISHED;
+            navItemIndex = 3;
+            CURRENT_TAG = TAG_PUBLISHED;
 
         } else if (id == R.id.nav_sent) {
-            navItemIndex=4;
-            CURRENT_TAG=TAG_SENT;
+            navItemIndex = 4;
+            CURRENT_TAG = TAG_SENT;
 
         } else if (id == R.id.nav_about_us) {
-            Intent intent =new Intent(TrialActivity.this,AboutUsActivity.class);
+            Intent intent = new Intent(TrialActivity.this, AboutUsActivity.class);
             startActivity(intent);
 
         }
@@ -483,7 +454,6 @@ public class TrialActivity extends AppCompatActivity
         loadHomeFragment();
         return true;
     }
-
 
 
     private void loadHomeFragment() {
@@ -531,7 +501,6 @@ public class TrialActivity extends AppCompatActivity
         invalidateOptionsMenu();
 
 
-
     }
 
     private void selectNavMenu() {
@@ -568,9 +537,9 @@ public class TrialActivity extends AppCompatActivity
         mAuth.addAuthStateListener(mAuthListener);
 
     }
+
     @Override
-    public void onStop()
-    {
+    public void onStop() {
         super.onStop();
         // Log.d(TAG,"onStop()");
         if (mAuthListener != null) {
@@ -579,35 +548,29 @@ public class TrialActivity extends AppCompatActivity
         }
 
 
-
-
     }
-    public void onDestroy()
-    {
+
+    public void onDestroy() {
         super.onDestroy();
         //  Log.d(TAG,"onDestroy()");
-        if(mReceiver!=null)
-        {
+        if (mReceiver != null) {
             unregisterReceiver(mReceiver);
-            mReceiver=null;
+            mReceiver = null;
 
         }
 
     }
-    public void onStart()
-    {
+
+    public void onStart() {
         super.onStart();
 
         // Log.d(TAG,"start");
 
 
-
-
     }
 
 
-    private void onSignedInInitialize(String username, String email, Uri photo, Bundle savedInstanceState)
-    {
+    private void onSignedInInitialize(String username, String email, Uri photo, Bundle savedInstanceState) {
         try {
             mUsername = username;
             uname = username;
@@ -618,16 +581,13 @@ public class TrialActivity extends AppCompatActivity
             // Log.d("curi", photoUri.toString());
 
 
-
-        }
-        catch(NullPointerException e)
-        {
+        } catch (NullPointerException e) {
             e.printStackTrace();
         }
-        String FCMToken= null;
+        String FCMToken = null;
         try {
             FCMToken = FirebaseInstanceId.getInstance().getToken();
-            DatabaseReference dbToken=firebaseDtabase.getReference("FCMToken");
+            DatabaseReference dbToken = firebaseDtabase.getReference("FCMToken");
             dbToken.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(FCMToken);
 
             /** Store this token to firebase database along with user id **/
@@ -648,22 +608,22 @@ public class TrialActivity extends AppCompatActivity
         //getSupportFragmentManager().beginTransaction().replace(R.id.frame, homeFragment, CURRENT_TAG).commit();
 
 
-
     }
-    private void onSignedOutCleanup()
-    {
-        mUsername=ANONYMOUS;
-        userStatus="Blogger";
 
+    private void onSignedOutCleanup() {
+        mUsername = ANONYMOUS;
+        userStatus = "Blogger";
 
 
     }
+
     private void toggleFab() {
         if (navItemIndex == 0)
             fab.show();
         else
             fab.hide();
     }
+
     private Fragment getHomeFragment() {
         // Log.d(TAG,"GETFrag");
         switch (navItemIndex) {
@@ -673,7 +633,7 @@ public class TrialActivity extends AppCompatActivity
                 return homeFragment;
             case 1:
                 // fav
-                FavFragment favFragment=new FavFragment();
+                FavFragment favFragment = new FavFragment();
                 return favFragment;
 
             case 2:
@@ -695,31 +655,32 @@ public class TrialActivity extends AppCompatActivity
                 return new HomeFragment();
         }
     }
+
     private void setToolbarTitle() {
         // Log.d(TAG,"checknavIndextitle"+navItemIndex);
         getSupportActionBar().setTitle(activityTitles[navItemIndex]);
     }
-    public void onPause()
-    {
+
+    public void onPause() {
         super.onPause();
         //unregisterReceiver(mReceiver);
     }
 
     @Override
-    public void onNewIntent(Intent intent)
-    {
+    public void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
 
-        String get_Fragment=intent.getStringExtra("menuFragment");
+        String get_Fragment = intent.getStringExtra("menuFragment");
         // Log.d("getnotif",get_Fragment);
-        if(get_Fragment.equals("HomeFragment"))
-        {
+        if (get_Fragment.equals("HomeFragment")) {
             HomeFragment hmFragment = new HomeFragment();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             //fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.replace(R.id.frame,hmFragment).commit();
+            fragmentTransaction.replace(R.id.frame, hmFragment).commit();
         }
-    }
+
+
+
 
 
 
@@ -741,4 +702,6 @@ public class TrialActivity extends AppCompatActivity
        toggle.onConfigurationChanged(newConfig);
     }
     */
+    }
 }
+

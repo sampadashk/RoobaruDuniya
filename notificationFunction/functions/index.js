@@ -26,16 +26,13 @@ admin.database().ref('/FCMToken').on("child_added", function(snapshot)
   //return deviceToken.then(result => {
     const token_id=snapshot.val();
     const payload={
-      notification:
-      {
-        title:"New Article",
-        body:`New Article ${msg_title}`,
-        icon:"default",
-        click_action:"com.samiapps.kv.roobaruduniya.getNotif"
-      },
-       data : {
+    
+        data : {
+       	  title:"New Article",
+          body: msg_title,
           msgid : msg_id,
           userid : user_id
+         
         }
     };
     return admin.messaging().sendToDevice(token_id,payload).then(response=>{
@@ -89,17 +86,14 @@ exports.sNotification=func.database.ref('/notification/{user_id}/{msg_id}').onWr
       const token_id = result[1].val();
       const msgTitle=result[2].val();
       const payload = {
-        notification: {
-          title : `New ${from_type}`,
-          body :`New ${from_type} on your article ${msgTitle} by ${userName}`,
-          //body: `${userName} has ${from_type} your post ${msgTitle} `,
-          icon: "default",
-          click_action : "com.samiapps.kv.roobaruduniya.getNotif"
-          
-        },
+       
         data : {
+        title : from_type,
+          body : msgTitle,
+          userName : userName,
           msgid : msg_id,
           userid : user_id
+         
 
         }
       };

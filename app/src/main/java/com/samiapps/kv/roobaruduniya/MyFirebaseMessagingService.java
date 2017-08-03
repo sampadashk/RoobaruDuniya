@@ -14,6 +14,7 @@ import com.google.firebase.messaging.RemoteMessage;
 
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,11 +29,34 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
-        String notification_title = remoteMessage.getNotification().getTitle();
-        String notification_body = remoteMessage.getNotification().getBody();
+        String notificatication_type = remoteMessage.getData().get("title");
+        String msgTitle = remoteMessage.getData().get("body");
+        String user=remoteMessage.getData().get("userName");
+        String notification_body;
+        String notification_title;
+
+        if(user!=null)
+        {
+           notification_body="New "+notificatication_type+" on your article "+msgTitle+" by "+user;
+            notification_title="New"+notificatication_type;
+
+
+        }
+        else {
+            notification_body = notificatication_type +" "+msgTitle;
+            notification_title="New Article";
+        }
+
+
+        Log.d("notification_body",notification_body);
         //TODO new article notification
-      String click_action = remoteMessage.getNotification().getClickAction();
-        Map<String, String> params = remoteMessage.getData();
+     // String click_action = remoteMessage.getNotification().getClickAction();
+        String mid=remoteMessage.getData().get("msgid");
+        String uid=remoteMessage.getData().get("userid");
+        Map<String, String> params=new HashMap<String,String>();
+        //params = remoteMessage.getData().get("msgid"),remoteMessage.getData().get("userid");
+        params.put("msgid",mid);
+        params.put("userid",uid);
         JSONObject object = new JSONObject(params);
         Log.d("JSON_OBJECT", object.toString());
 
@@ -79,8 +103,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // If the application is in the foreground handle both data and notification messages here.
         // Also if you intend on generating your own notifications as a result of a received FCM
         // message, here is where that should be initiated.
-       Log.d(TAG, "From: " + remoteMessage.getFrom());
-        Log.d(TAG, "Notification Message Body: " + remoteMessage.getNotification().getBody());
+
         // FirebaseDatabase db=FirebaseDatabase.getInstance();
         // DatabaseReference dbref=db.getReference("notification");
         //dbref.removeValue();

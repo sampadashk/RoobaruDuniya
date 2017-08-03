@@ -422,7 +422,7 @@ public class WriteArticleActivity extends AppCompatActivity {
                     Snackbar.make(llout,"Please write altleast 500 words to publish",Snackbar.LENGTH_LONG).show();
                     break;
                 }
-                if(title.length()<5)
+                if(title.length()<2)
                 {
                    // Log.d("chktitle","we r here");
                     Snackbar.make(llout,"Please give your article a title",Snackbar.LENGTH_SHORT).show();

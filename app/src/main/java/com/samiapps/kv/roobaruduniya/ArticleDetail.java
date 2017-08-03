@@ -682,13 +682,16 @@ public class ArticleDetail extends AppCompatActivity {
 
     }
 
-  @Override
+ /* @Override
     public void onBackPressed() {
 
         super.onBackPressed();
       Intent it=new Intent(ArticleDetail.this,TrialActivity.class);
       startActivity(it);
     }
+    */
+
+
 
 }
 
