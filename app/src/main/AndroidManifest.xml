@@ -57,17 +57,16 @@
 
             android:windowSoftInputMode="adjustPan"
             android:theme="@style/AppTheme.NoActionBar">
-        <intent-filter>
-            <action android:name="com.samiapps.kv.roobaruduniya.getNotif" />
-            <category android:name="android.intent.category.DEFAULT"/>
 
-        </intent-filter>
+
 
 
 
 
 
           </activity>
+        <activity android:name=".DialogLink"
+            android:theme="@style/Theme.AppCompat.Dialog"></activity>
         <activity android:name=".EditorArticleActivity"></activity>
         <activity android:name=".publishDetail"></activity>
         <activity android:name=".NotificationList"></activity>

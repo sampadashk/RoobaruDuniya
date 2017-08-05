@@ -3,14 +3,24 @@ package com.samiapps.kv.roobaruduniya;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextWatcher;
+import android.text.method.LinkMovementMethod;
+import android.text.style.StyleSpan;
+import android.text.style.URLSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -52,6 +62,8 @@ public class WriteArticleActivity extends AppCompatActivity {
     FirebaseUser user;
     FirebaseDatabase db;
     DatabaseReference dbRefMsg;
+    DatabaseReference contentStyleRef;
+    ImageButton hyperlink_text;
 
 
 
@@ -61,6 +73,7 @@ public class WriteArticleActivity extends AppCompatActivity {
     DatabaseReference publishedRef;
     Button writerDetail;
     String wName;
+    ArrayList<TextFormat> formatList;
 
     int draftPressed = 0;
     String userEmail;
@@ -79,6 +92,8 @@ public class WriteArticleActivity extends AppCompatActivity {
     private StorageReference defaultPhoto;
     ScrollView sv;
     LinearLayout llout;
+    Button italicButton;
+
 
 
 
@@ -95,6 +110,7 @@ public class WriteArticleActivity extends AppCompatActivity {
     private static final int RC_PHOTO_PICKER = 2;
     private ValueEventListener eventListener;
     final HashMap<String, Object> userMap = new HashMap<String, Object>();
+    private Button boldButton;
 
 
     public void onCreate(Bundle savedInstanceState) {
@@ -105,10 +121,15 @@ public class WriteArticleActivity extends AppCompatActivity {
 
         sv=(ScrollView) findViewById(R.id.scroll_v);
         llout=(LinearLayout) findViewById(R.id.linearlout);
+        italicButton=(Button)findViewById(R.id.italic_button);
+        boldButton=(Button)findViewById(R.id.bold_button);
+
+        hyperlink_text=(ImageButton) findViewById(R.id.hyperlink_text);
 
         firebaseAuth = FirebaseAuth.getInstance();
         user = firebaseAuth.getCurrentUser();
         userEmail = user.getEmail();
+        formatList=new ArrayList<>();
         userId = user.getUid();
         uStatus=TrialActivity.userStatus;
         firebaseStorage=FirebaseStorage.getInstance();
@@ -137,6 +158,7 @@ public class WriteArticleActivity extends AppCompatActivity {
         dbRefUser = db.getReference("user");
         dbPendingArticle = db.getReference("pending");
         publishedRef=db.getReference("published");
+        contentStyleRef=db.getReference("contentStyle");
         firebaseStorage = FirebaseStorage.getInstance();
         storageReference = firebaseStorage.getReference().child("article_photo");
         //  FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG);
@@ -349,6 +371,103 @@ public class WriteArticleActivity extends AppCompatActivity {
 
             }
         });
+
+
+        italicButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Spannable str = content.getText();
+
+
+
+                    if (content.getSelectionEnd() > content.getSelectionStart()) {
+
+
+
+
+
+                        str.setSpan(new StyleSpan(Typeface.ITALIC),
+                                content.getSelectionStart(), content.getSelectionEnd(),
+                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                    }
+
+                else{
+                        str.setSpan(new StyleSpan(Typeface.ITALIC),
+                                content.getSelectionEnd(),
+                                content.getSelectionStart(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                    }
+                    TextFormat format = new TextFormat("italic", content.getSelectionStart(), content.getSelectionEnd());
+                    formatList.add(format);
+                }
+
+
+
+
+
+            }
+        );
+        boldButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+
+
+                Spannable str = content.getText();
+
+                if(content.getSelectionEnd() > content.getSelectionStart()) {
+                    str.setSpan(new StyleSpan(Typeface.BOLD),
+                            content.getSelectionStart(), content.getSelectionEnd(),
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                }
+
+                else {
+                    str.setSpan(new StyleSpan(Typeface.BOLD),
+                            content.getSelectionEnd(),
+                            content.getSelectionStart(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                }
+                TextFormat format=new TextFormat("bold",content.getSelectionStart(),content.getSelectionEnd());
+                formatList.add(format);
+
+
+
+
+
+
+            }
+
+        });
+
+        hyperlink_text.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                SpannableString str = new SpannableString(content.getText());
+
+                if(content.getSelectionEnd() > content.getSelectionStart()) {
+                    String selectedText = content.getText().toString().substring(
+                           content.getSelectionStart(),
+                            content.getSelectionEnd()
+                    ) ;
+
+
+                   // String url = "https://developer.android.com";
+                    str.setSpan(new URLSpan(selectedText), content.getSelectionStart(), content.getSelectionEnd(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+// set to textview
+
+                   content.setMovementMethod(LinkMovementMethod.getInstance());
+
+                }
+
+            }
+        });
+
+
         checkUserDb();
 
         super.onStart();
@@ -364,6 +483,7 @@ public class WriteArticleActivity extends AppCompatActivity {
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id) {
@@ -429,6 +549,9 @@ public class WriteArticleActivity extends AppCompatActivity {
                     break;
                 }
 
+
+
+
                 draftButton.setEnabled(false);
 
 
@@ -455,11 +578,32 @@ public class WriteArticleActivity extends AppCompatActivity {
 
 
                     }
+                    if(formatList.size()>0)
+                    {
+                        for(TextFormat ft:formatList)
+                        {
+                            String str=ft.getStart()+" "+ft.getEnd()+" "+ft.getStyle();
+                            Log.d("chk",str);
+                           /* String st= String.valueOf(ft.getStart());
+                            String lt= String.valueOf(ft.getEnd());
+                            Map<String,String> mp=new HashMap<>();
+                            mp.put(ft.getStyle(),"style");
+                            mp.put(st,"start");
+                            mp.put(lt,"end");
+                            */
+
+                            contentStyleRef.child(key).push().setValue(ft);
+
+
+                        }
+
+                    }
 
 
                     if (userPos.equals("editor")) {
 
                         //TODO: publish editor
+                        //select photo from storage and put in rbd object and firebase database
                         if(rbd.getPhoto()==null)
                         {
                             String add="https://firebasestorage.googleapis.com/v0/b/roobaru-duniya-86f7d.appspot.com/o/default%2F3.jpg?alt=media&token=c223a998-7f03-483e-af98-12e0f8c3aa43";
@@ -468,7 +612,7 @@ public class WriteArticleActivity extends AppCompatActivity {
 
 
 
-                            //select random photo from storage and put in rbd object and firebase database
+
 
                    /* Random rand = new Random();
                     int value = rand.nextInt(4);

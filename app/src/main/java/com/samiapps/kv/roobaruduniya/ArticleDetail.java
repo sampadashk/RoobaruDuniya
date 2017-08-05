@@ -3,6 +3,7 @@ package com.samiapps.kv.roobaruduniya;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -14,6 +15,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
@@ -55,6 +58,9 @@ public class ArticleDetail extends AppCompatActivity {
     ValueEventListener notificationListener;
     CollapsingToolbarLayout collapsingToolbarLayout;
     TextView num_Of_likes;
+    ArrayList<TextFormat> textFormatList;
+    String contentString;
+
 
     String userName;
     String userProf;
@@ -62,6 +68,7 @@ public class ArticleDetail extends AppCompatActivity {
     TextView tvtitle;
     TextView tvcontent;
     TextView txtName, txtStatus;
+    //SpannableStringBuilder str;
     ImageView imgProfile;
     ImageButton sharedButton;
     String date;
@@ -71,6 +78,7 @@ public class ArticleDetail extends AppCompatActivity {
     DatabaseReference publishedRef;
     DatabaseReference msgReference;
     DatabaseReference notificationRef;
+    DatabaseReference styleRef;
     Uri userPhoto;
     String keySel;
     boolean isFav;
@@ -80,6 +88,7 @@ public class ArticleDetail extends AppCompatActivity {
     EditText commentEditText;
     TextView datetvw;
     Button sendCmt;
+
     ValueEventListener likeListener;
     ValueEventListener msgListener;
     ValueEventListener delcmtListener;
@@ -114,6 +123,8 @@ public class ArticleDetail extends AppCompatActivity {
         tvcontent = (TextView) findViewById(R.id.post_con);
         favButton = (FloatingActionButton) findViewById(R.id.share_fab);
         datetvw = (TextView) findViewById(R.id.published_date);
+        textFormatList=new ArrayList<>();
+
 
 
         mAuth = FirebaseAuth.getInstance();
@@ -132,6 +143,7 @@ public class ArticleDetail extends AppCompatActivity {
 
         publishedRef = db.getReference("published");
         notificationRef = db.getReference("notification");
+        styleRef=db.getReference("contentStyle");
         notificationRef.keepSynced(true);
         msgReference = db.getReference("messages");
        // msgReference.keepSynced(true);
@@ -279,6 +291,11 @@ public class ArticleDetail extends AppCompatActivity {
                 keySel = obj.get("msgid").toString();
 
                 Log.d("chkrecikey", keySel);
+
+
+
+
+
                 msgListener = msgReference.child(keySel).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -310,8 +327,9 @@ public class ArticleDetail extends AppCompatActivity {
             artsel = (RoobaruDuniya) intent.getSerializableExtra(ArticleDetail.TAG);
             keySel = intent.getStringExtra("keySelected");
             loadUI();
-            //   Log.d("keysel", keySel);
+            Log.d("keysel", keySel);
         }
+
         //Deleting comments;
 
 
@@ -486,7 +504,66 @@ public class ArticleDetail extends AppCompatActivity {
             userProf = artsel.getUserProfilePhoto();
             Glide.with(this).load(artsel.getPhoto()).into(ivw);
             tvtitle.setText(artsel.getTitle());
-            tvcontent.setText(artsel.getContent());
+
+
+
+           // if(styleRef.child(keySel)!=null) {
+
+                final SpannableStringBuilder str = new SpannableStringBuilder(artsel.getContent());
+                styleRef.child(keySel).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        contentString = artsel.getContent();
+                        if (dataSnapshot.exists()) {
+                            Log.d("ckval", "hasvalue");
+                            for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                Log.d("ckke", ds.getKey());
+
+                                TextFormat tf = ds.getValue(TextFormat.class);
+
+                                Log.d("chktd", tf.getStyle());
+
+                               // SpannableStringBuilder str = new SpannableStringBuilder(contentString);
+
+
+                                if (tf.getStyle().equals("bold")) {
+
+                                    str.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD), tf.getStart(), tf.getEnd(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                    Log.d("ckbold", "" + str);
+
+
+                                }
+                                if (tf.getStyle().equals("italic")) {
+
+                                    str.setSpan(new android.text.style.StyleSpan(Typeface.ITALIC), tf.getStart(), tf.getEnd(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                    Log.d("ckbold", "" + str);
+
+
+                                }
+                            //  tvcontent.setText(str);
+
+
+                            }
+                            tvcontent.setText(str);
+                        }
+                        else
+                        {
+                            tvcontent.setText(artsel.getContent());
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+
+
+
+                });
+
+           // }
+
+
             txtName.setText(userName);
             Uri uri = Uri.parse(userProf);
             // Loading profile image
@@ -498,7 +575,9 @@ public class ArticleDetail extends AppCompatActivity {
                     .into(imgProfile);
         }
 
-    }
+
+
+            }
     @Override
     public void onResume()
     {

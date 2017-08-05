@@ -512,7 +512,6 @@ public class TrialActivity extends AppCompatActivity
         //  Log.d(TAG,"resume");
 
    /*    FirebaseUser user=FirebaseAuth.getInstance().getCurrentUser();
-
         if(user!=null) {
             uname = user.getDisplayName();
             photoUri = user.getPhotoUrl();
@@ -526,10 +525,6 @@ public class TrialActivity extends AppCompatActivity
                 sentart.setTitle(R.string.editor_unpublished);
                 txtStatus.setText("Editor");
             }
-
-
-
-
         }
         */
 
@@ -694,7 +689,6 @@ public class TrialActivity extends AppCompatActivity
         // Sync the toggle state after onRestoreInstanceState has occurred.
         toggle.syncState();
     }
-
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -704,4 +698,3 @@ public class TrialActivity extends AppCompatActivity
     */
     }
 }
-

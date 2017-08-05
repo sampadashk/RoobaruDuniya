@@ -6,6 +6,8 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="openDrawer">open_drawer</string>
     <string name="closeDrawer">close_drawer</string>
+    <string name="URL">URL</string>
+    <string name="URL_Text">Link Text(Optional)</string>
 
     <!-- Navigation Drawer menu labels -->
     <string name="nav_home">Home</string>
