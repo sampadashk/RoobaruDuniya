@@ -14,12 +14,9 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.Spanned;
 import android.text.TextWatcher;
-import android.text.method.LinkMovementMethod;
+import android.text.style.BulletSpan;
 import android.text.style.StyleSpan;
-import android.text.style.URLSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -63,7 +60,10 @@ public class WriteArticleActivity extends AppCompatActivity {
     FirebaseDatabase db;
     DatabaseReference dbRefMsg;
     DatabaseReference contentStyleRef;
-    ImageButton hyperlink_text;
+    ImageButton bulletButton;
+
+
+
 
 
 
@@ -123,8 +123,8 @@ public class WriteArticleActivity extends AppCompatActivity {
         llout=(LinearLayout) findViewById(R.id.linearlout);
         italicButton=(Button)findViewById(R.id.italic_button);
         boldButton=(Button)findViewById(R.id.bold_button);
+        bulletButton=(ImageButton) findViewById(R.id.add_bullet);
 
-        hyperlink_text=(ImageButton) findViewById(R.id.hyperlink_text);
 
         firebaseAuth = FirebaseAuth.getInstance();
         user = firebaseAuth.getCurrentUser();
@@ -291,6 +291,7 @@ public class WriteArticleActivity extends AppCompatActivity {
     }
 
     public void onStart() {
+
         try {
             if (uStatus.equals("editor")) {
                 writerDetail.setVisibility(View.VISIBLE);
@@ -371,78 +372,130 @@ public class WriteArticleActivity extends AppCompatActivity {
 
             }
         });
+        bulletButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Spannable str = content.getText();
+                int start = content.getSelectionStart();
+                int end = content.getSelectionEnd();
+                boolean exists=false;
+                if (start > end) {
+                    int temp = end;
+                    end = start;
+                    start = temp;
+                }
+                TextFormat format = new TextFormat("bullet", content.getSelectionStart(), content.getSelectionEnd());
+
+
+                BulletSpan[] quoteSpan = str.getSpans(start, end, BulletSpan.class);
+
+                // If the selected text-part already has UNDERLINE style on it, then we need to disable it
+                for (int i = 0; i < quoteSpan.length; i++) {
+                    str.removeSpan(quoteSpan[i]);
+                    formatList.remove(format);
+                    exists = true;
+                    break;
+                }
+
+                // Else we set UNDERLINE style on it
+                if (!exists) {
+                    str.setSpan(new BulletSpan(10), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    formatList.add(format);
+                }
+                content.setSelection(start, end);
+
+            }
+
+        });
 
 
         italicButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Spannable str = content.getText();
+                int start = content.getSelectionStart();
+                int end = content.getSelectionEnd();
+                boolean iExists=false;
+                if (start > end) {
+                    int temp = end;
+                    end = start;
+                    start = temp;
+
+                }
+                TextFormat format = new TextFormat("italic", content.getSelectionStart(), content.getSelectionEnd());
 
 
+                StyleSpan[] styleSpans = str.getSpans(start, end, StyleSpan.class);
 
-                    if (content.getSelectionEnd() > content.getSelectionStart()) {
+                // If the selected text-part already has BOLD style on it, then
+                // we need to disable it
+                for (int i = 0; i < styleSpans.length; i++) {
+                    if (styleSpans[i].getStyle() == Typeface.ITALIC) {
+                        str.removeSpan(styleSpans[i]);
+                        iExists = true;
 
-
-
-
-
-                        str.setSpan(new StyleSpan(Typeface.ITALIC),
-                                content.getSelectionStart(), content.getSelectionEnd(),
-                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
+                        formatList.remove(format);
+                        break;
                     }
-
-                else{
-                        str.setSpan(new StyleSpan(Typeface.ITALIC),
-                                content.getSelectionEnd(),
-                                content.getSelectionStart(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-                    }
-                    TextFormat format = new TextFormat("italic", content.getSelectionStart(), content.getSelectionEnd());
-                    formatList.add(format);
                 }
 
 
+                // Else we set BOLD style on it
+                if (!iExists) {
+                    str.setSpan(new StyleSpan(Typeface.ITALIC), start, end,
+                            Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+                    formatList.add(format);
+                }
 
-
-
+                content.setSelection(start, end);
             }
-        );
+        });
         boldButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
 
 
-
                 Spannable str = content.getText();
+                int start = content.getSelectionStart();
+                int end = content.getSelectionEnd();
+                boolean bExists=false;
+                if (start > end) {
+                    int temp = end;
+                    end = start;
+                    start = temp;
+                }
+                TextFormat format = new TextFormat("bold", content.getSelectionStart(), content.getSelectionEnd());
 
-                if(content.getSelectionEnd() > content.getSelectionStart()) {
-                    str.setSpan(new StyleSpan(Typeface.BOLD),
-                            content.getSelectionStart(), content.getSelectionEnd(),
-                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
+                StyleSpan[] styleSpans = str.getSpans(start, end, StyleSpan.class);
+
+                // If the selected text-part already has BOLD style on it, then
+                // we need to disable it
+                for (int i = 0; i < styleSpans.length; i++) {
+                    if (styleSpans[i].getStyle() == android.graphics.Typeface.BOLD) {
+                        str.removeSpan(styleSpans[i]);
+                        bExists = true;
+
+                        formatList.remove(format);
+                        break;
+                    }
                 }
 
-                else {
-                    str.setSpan(new StyleSpan(Typeface.BOLD),
-                            content.getSelectionEnd(),
-                            content.getSelectionStart(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
+                // Else we set BOLD style on it
+                if (!bExists) {
+                    str.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), start, end,
+                            Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+                    formatList.add(format);
                 }
-                TextFormat format=new TextFormat("bold",content.getSelectionStart(),content.getSelectionEnd());
-                formatList.add(format);
 
-
-
-
-
-
+                content.setSelection(start, end);
             }
-
         });
 
-        hyperlink_text.setOnClickListener(new View.OnClickListener() {
+     /*   hyperlink_text.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -466,6 +519,7 @@ public class WriteArticleActivity extends AppCompatActivity {
 
             }
         });
+        */
 
 
         checkUserDb();

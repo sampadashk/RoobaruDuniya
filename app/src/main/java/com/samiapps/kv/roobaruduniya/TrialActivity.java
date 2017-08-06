@@ -112,14 +112,14 @@ public class TrialActivity extends AppCompatActivity
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 // String s=firebaseAuth.getCurrentUser().getUid();
                 if (user != null) {
-                    //  Log.d(TAG,"Signed in 3");
+                 Log.d(TAG,"Signed in 3");
 
 
                     onSignedInInitialize(user.getDisplayName(), user.getEmail(), user.getPhotoUrl(), savedInstanceState);
 
 
                 } else {
-                    //   Log.d(TAG,"Signed in 2");
+                 Log.d(TAG,"Signed in 2");
                     onSignedOutCleanup();
                     startActivityForResult(
                             AuthUI.getInstance()
@@ -572,8 +572,8 @@ public class TrialActivity extends AppCompatActivity
             photoUri = photo;
             uemail = email;
             mHandler = new Handler();
-            // Log.d("cname", uname);
-            // Log.d("curi", photoUri.toString());
+           Log.d("cname", uname);
+          Log.d("curi", photoUri.toString());
 
 
         } catch (NullPointerException e) {
@@ -620,7 +620,7 @@ public class TrialActivity extends AppCompatActivity
     }
 
     private Fragment getHomeFragment() {
-        // Log.d(TAG,"GETFrag");
+         Log.d(TAG,"GETFrag");
         switch (navItemIndex) {
             case 0:
                 // home

@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "1051097820539-ejirrq73aq98sp8lrt6lqtu10c33fdid.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.samiapps.kv.roobaruduniya",
+            "certificate_hash": "af4f67acb141df10d2e61e82c0e908a61c3c6783"
+          }
+        },
+        {
           "client_id": "1051097820539-ct7dbt4tth4nd5r3e22lho45ub454u8m.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -29,7 +37,7 @@
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyC401ebQ9pNOc36qpfKnnM4UH46ENrer6E"
+          "current_key": "AIzaSyDnufnnY5h1we80emCzhrHv5bZdTdFqtbw"
         }
       ],
       "services": {

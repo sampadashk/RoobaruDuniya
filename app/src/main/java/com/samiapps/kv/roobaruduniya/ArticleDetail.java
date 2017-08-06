@@ -18,6 +18,7 @@ import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextWatcher;
+import android.text.style.BulletSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -62,6 +63,8 @@ public class ArticleDetail extends AppCompatActivity {
     String contentString;
 
 
+
+
     String userName;
     String userProf;
     ImageView ivw;
@@ -71,6 +74,7 @@ public class ArticleDetail extends AppCompatActivity {
     //SpannableStringBuilder str;
     ImageView imgProfile;
     ImageButton sharedButton;
+    ImageButton bookmarkButton;
     String date;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -82,6 +86,7 @@ public class ArticleDetail extends AppCompatActivity {
     Uri userPhoto;
     String keySel;
     boolean isFav;
+    boolean isBookMarked;
     FirebaseDatabase db;
     int nLikes;
     int cNo;
@@ -116,6 +121,7 @@ public class ArticleDetail extends AppCompatActivity {
         txtName = (TextView) findViewById(R.id.name);
         txtStatus = (TextView) findViewById(R.id.user_status);
         num_Of_likes = (TextView) findViewById(R.id.num_likes);
+        bookmarkButton=(ImageButton) findViewById(R.id.bookmark);
 
         imgProfile = (ImageView) findViewById(R.id.img_profile);
         ivw = (ImageView) findViewById(R.id.display_image);
@@ -539,6 +545,10 @@ public class ArticleDetail extends AppCompatActivity {
                                     Log.d("ckbold", "" + str);
 
 
+                                }
+                                if(tf.getStyle().equals("bullet"))
+                                {
+                                    str.setSpan(new BulletSpan(10), tf.getStart(), tf.getEnd(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                                 }
                             //  tvcontent.setText(str);
 
