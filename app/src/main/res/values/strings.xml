@@ -86,5 +86,21 @@ Newspapers for India, Govt of India) द्वारा पंजीयत ह�
     <string name="savenclose">Save&amp;Close</string>
     <string name="nav_bookmark">Bookmarked</string>
     <string name="filter_view_http_gizmos">test_link</string>
+    <string name="cat1">रूबरू स्पॉटलाइट</string>
+    <string name="cat2">मैं घुमंतू</string>
+    <string name="cat3">ख़बर खजाना</string>
+    <string name="cat4">Tech रूबरू</string>
+    <string name="cat5">यंग इंडिया स्पीक्स</string>
+    <string name="cat6">किचन विंडो</string>
+    <string name="cat7">एक्सपर्ट्स टॉक</string>
+    <string name="cat8">हेल्थ-वेल्थ</string>
+    <string name="cat9">डेली-डोज़</string>
+    <string name="cat10">बच्चों के लिए</string>
+    <string name="cat11">रीडर्स कॉलम</string>
+    <string name="cat12">राइट एंड विन</string>
+    <string name="cat13">कहानियाँ</string>
+    <string name="cat14">कविताएँ</string>
+
+
 
 </resources>
