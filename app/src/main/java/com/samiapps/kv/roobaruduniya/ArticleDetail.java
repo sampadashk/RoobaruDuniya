@@ -8,7 +8,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -58,6 +60,7 @@ public class ArticleDetail extends AppCompatActivity {
     ValueEventListener commentListener;
     ValueEventListener notificationListener;
     CollapsingToolbarLayout collapsingToolbarLayout;
+    CoordinatorLayout cdlayout;
     TextView num_Of_likes;
     ArrayList<TextFormat> textFormatList;
     String contentString;
@@ -122,6 +125,7 @@ public class ArticleDetail extends AppCompatActivity {
         txtStatus = (TextView) findViewById(R.id.user_status);
         num_Of_likes = (TextView) findViewById(R.id.num_likes);
         bookmarkButton=(ImageButton) findViewById(R.id.bookmark);
+        cdlayout=(CoordinatorLayout) findViewById(R.id.draw_insets_frame_layout);
 
         imgProfile = (ImageView) findViewById(R.id.img_profile);
         ivw = (ImageView) findViewById(R.id.display_image);
@@ -342,10 +346,23 @@ public class ArticleDetail extends AppCompatActivity {
 
         FavDb favRef = new FavDb(ArticleDetail.this);
         SQLiteDatabase sqldb = favRef.getReadableDatabase();
-        Cursor cursor = favRef.queryKey(sqldb, keySel);
+
+        Cursor cursor = favRef.queryKey(sqldb, keySel,"favourite");
+        Cursor cr = favRef.queryKey(sqldb, keySel,"booked");
         if (cursor.getCount() > 0) {
+
+
+
             favButton.setImageResource(R.drawable.ic_favorite);
             isFav = true;
+        }
+
+        if(cr.getCount()>0)
+        {
+
+                bookmarkButton.setImageResource(R.drawable.ic_bookmark_white_24dp);
+                isBookMarked = true;
+
         }
         likeListener = publishedRef.child(keySel).addValueEventListener(new ValueEventListener() {
             @Override
@@ -613,6 +630,44 @@ public class ArticleDetail extends AppCompatActivity {
                 }
             });
             */
+        bookmarkButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                FavDb favdbRef = new FavDb(ArticleDetail.this);
+                SQLiteDatabase db = favdbRef.getWritableDatabase();
+                 /*   publishedRef.child(keySel).child("likes").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            String value = dataSnapshot.getValue().toString();
+                            nLikes = Integer.parseInt(value);
+
+
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                    */
+                if (isBookMarked) {
+                    favdbRef.deleteKey(db,keySel,"booked");
+                    bookmarkButton.setImageResource(R.drawable.ic_bookmark_border_white_24dp);
+                    isBookMarked = false;
+                    Snackbar.make(cdlayout,R.string.bookmark_removed,Snackbar.LENGTH_SHORT).show();
+
+
+                } else {
+                    favdbRef.insertKey(db,keySel,"booked");
+                    bookmarkButton.setImageResource(R.drawable.ic_bookmark_white_24dp);
+                    isBookMarked = true;
+                    Snackbar.make(cdlayout,R.string.bookmark_saved,Snackbar.LENGTH_SHORT).show();
+                }
+
+            }
+        });
 
 
 
@@ -641,7 +696,7 @@ public class ArticleDetail extends AppCompatActivity {
                     });
                     */
                     if (isFav) {
-                        favdbRef.deleteKey(db, keySel);
+                        favdbRef.deleteKey(db,keySel,"favourite");
                         favButton.setImageResource(R.drawable.ic_favorite_border);
                         isFav = false;
                         if (nLikes > 0) {
@@ -649,7 +704,7 @@ public class ArticleDetail extends AppCompatActivity {
                         }
 
                     } else {
-                        favdbRef.insertKey(db, keySel);
+                        favdbRef.insertKey(db,keySel,"favourite");
                         favButton.setImageResource(R.drawable.ic_favorite);
                         HashMap<String, String> notificationData = new HashMap<String, String>();
                         notificationData.put("from", mAuth.getCurrentUser().getUid());

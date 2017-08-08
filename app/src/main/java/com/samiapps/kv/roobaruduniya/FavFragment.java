@@ -88,14 +88,17 @@ public class FavFragment extends Fragment {
 
     private void computeCursor() {
 
-        if (c.getCount() != 0) {
 
-            while (c.moveToNext()) {
+        if (c.moveToFirst()) {
+            while (!c.isAfterLast()) {
+
 
                 String key = c.getString(c.getColumnIndex(RoobaruContract.COLUMN_KEY));
                 displayFav(key);
                 kList.add(key);
+                c.moveToNext();
             }
+
         }
     }
 

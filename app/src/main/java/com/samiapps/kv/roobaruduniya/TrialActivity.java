@@ -67,6 +67,7 @@ public class TrialActivity extends AppCompatActivity
     private Toolbar toolbar;
     String uname;
     String uemail;
+
     private Handler mHandler;
     DrawerLayout drawer;
     // index to identify current nav menu item
@@ -85,6 +86,7 @@ public class TrialActivity extends AppCompatActivity
     FloatingActionButton fab;
     public static boolean isEditor;
     FirebaseDatabase firebaseDtabase;
+   DatabaseReference userDtabase;
     DatabaseReference dbEditor;
     NavigationView navigationView;
     MenuItem sentart;
@@ -140,6 +142,7 @@ public class TrialActivity extends AppCompatActivity
 
 
         dbEditor = firebaseDtabase.getReference("editor");
+        userDtabase=firebaseDtabase.getReference("user");
         // mAuth.addAuthStateListener(mAuthListener);
         notificationArrList = new ArrayList<>();
         notificationJsonList = new ArrayList<>();
@@ -425,7 +428,7 @@ public class TrialActivity extends AppCompatActivity
             navItemIndex = 0;
             CURRENT_TAG = TAG_HOME;
 
-        } else if (id == R.id.nav_favorites) {
+        } else if (id == R.id.nav_bookmarked) {
             navItemIndex = 1;
             CURRENT_TAG = TAG_FAV;
 
@@ -589,7 +592,9 @@ public class TrialActivity extends AppCompatActivity
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         checkEditor();
+        checkUserDb();
 
         loadNavHeader();
         if (savedInstanceState == null) {
@@ -602,6 +607,37 @@ public class TrialActivity extends AppCompatActivity
 
         //getSupportFragmentManager().beginTransaction().replace(R.id.frame, homeFragment, CURRENT_TAG).commit();
 
+
+    }
+
+    private void checkUserDb() {
+
+
+
+      userDtabase.addListenerForSingleValueEvent(new ValueEventListener() {
+          @Override
+          public void onDataChange(DataSnapshot dataSnapshot) {
+              String uid=FirebaseAuth.getInstance().getCurrentUser().getUid();
+              Log.d("testui",uid);
+              if(dataSnapshot.hasChild(uid))
+              {
+                  Log.d("haschi","true");
+                 return;
+              }
+              else
+              {
+                  Log.d("haschi","false");
+                  User u= new User(uname,uemail,null,TrialActivity.userStatus);
+                  userDtabase.child(uid).setValue(u);
+              }
+          }
+
+          @Override
+          public void onCancelled(DatabaseError databaseError) {
+              Log.d("cker",databaseError.toString());
+
+          }
+      });
 
     }
 

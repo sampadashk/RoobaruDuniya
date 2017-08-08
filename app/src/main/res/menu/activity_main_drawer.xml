@@ -7,10 +7,10 @@
             android:icon="@drawable/ic_home_black_24dp"
             android:title="@string/nav_home" />
         <item
-            android:id="@+id/nav_favorites"
-            android:icon="@drawable/ic_favorite_black_24dp"
+            android:id="@+id/nav_bookmarked"
+            android:icon="@drawable/ic_bookmark_white_24dp"
 
-            android:title="@string/nav_fav" />
+            android:title="@string/nav_bookmark" />
         <item
             android:id="@+id/nav_draft"
             android:icon="@drawable/ic_drafts"

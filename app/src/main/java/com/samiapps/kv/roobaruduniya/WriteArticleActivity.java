@@ -1,6 +1,7 @@
 package com.samiapps.kv.roobaruduniya;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -22,6 +23,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -85,6 +87,7 @@ public class WriteArticleActivity extends AppCompatActivity {
     MenuItem draftButton;
     MenuItem saveButton;
     MenuItem publishButton;
+    MenuItem deleteButton;
     ImageButton photoButton;
     RoobaruDuniya rbd;
     String userProfile;
@@ -124,6 +127,7 @@ public class WriteArticleActivity extends AppCompatActivity {
         italicButton=(Button)findViewById(R.id.italic_button);
         boldButton=(Button)findViewById(R.id.bold_button);
         bulletButton=(ImageButton) findViewById(R.id.add_bullet);
+
 
 
         firebaseAuth = FirebaseAuth.getInstance();
@@ -341,6 +345,14 @@ public class WriteArticleActivity extends AppCompatActivity {
 
             }
         });
+        content.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               content.requestFocus();
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+            }
+        });
 
         content.addTextChangedListener(new TextWatcher() {
             @Override
@@ -533,6 +545,7 @@ public class WriteArticleActivity extends AppCompatActivity {
         draftButton = (MenuItem) menu.findItem(R.id.draft);
         saveButton = (MenuItem) menu.findItem(R.id.savecl);
         publishButton = (MenuItem) menu.findItem(R.id.publish);
+        deleteButton=(MenuItem)menu.findItem(R.id.delete_draft);
         return true;
 
     }
@@ -579,6 +592,7 @@ public class WriteArticleActivity extends AppCompatActivity {
 
 
                     Toast.makeText(this, "Draft saved", Toast.LENGTH_LONG).show();
+                    deleteButton.setEnabled(true);
                     draftButton.setEnabled(false);
                     saveButton.setEnabled(true);
                 } catch (Exception e) {
@@ -725,6 +739,13 @@ public class WriteArticleActivity extends AppCompatActivity {
                 break;
 
             }
+            case R.id.delete_draft:
+            {
+                dbRefMsg.child(key).removeValue();
+                dbRefUser.child(userId).child("articleStatus").child(key).removeValue();
+                saveNclose();
+                break;
+            }
 
 
         }
@@ -833,24 +854,34 @@ public class WriteArticleActivity extends AppCompatActivity {
                             }
                         //    Log.d("chkphotoup",rbd.getPhoto());
                             draftButton.setEnabled(true);
+                        } catch (NullPointerException e) {
+                        }
 
                           //  publishButton.setEnabled(true);
-                        } catch (NullPointerException e) {
-                           // Log.d("exception", "" + e);
-                        }
+
                     }
                 });
 
-              //TODO use progressbar
+                // Log.d("exception", "" + e);
+
+
+                //TODO use progressbar
 
                     progressBar.setVisibility(View.GONE);
 
 
-                Toast.makeText(this, "Photo uploaded", Toast.LENGTH_LONG).show();
+
+
+                    Toast.makeText(this, "Photo uploaded", Toast.LENGTH_LONG).show();
 
 
 
-        } else if (requestcode == RC_PROFILE_PICKER && resultcode == RESULT_OK) {
+
+            }
+
+
+
+         else if (requestcode == RC_PROFILE_PICKER && resultcode == RESULT_OK) {
             final Uri SelectedProfileUri = data.getData();
             StorageReference picref = storageReference.child(SelectedProfileUri.getLastPathSegment());
             picref.putFile(SelectedProfileUri).addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {

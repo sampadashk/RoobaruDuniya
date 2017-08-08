@@ -93,9 +93,9 @@ public class NotificationList extends AppCompatActivity {
     {
         super.onStart();
     }
-    public void onStop()
+    public void onDestroy()
     {
-        super.onStop();
+        super.onDestroy();
         notificationArrayList.clear();
         jsonArrayList.clear();
     }

@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/delete_draft"
+        android:title="delete"
+        app:showAsAction="always"
+
+        android:enabled="false"
+        android:text="delete"
+        />
+
     <item android:id="@+id/savecl"
-        android:title="save"
+        android:title="@string/savenclose"
         app:showAsAction="always"
 
         android:enabled="false"

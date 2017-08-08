@@ -104,9 +104,10 @@ public class HomeFragment extends Fragment  {
         imageAdapter=new imgAdapter(rubaru,getContext());
        //StaggeredGridLayoutManager sglm = new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
        //sglm.setReverseLayout(true);
-        GridLayoutManager gridLayoutManager=new GridLayoutManager(getContext(),column);
+       GridLayoutManager gridLayoutManager=new GridLayoutManager(getContext(),column);
         //to display in reverse order;setreverselayout(true)
         gridLayoutManager.setReverseLayout(true);
+
 
         mRecycleView.setLayoutManager(gridLayoutManager);
         error= (TextView) rootView.findViewById(R.id.error);

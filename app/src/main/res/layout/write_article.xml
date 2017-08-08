@@ -26,6 +26,7 @@
         android:inputType="text|textCapSentences"
         android:textAppearance="@style/TextAppearance.Large.Light"
         tools:text="My awesome post title"
+
         />
     <View
         android:layout_width="match_parent"
@@ -62,7 +63,8 @@
             android:textColorHint="@color/text_secondary"
             android:textIsSelectable="true"
 
-            />
+
+        />
 
     </ScrollView>
     <ProgressBar
