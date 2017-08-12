@@ -334,9 +334,24 @@ public class ArticleDetail extends AppCompatActivity {
             {
             pos = intent.getIntExtra("position", -1);
             //  Log.d("checkpos", "" + pos);
-            artsel = (RoobaruDuniya) intent.getSerializableExtra(ArticleDetail.TAG);
+           // artsel = (RoobaruDuniya) intent.getSerializableExtra(ArticleDetail.TAG);
             keySel = intent.getStringExtra("keySelected");
-            loadUI();
+                msgListener = msgReference.child(keySel).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        artsel = dataSnapshot.getValue(RoobaruDuniya.class);
+                        //updating UI when you have article
+                        loadUI();
+                        Log.d("artchktit", artsel.getTitle());
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.d("dberror", databaseError.toString());
+                    }
+                });
+
+
             Log.d("keysel", keySel);
         }
 

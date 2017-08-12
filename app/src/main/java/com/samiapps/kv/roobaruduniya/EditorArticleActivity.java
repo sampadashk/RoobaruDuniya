@@ -6,11 +6,15 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -27,7 +31,7 @@ import java.util.Random;
  * Created by KV on 29/6/17.
  */
 
-public class EditorArticleActivity extends AppCompatActivity{
+public class EditorArticleActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     EditText title;
     EditText content;
     FirebaseDatabase db;
@@ -36,6 +40,7 @@ public class EditorArticleActivity extends AppCompatActivity{
     DatabaseReference dbEditor;
     DatabaseReference dbPendingArticle;
     DatabaseReference publishedRef;
+    DatabaseReference category;
     ImageButton photoButton;
     int pos;
     String key;
@@ -47,8 +52,13 @@ public class EditorArticleActivity extends AppCompatActivity{
     private FirebaseStorage firebaseStorage;
     private StorageReference storageReference;
     private StorageReference defaultPhoto;
+    ArrayAdapter<CharSequence> adapter;
+    Spinner categorySpinner;
     private boolean titleChanged;
+    int it=0;
+
     private boolean contentChanged;
+    String categoryChoosen;
     private static final int RC_PHOTO_PICK = 3;
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,7 +73,17 @@ public class EditorArticleActivity extends AppCompatActivity{
         publishedRef=db.getReference("published");
         firebaseStorage = FirebaseStorage.getInstance();
         storageReference = firebaseStorage.getReference().child("article_photo");
+        category=db.getReference("categories");
         defaultPhoto=firebaseStorage.getReference().child("default");
+        categorySpinner=(Spinner) findViewById(R.id.spinner1);
+        categorySpinner.setVisibility(View.VISIBLE);
+        adapter = ArrayAdapter.createFromResource(this,
+                R.array.catgs, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+// Apply the adapter to the spinner
+        categorySpinner.setAdapter(adapter);
+
+        categorySpinner.setOnItemSelectedListener(this);
         Intent intent=getIntent();
         try {
             pos = intent.getIntExtra("position", -1);
@@ -222,9 +242,41 @@ public class EditorArticleActivity extends AppCompatActivity{
 
                 PendingClass pc=new PendingClass(true,true,TrialActivity.mUsername);
                 dbPendingArticle.child(key).setValue(pc);
+              /*  AlertDialog.Builder b = new AlertDialog.Builder(this);
+                b.setTitle("Choose Category");
+                String[] types = getResources().getStringArray(R.array.catgs);
+                b.setItems(types,new DialogInterface.OnClickListener() {
+
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+
+                        switch(which){
+                            case 0:
+                                categoryChoosen=getString(R.string.cat1);
+                                break;
+                            case 1:
+                                categoryChoosen=getString(R.string.cat2);
+                                break;
+                            case 3:
+                                categoryChoosen=getString(R.string.cat3);
+                            case 4:
+                                categoryChoosen=getString(R.string.cat4);
+                        }
+                      //  dialog.dismiss();
+
+                    }
+
+                });
+
+                b.show();
+                */
                 addPublishedDatabase();
                 //CHANGE VALUE OF ARTICLE STATUS IN USERDB TO PUBLISHED
                 changeUserDB();
+                addCategoryDb();
+
                // FirebaseMessagingService
                 //approveButton.setEnabled(false);
                 saveEditorButton.setEnabled(false);
@@ -253,6 +305,15 @@ public class EditorArticleActivity extends AppCompatActivity{
 
         }
         return super.onOptionsItemSelected(menuItem);
+    }
+
+    private void addCategoryDb() {
+        Log.d("catc",categoryChoosen);
+        Log.d("ckk",key);
+        HomeDisplay hm=new HomeDisplay(rbd.getTitle(),rbd.getPhoto());
+
+       // it+=1;
+       category.child(categoryChoosen).child(key).setValue(hm);
     }
 
     private void removeDB() {
@@ -319,4 +380,21 @@ public class EditorArticleActivity extends AppCompatActivity{
     }
 
 
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        Log.d("item", (String) parent.getItemAtPosition(position));
+
+       categoryChoosen=(String) parent.getItemAtPosition(position);
+        adapter.notifyDataSetChanged();
+
+        Log.d("catsel",categoryChoosen);
+
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+
+    }
 }

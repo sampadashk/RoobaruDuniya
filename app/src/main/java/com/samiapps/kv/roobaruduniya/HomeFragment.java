@@ -10,9 +10,11 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +27,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -36,10 +37,11 @@ import static android.content.Context.CONNECTIVITY_SERVICE;
  * Created by KV on 20/6/17.
  */
 
-public class HomeFragment extends Fragment  {
+public class HomeFragment extends Fragment {
     private FirebaseDatabase firebaseDtabase;
     private DatabaseReference dbaseReference;
     private DatabaseReference publishedRef;
+    private DatabaseReference categoryRef;
     Snackbar snackbar;
     LinearLayout homeLayout;
     ProgressBar mLoadingIndicator;
@@ -49,21 +51,17 @@ public class HomeFragment extends Fragment  {
     int column;
 
 
-
-
-
-
-
-    private imgAdapter imageAdapter;
-    ArrayList<RoobaruDuniya> rubaru=new ArrayList<RoobaruDuniya>();
-    ArrayList<String> keys=new ArrayList<>();
+    private categoryAdapter catdapter;
+    ArrayList<DisplayEvent> rubaru = new ArrayList<DisplayEvent>();
+    ArrayList<String> keys = new ArrayList<>();
 
 
     private RecyclerView mRecycleView;
     private RecyclerView.LayoutManager mLayoutManager;
-     String uid;
+    String uid;
 
-    public static final String TAG=DraftFragment.class.getName();
+    public static final String TAG = DraftFragment.class.getName();
+
     public HomeFragment() {
         super();
     }
@@ -71,52 +69,45 @@ public class HomeFragment extends Fragment  {
 //    FirebaseRecyclerAdapter<RoobaruDuniya, BlogViewHolder> firebaseRecyclerAdapter;
 
 
-
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       // setRetainInstance(true);
-        column=calculateNoOfColumns(getContext());
+        // setRetainInstance(true);
+        column = calculateNoOfColumns(getContext());
 
 
-        uid= FirebaseAuth.getInstance().getCurrentUser().getUid();
+        uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         firebaseDtabase = FirebaseDatabase.getInstance();
         dbaseReference = firebaseDtabase.getReference().child("messages");
-        publishedRef=firebaseDtabase.getReference("published");
+        publishedRef = firebaseDtabase.getReference("published");
+        categoryRef = firebaseDtabase.getReference("categories");
         getContext().registerReceiver(MyReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
 
-      //  Log.d("checkt",dbaseReference.toString());
-
-
-
-
+        //  Log.d("checkt",dbaseReference.toString());
 
 
         //setHasOptionsMenu(true);
 
     }
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.headlinelayout, container, false);
         mLoadingIndicator = (ProgressBar) rootView.findViewById(R.id.pb_loading_indicator);
         mRecycleView = (RecyclerView) rootView.findViewById(R.id.editor_recycleview);
-        imageAdapter=new imgAdapter(rubaru,getContext());
-       //StaggeredGridLayoutManager sglm = new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
-       //sglm.setReverseLayout(true);
-       GridLayoutManager gridLayoutManager=new GridLayoutManager(getContext(),column);
-        //to display in reverse order;setreverselayout(true)
-        gridLayoutManager.setReverseLayout(true);
+        catdapter = new categoryAdapter(rubaru, getContext());
+        //StaggeredGridLayoutManager sglm = new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
+        //sglm.setReverseLayout(true);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), OrientationHelper.VERTICAL, false);
 
-
-        mRecycleView.setLayoutManager(gridLayoutManager);
-        error= (TextView) rootView.findViewById(R.id.error);
+        mRecycleView.setLayoutManager(linearLayoutManager);
+        error = (TextView) rootView.findViewById(R.id.error);
         mRecycleView.setItemAnimator(new DefaultItemAnimator());
-        homeLayout=(LinearLayout) rootView.findViewById(R.id.main_container);
+        homeLayout = (LinearLayout) rootView.findViewById(R.id.main_container);
 
 
-
-        mRecycleView.setAdapter(imageAdapter);
+        mRecycleView.setAdapter(catdapter);
 
         // mLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         // mRecycleView.setHasFixedSize(true);
@@ -126,28 +117,28 @@ public class HomeFragment extends Fragment  {
 
 
 
-           imageAdapter.setOnItemClickListener(new imgAdapter.ClickListener() {
-                    @Override
-                    public void onItemClick(int position, View v) {
+     catdapter.setOnItemClickListener(new categoryAdapter.ClickListener() {
+            @Override
+            public void onItemClick(int position, View v) {
 
-                        RoobaruDuniya item = rubaru.get(position);
-                        String key=keys.get(position);
-                      //  Log.d("keyselected",key);
-                        Intent intent = new Intent(getContext(), ArticleDetail.class);
-                        intent.putExtra("position", position);
-                        intent.putExtra("keySelected",key);
-                        Bundle b=new Bundle();
-                        b.putSerializable(ArticleDetail.TAG,item);
-                        intent.putExtras(b);
+                Log.d("ckpos",""+position);
 
-
-                        //intent.putExtra("article",rd);
-
-                        startActivity(intent);
-                    }
-                });
+                DisplayEvent item = rubaru.get(position);
+                String key=keys.get(position);
+                //  Log.d("keyselected",key);
+                Intent intent = new Intent(getContext(), ArticleDetail.class);
+                intent.putExtra("position", position);
+                intent.putExtra("keySelected",key);
+              //  Bundle b=new Bundle();
+              //  b.putSerializable(ArticleDetail.TAG,item);
+               // intent.putExtras(b);
 
 
+                //intent.putExtra("article",rd);
+
+                startActivity(intent);
+            }
+        });
 
 
 
@@ -171,14 +162,9 @@ public class HomeFragment extends Fragment  {
                     Log.d("chkkey",key);
                 }
                 Log.d("keylist",childkey.get(0));
-
-
-
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
             }
         });
         */
@@ -186,6 +172,7 @@ public class HomeFragment extends Fragment  {
 
         return rootView;
     }
+
     public static int calculateNoOfColumns(Context context) {
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
@@ -197,14 +184,59 @@ public class HomeFragment extends Fragment  {
     private void checkPublishedKey() {
         //checking the published key in published node
         //to retrieve 30 nodes
-        Query query = publishedRef.orderByKey().limitToLast(30);
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
+        // Query query = publishedRef.orderByKey().limitToLast(30);
+        categoryRef.child("रूबरू स्पॉटलाइट").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.hasChildren()) {
-                    for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    DisplayEvent e = new DisplayEvent("रूबरू स्पॉटलाइट", null, 0);
+                    keys.add(null);
+                    rubaru.add(e);
 
-                        displayArticles(postSnapshot.getKey());
+                    for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                        String key = postSnapshot.getKey();
+                        Log.d("ckk",key);
+                        keys.add(key);
+                        HomeDisplay hm = postSnapshot.getValue(HomeDisplay.class);
+                        DisplayEvent ev = new DisplayEvent(null, hm, 1);
+                        Log.d("ckv",hm.getTitle());
+                        rubaru.add(ev);
+                        catdapter.notifyDataSetChanged();
+
+
+
+                        // displayArticles(postSnapshot.getKey());
+
+
+                    }
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        categoryRef.child("मैं घुमंतू").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChildren()) {
+                    DisplayEvent e = new DisplayEvent("मैं घुमंतू", null, 0);
+                    rubaru.add(e);
+                    keys.add(null);
+
+                    for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                        String key = postSnapshot.getKey();
+                        keys.add(key);
+                        HomeDisplay hm = postSnapshot.getValue(HomeDisplay.class);
+                        DisplayEvent ev = new DisplayEvent(null, hm, 1);
+                        rubaru.add(ev);
+                        catdapter.notifyDataSetChanged();
+
+
+                        // displayArticles(postSnapshot.getKey());
 
 
                     }
@@ -220,59 +252,12 @@ public class HomeFragment extends Fragment  {
         });
     }
 
-    private void displayArticles(String key) {
-        keys.add(key);
-        dbaseReference.child(key).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                RoobaruDuniya rbd = dataSnapshot.getValue(RoobaruDuniya.class);
-//                Log.d("titleck", rbd.getTitle());
-
-                rubaru.add(rbd);
-                error.setVisibility(View.GONE);
-
-                mLoadingIndicator.setVisibility(View.INVISIBLE);
-
-                imageAdapter.notifyDataSetChanged();
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
 
 
 
-      /*  dbaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                Log.d("chkcount", String.valueOf(dataSnapshot.getChildrenCount()));
-                // ArrayList<RoobaruDuniya> rubaru=new ArrayList<RoobaruDuniya>();
-                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
 
 
-                    RoobaruDuniya rbd = postSnapshot.getValue(RoobaruDuniya.class);
 
-                    Log.d("checktitle", rbd.getTitle());
-                    rubaru.add(rbd);
-                    imageAdapter.notifyDataSetChanged();
-                    Log.d("rub", " " + rubaru);
-
-
-                }
-            }
-
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                System.out.println("The read failed: " + databaseError.getCode());
-            }
-        });
-        */
-    }
 
     public void onStart() {
         super.onStart();
@@ -288,7 +273,7 @@ public class HomeFragment extends Fragment  {
     @Override
     public void onStop() {
         super.onStop();
-       // Log.d("actck","stop");
+        // Log.d("actck","stop");
 
 
     }
@@ -296,7 +281,7 @@ public class HomeFragment extends Fragment  {
     @Override
     public void onPause() {
         super.onPause();
-       // Log.d("actck","pause");
+        // Log.d("actck","pause");
     }
     public boolean isNetworkUp()
     {
@@ -309,7 +294,7 @@ public class HomeFragment extends Fragment  {
         @Override
         public void onReceive(Context context, Intent intent){
             if (!isNetworkUp()) {
-               // Log.d("hi","show");
+                // Log.d("hi","show");
                 snackbar = Snackbar.make(homeLayout,
                         getString(R.string.error_no_network),
                         Snackbar.LENGTH_INDEFINITE);
@@ -319,7 +304,7 @@ public class HomeFragment extends Fragment  {
             {
 
                 if (snackbar != null) snackbar.dismiss();
-               emptyView();
+                emptyView();
             }
             //  snackbar.setActionTextColor(getResources().getColor(R.color.material_red_700));
 
@@ -330,7 +315,7 @@ public class HomeFragment extends Fragment  {
     public void emptyView()
     {
 
-        if(imageAdapter.getItemCount()==0)
+        if(catdapter.getItemCount()==0)
 
         {
             if (!isNetworkUp()) {
@@ -341,7 +326,7 @@ public class HomeFragment extends Fragment  {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.hasChildren()) {
-                         error.setText(R.string.wait_msg);
+                            error.setText(R.string.wait_msg);
                         } else
                             error.setText(R.string.no_data);
                     }
@@ -355,7 +340,7 @@ public class HomeFragment extends Fragment  {
 
 
 
-           // error.setText(msg);
+            // error.setText(msg);
             error.setVisibility(View.VISIBLE);
         } else {
 
@@ -383,9 +368,7 @@ public class HomeFragment extends Fragment  {
 /*
     @Override
     public void onRefresh() {
-
-
-        if (!isNetworkUp() && imageAdapter.getItemCount() == 0) {
+        if (!isNetworkUp() && catdapter.getItemCount() == 0) {
             swipeRefreshLayout.setRefreshing(false);
             error.setText(getString(R.string.error_no_network));
             error.setVisibility(View.VISIBLE);
@@ -397,8 +380,6 @@ public class HomeFragment extends Fragment  {
             swipeRefreshLayout.setRefreshing(false);
             checkPublishedKey();
         }
-
-
     }
     */
 }

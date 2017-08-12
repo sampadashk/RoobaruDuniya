@@ -28,7 +28,7 @@ public class imgAdapter extends RecyclerView.Adapter<imgAdapter.ViewHolder> {
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                      int viewType) {
+                                         int viewType) {
         View view= LayoutInflater.from(context).inflate(R.layout.editorcard,parent,false);
         ViewHolder myviewholder=new ViewHolder(view) ;
         return myviewholder;
@@ -42,7 +42,7 @@ public class imgAdapter extends RecyclerView.Adapter<imgAdapter.ViewHolder> {
         RoobaruDuniya item = articles.get(listPosition);
         Context context = holder.imageViewIcon.getContext();
         String text=item.getTitle();
-       // Log.d("adapterchk",text);
+        // Log.d("adapterchk",text);
         String image=item.getPhoto();
         holder.textView.setText(text);
         if(image!=null) {
@@ -54,6 +54,7 @@ public class imgAdapter extends RecyclerView.Adapter<imgAdapter.ViewHolder> {
                     .load(image)
                     .into(holder.imageViewIcon);
         }
+
        /* else
         {
             holder.imageViewIcon.setImageResource(R.drawable.sparrow);
@@ -73,7 +74,7 @@ public class imgAdapter extends RecyclerView.Adapter<imgAdapter.ViewHolder> {
         void onItemClick(int position, View v);
     }
 
-        public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public ImageView imageViewIcon;
         public TextView textView;
@@ -84,20 +85,20 @@ public class imgAdapter extends RecyclerView.Adapter<imgAdapter.ViewHolder> {
             this.imageViewIcon = (ImageView) view.findViewById(R.id.imgEditor);
             this.textView = (TextView) view.findViewById(R.id.editortxt);
         }
-            @Override
-            public void onClick(View v) {
-                clickListener.onItemClick(getAdapterPosition(), v);
-            }
-       }
-
-
-
-
-
-
-
-
-
-
+        @Override
+        public void onClick(View v) {
+            clickListener.onItemClick(getAdapterPosition(), v);
+        }
     }
+
+
+
+
+
+
+
+
+
+
+}
 

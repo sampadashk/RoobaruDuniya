@@ -128,6 +128,15 @@
             android:layout_toRightOf="@id/add_bullet"
             android:text="Writer Details"
             android:visibility="invisible"/>
+        <Spinner
+            android:id="@+id/spinner1"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+
+            android:spinnerMode="dropdown"
+            android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@id/writer_detail"
+            android:visibility="invisible"/>
 
 
 

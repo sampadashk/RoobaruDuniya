@@ -24,12 +24,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -55,7 +58,7 @@ import java.util.Random;
  * Created by KV on 18/6/17.
  */
 
-public class WriteArticleActivity extends AppCompatActivity {
+public class WriteArticleActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     private static final int RC_PROFILE_PICKER = 4;
     FirebaseAuth firebaseAuth;
     FirebaseUser user;
@@ -63,7 +66,10 @@ public class WriteArticleActivity extends AppCompatActivity {
     DatabaseReference dbRefMsg;
     DatabaseReference contentStyleRef;
     ImageButton bulletButton;
-
+    Spinner spinner;
+    ArrayAdapter<CharSequence> adapter;
+    int it;
+    DatabaseReference category;
 
 
 
@@ -96,6 +102,7 @@ public class WriteArticleActivity extends AppCompatActivity {
     ScrollView sv;
     LinearLayout llout;
     Button italicButton;
+    String categoryChoosen;
 
 
 
@@ -127,6 +134,8 @@ public class WriteArticleActivity extends AppCompatActivity {
         italicButton=(Button)findViewById(R.id.italic_button);
         boldButton=(Button)findViewById(R.id.bold_button);
         bulletButton=(ImageButton) findViewById(R.id.add_bullet);
+        spinner=(Spinner) findViewById(R.id.spinner1);
+
 
 
 
@@ -157,7 +166,7 @@ public class WriteArticleActivity extends AppCompatActivity {
 
         db = FirebaseDatabase.getInstance();
         dbRefMsg = db.getReference("messages");
-
+        category=db.getReference("categories");
         dbEditor = db.getReference("editor");
         dbRefUser = db.getReference("user");
         dbPendingArticle = db.getReference("pending");
@@ -298,6 +307,14 @@ public class WriteArticleActivity extends AppCompatActivity {
 
         try {
             if (uStatus.equals("editor")) {
+                spinner.setVisibility(View.VISIBLE);
+                adapter = ArrayAdapter.createFromResource(this,
+                        R.array.catgs, android.R.layout.simple_spinner_item);
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+// Apply the adapter to the spinner
+                spinner.setAdapter(adapter);
+
+                spinner.setOnItemSelectedListener(this);
                 writerDetail.setVisibility(View.VISIBLE);
                 writerDetail.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -702,6 +719,7 @@ public class WriteArticleActivity extends AppCompatActivity {
 
                         }
                         publishEditor();
+                        addCategoryDb();
                     } else {
 
 
@@ -902,6 +920,30 @@ public class WriteArticleActivity extends AppCompatActivity {
             Toast.makeText(this, "Photo uploaded", Toast.LENGTH_LONG).show();
         }
     }
+    private void addCategoryDb() {
+
+        // it+=1;
+        HomeDisplay hm=new HomeDisplay(rbd.getTitle(),rbd.getPhoto());
+        category.child(categoryChoosen).child(key).setValue(hm);
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        Log.d("item", (String) parent.getItemAtPosition(position));
+
+        categoryChoosen=(String) parent.getItemAtPosition(position);
+        adapter.notifyDataSetChanged();
+
+        Log.d("catselected",categoryChoosen);
+
+
+    }
+
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
 
     class AsyncUpload extends AsyncTask<Object, Object, Void>
     {
@@ -937,5 +979,6 @@ public class WriteArticleActivity extends AppCompatActivity {
 
 
     }
+
 }
 

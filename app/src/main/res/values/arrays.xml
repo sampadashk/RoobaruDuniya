@@ -6,7 +6,22 @@
         <item>@drawable/avenue</item>
         <item>@drawable/flower</item>
         <item>@drawable/womens</item>
-
-
     </string-array>
+    <string-array name="catgs">
+        <item>@string/cat1</item>
+        <item>@string/cat2</item>
+        <item>@string/cat3</item>
+        <item>@string/cat4</item>
+        <item>@string/cat5</item>
+        <item>@string/cat6</item>
+        <item>@string/cat7</item>
+        <item>@string/cat8</item>
+        <item>@string/cat9</item>
+        <item>@string/cat10</item>
+        <item>@string/cat11</item>
+        <item>@string/cat12</item>
+        <item>@string/cat13</item>
+        <item>@string/cat14</item>
+    </string-array>
+
 </resources>
