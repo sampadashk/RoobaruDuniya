@@ -11,6 +11,7 @@ public class Comment {
 
 
 
+
     public String getDate() {
         return date;
     }
@@ -20,6 +21,7 @@ public class Comment {
         this.comment = comment;
         this.date = date;
         this.uPhoto = uPhoto;
+
 
     }
 

@@ -105,6 +105,7 @@ public class ArticleDetail extends AppCompatActivity {
     ArrayList<Comment> commentList;
     CommentAdapter commentAdapter;
     private ShareActionProvider mShareActionProvider;
+    private String userId;
     // ArrayList<RoobaruDuniya> rbd;
 
     public void onCreate(Bundle savedInstanceState) {
@@ -147,6 +148,7 @@ public class ArticleDetail extends AppCompatActivity {
 //      getSupportActionBar().setDisplayShowTitleEnabled(false);
         // getSupportActionBar().setLogo(R.drawable.roobaru_logo);
         userPhoto = mAuth.getCurrentUser().getPhotoUrl();
+        userId=mAuth.getCurrentUser().getUid();
         commentList = new ArrayList<>();
         commentAdapter = new CommentAdapter(this, commentList);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
@@ -650,6 +652,7 @@ public class ArticleDetail extends AppCompatActivity {
             public void onClick(View v) {
                 String comment = commentEditText.getText().toString();
                 String cName = TrialActivity.mUsername;
+
                 long date = System.currentTimeMillis();
 
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
