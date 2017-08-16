@@ -12,6 +12,10 @@ public class User {
     //published
   //  String drafted;
    // String sent;
+    public User()
+    {
+
+    }
 
     public String getName() {
         return name;

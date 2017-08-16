@@ -7,20 +7,27 @@ package com.samiapps.kv.roobaruduniya;
 public class Comment {
     String commentorName;
     String comment;
+    String uid;
 
 
+    public String getUid() {
+        return uid;
+    }
 
-
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
 
     public String getDate() {
         return date;
     }
 
-    public Comment(String commentorName, String comment, String date, String uPhoto) {
+    public Comment(String commentorName, String comment, String date, String uPhoto,String uid) {
         this.commentorName = commentorName;
         this.comment = comment;
         this.date = date;
         this.uPhoto = uPhoto;
+        this.uid=uid;
 
 
     }

@@ -38,13 +38,25 @@
                     android:id="@+id/name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="sampada shukla"
+                    android:text="sam"
                     android:layout_toRightOf="@+id/img_profile"
                     android:paddingTop="40dp"
 
 
                     android:textColor="@android:color/black"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+                <TextView
+                    android:id="@+id/profileEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/img_profile"
+                    android:paddingTop="60dp"
+                    android:textColor="@android:color/black"
+
+                    android:text="sha@gmail.com"
+                    android:visibility="visible" />
+
+
             </RelativeLayout>
 
 
@@ -66,20 +78,20 @@
 
         </LinearLayout>
     </RelativeLayout>
-    <android.support.design.widget.TabLayout
+    <TextView
         android:id="@+id/tabs"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:text="Published Articles"
+        android:textColor="@android:color/white"
         android:textSize="22sp"
+        android:background="@color/com_facebook_blue"
 
-        app:tabMode="fixed"
-        app:tabGravity="fill"/>
+     />
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/viewpager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"  />
+      <android.support.v7.widget.RecyclerView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:id="@+id/publishedProfileRecycle"></android.support.v7.widget.RecyclerView>
 
 </LinearLayout>

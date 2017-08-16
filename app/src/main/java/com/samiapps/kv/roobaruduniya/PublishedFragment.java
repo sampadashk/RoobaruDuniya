@@ -36,8 +36,8 @@ public class PublishedFragment extends Fragment {
 
 
     private imgAdapter imageAdapter;
-    ArrayList<RoobaruDuniya> rubarup = new ArrayList<RoobaruDuniya>();
-    ArrayList<String> keyList ;
+    private ArrayList<RoobaruDuniya> rubarup = new ArrayList<RoobaruDuniya>();
+   private  ArrayList<String> keyList ;
 
 
     private RecyclerView mRecycleView;

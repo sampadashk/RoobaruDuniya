@@ -171,6 +171,10 @@ public class ArticleDetail extends AppCompatActivity {
 
             @Override
             public void onItemClick( final int position, View v) {
+
+
+
+
                 Comment c=commentList.get(position);
                 Log.d("posdelf",""+position);
                 //only give delete right to the person who wrote the comment;Than only delete button will be visisble
@@ -668,7 +672,7 @@ public class ArticleDetail extends AppCompatActivity {
                 }
 
 
-                Comment c = new Comment(cName, comment, dateString, userPhoto.toString());
+                Comment c = new Comment(cName, comment, dateString, userPhoto.toString(),userId);
                 //commentList.add(c);
                 publishedRef.child(keySel).child("comments").push().setValue(c);
                 HashMap<String, String> notificationData = new HashMap<String, String>();
