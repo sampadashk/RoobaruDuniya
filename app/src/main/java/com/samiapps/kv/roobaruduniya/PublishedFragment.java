@@ -102,8 +102,8 @@ public class PublishedFragment extends Fragment {
                 intent.putExtra("keySelected",key);
                 intent.putExtra("position", position);
                 Bundle b=new Bundle();
-                b.putSerializable(ArticleDetail.TAG,item);
-                intent.putExtras(b);
+               b.putSerializable(ArticleDetail.TAG,item);
+             intent.putExtras(b);
 
 
                 //intent.putExtra("article",rd);
@@ -144,6 +144,7 @@ public class PublishedFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 RoobaruDuniya rbd = dataSnapshot.getValue(RoobaruDuniya.class);
+
               //  Log.d("titleck", rbd.getTitle());
                 rubarup.add(rbd);
                 imageAdapter.notifyDataSetChanged();

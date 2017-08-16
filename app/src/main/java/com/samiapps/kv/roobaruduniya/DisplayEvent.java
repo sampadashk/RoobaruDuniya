@@ -1,36 +1,37 @@
 package com.samiapps.kv.roobaruduniya;
 
+import java.util.ArrayList;
+
 /**
  * Created by KV on 11/8/17.
  */
 
 public class DisplayEvent {
-    public static final int Header_TYPE = 0;
-    public static final int EVENT_TYPE = 1;
+
     private String heading;
-    private HomeDisplay mDescription;
-    private int mType;
-    public DisplayEvent(String name, HomeDisplay description, int type) {
-        this.heading = name;
-        this.mDescription = description;
-        this.mType = type;
+    private ArrayList<HomeDisplay> mDescriptions;
+    public DisplayEvent()
+    {
+
     }
-    public String getName() {
+
+    public DisplayEvent(String name,ArrayList<HomeDisplay> mDescriptions ) {
+        this.heading = name;
+        this.mDescriptions = mDescriptions;
+
+    }
+    public String getHeader() {
         return heading;
     }
-    public void setName(String name) {
+    public void setHeader(String name) {
         this.heading = name;
     }
-    public HomeDisplay getDescription() {
-        return mDescription;
+    public ArrayList<HomeDisplay> getAllItemsInSection() {
+        return mDescriptions;
     }
-    public void setDescription(HomeDisplay description) {
-        this.mDescription = description;
+
+    public void setAllItemsInSection(ArrayList<HomeDisplay> allItemsInSection) {
+        this.mDescriptions = allItemsInSection;
     }
-    public int getType() {
-        return mType;
-    }
-    public void setType(int type) {
-        this.mType = type;
-    }
+
 }

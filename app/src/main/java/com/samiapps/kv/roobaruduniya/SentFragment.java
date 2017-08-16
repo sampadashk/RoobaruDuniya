@@ -109,9 +109,9 @@ public class SentFragment extends Fragment {
                     String key=keyList.get(position);
                     intent.putExtra("keySelected",key);
                     intent.putExtra("position", position);
-                    Bundle b=new Bundle();
+                  Bundle b=new Bundle();
                     b.putSerializable(publishDetail.TAG,item);
-                    intent.putExtras(b);
+                   intent.putExtras(b);
 
 
                     //intent.putExtra("article",rd);
@@ -134,9 +134,9 @@ public class SentFragment extends Fragment {
                     Intent intent = new Intent(getContext(), EditorArticleActivity.class);
                     intent.putExtra("position", position);
                     intent.putExtra("Keypos",key);
-                    Bundle b=new Bundle();
-                    b.putSerializable(SentFragment.TAG,item);
-                    intent.putExtras(b);
+                   // Bundle b=new Bundle();
+                    //b.putSerializable(SentFragment.TAG,item);
+                    //intent.putExtras(b);
 
 
                     //intent.putExtra("article",rd);
@@ -194,6 +194,7 @@ public class SentFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 RoobaruDuniya rbd = dataSnapshot.getValue(RoobaruDuniya.class);
 
+
                 rubaru.add(rbd);
                 imageAdapter.notifyDataSetChanged();
 
@@ -217,6 +218,7 @@ public class SentFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 RoobaruDuniya rbd = dataSnapshot.getValue(RoobaruDuniya.class);
+
             //    Log.d("titleck", rbd.getTitle());
                 rubaru.add(rbd);
                 imageAdapter.notifyDataSetChanged();

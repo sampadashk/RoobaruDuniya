@@ -924,7 +924,10 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
 
         // it+=1;
         HomeDisplay hm=new HomeDisplay(rbd.getTitle(),rbd.getPhoto());
+
         category.child(categoryChoosen).child(key).setValue(hm);
+      //  long times=-1 * new Date().getTime();
+      //  category.child(categoryChoosen).child(key).child("timestamp").setValue(times);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.samiapps.kv.roobaruduniya;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,6 +47,15 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         Glide.with(context)
                 .load(imgCommentor)
                 .into(holder.uPhotoView);
+        holder.cName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Comment cmt=comments.get(position);
+                String name=cmt.commentorName;
+                Intent intent=new Intent(context,Profile.class);
+                context.startActivity(intent);
+            }
+        });
         holder.deleteButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                // ListsDatabaseList theRemovedItem = list.get(position);
@@ -87,6 +97,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
             uPhotoView=(ImageView)itemView.findViewById(R.id.img_profile);
             deleteButton=(ImageButton)itemView.findViewById(R.id.delete_button);
             itemView.setOnClickListener(this);
+
+
         }
 
         @Override

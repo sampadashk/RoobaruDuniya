@@ -8,6 +8,7 @@ public class HomeDisplay {
     String title;
     String photo;
 
+
     public HomeDisplay() {
     }
 

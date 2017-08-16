@@ -112,6 +112,7 @@ public class TrialActivity extends AppCompatActivity
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
+
                 // String s=firebaseAuth.getCurrentUser().getUid();
                 if (user != null) {
                  Log.d(TAG,"Signed in 3");
@@ -660,7 +661,7 @@ public class TrialActivity extends AppCompatActivity
         switch (navItemIndex) {
             case 0:
                 // home
-                HomeFragment homeFragment = new HomeFragment();
+                MainPage homeFragment = new MainPage();
                 return homeFragment;
             case 1:
                 // fav
@@ -683,7 +684,7 @@ public class TrialActivity extends AppCompatActivity
 
 
             default:
-                return new HomeFragment();
+                return new MainPage();
         }
     }
 

@@ -104,12 +104,11 @@ public class DraftFragment extends Fragment {
                 Intent intent = new Intent(getContext(), WriteArticleActivity.class);
                 intent.putExtra("position", position);
                 intent.putExtra("Keypos",key);
-                Bundle b=new Bundle();
-                b.putSerializable(DraftFragment.TAG,item);
-                intent.putExtras(b);
+             Bundle b=new Bundle();
+            b.putSerializable(DraftFragment.TAG,item);
+               intent.putExtras(b);
 
 
-                //intent.putExtra("article",rd);
 
                 startActivity(intent);
             }
@@ -132,6 +131,7 @@ public class DraftFragment extends Fragment {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         RoobaruDuniya rbd = dataSnapshot.getValue(RoobaruDuniya.class);
                        // Log.d("titleck", rbd.getTitle());
+
                         rubaru.add(rbd);
                         imageAdapter.notifyDataSetChanged();
 

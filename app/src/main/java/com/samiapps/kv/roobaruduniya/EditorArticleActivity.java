@@ -314,6 +314,8 @@ public class EditorArticleActivity extends AppCompatActivity implements AdapterV
 
        // it+=1;
        category.child(categoryChoosen).child(key).setValue(hm);
+      //  long times=-1 * new Date().getTime();
+      //  category.child(categoryChoosen).child(key).child("timestamp").setValue(times);
     }
 
     private void removeDB() {

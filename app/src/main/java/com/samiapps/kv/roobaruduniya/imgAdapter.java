@@ -24,6 +24,7 @@ public class imgAdapter extends RecyclerView.Adapter<imgAdapter.ViewHolder> {
     public imgAdapter(ArrayList<RoobaruDuniya> articles, Context context) {
         this.articles = articles;
         this.context = context;
+
     }
 
     @Override

@@ -8,6 +8,9 @@ public class Comment {
     String commentorName;
     String comment;
 
+
+
+
     public String getDate() {
         return date;
     }
@@ -17,6 +20,7 @@ public class Comment {
         this.comment = comment;
         this.date = date;
         this.uPhoto = uPhoto;
+
     }
 
     public void setDate(String date) {

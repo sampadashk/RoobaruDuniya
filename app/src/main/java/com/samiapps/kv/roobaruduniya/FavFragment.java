@@ -108,6 +108,7 @@ public class FavFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 RoobaruDuniya rbd = dataSnapshot.getValue(RoobaruDuniya.class);
              //   Log.d("titleck", rbd.getTitle());
+
                 rubaru.add(rbd);
                 imageAdapter.notifyDataSetChanged();
 
@@ -146,9 +147,9 @@ public class FavFragment extends Fragment {
                 Intent intent = new Intent(getContext(), ArticleDetail.class);
                 intent.putExtra("position", position);
                 intent.putExtra("keySelected",key);
-                Bundle b=new Bundle();
-                b.putSerializable(ArticleDetail.TAG,item);
-                intent.putExtras(b);
+              Bundle b=new Bundle();
+             b.putSerializable(ArticleDetail.TAG,item);
+            intent.putExtras(b);
 
 
                 //intent.putExtra("article",rd);

@@ -105,6 +105,7 @@
                 android:layout_gravity="right"
                 android:background="@drawable/ic_share"
              />
+
             </LinearLayout>
         </android.support.v7.widget.Toolbar>
 

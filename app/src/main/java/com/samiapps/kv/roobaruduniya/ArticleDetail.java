@@ -32,6 +32,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -64,6 +65,7 @@ public class ArticleDetail extends AppCompatActivity {
     TextView num_Of_likes;
     ArrayList<TextFormat> textFormatList;
     String contentString;
+   GoogleApiClient googleApiClient;
 
 
 
@@ -137,6 +139,10 @@ public class ArticleDetail extends AppCompatActivity {
 
 
 
+
+
+
+
         mAuth = FirebaseAuth.getInstance();
 //      getSupportActionBar().setDisplayShowTitleEnabled(false);
         // getSupportActionBar().setLogo(R.drawable.roobaru_logo);
@@ -156,6 +162,7 @@ public class ArticleDetail extends AppCompatActivity {
         styleRef=db.getReference("contentStyle");
         notificationRef.keepSynced(true);
         msgReference = db.getReference("messages");
+
        // msgReference.keepSynced(true);
         commentAdapter.setOnItemClickListener(new CommentAdapter.ClickListener()
         {
@@ -167,65 +174,67 @@ public class ArticleDetail extends AppCompatActivity {
                 //only give delete right to the person who wrote the comment;Than only delete button will be visisble
                 if(c.commentorName.equals(TrialActivity.mUsername))
                 {
+
                     final ImageButton deleteButton= (ImageButton) v.findViewById(R.id.delete_button);
-                    deleteButton.setVisibility(View.VISIBLE);
-                    deleteButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
+                    if(deleteButton.getVisibility()==View.VISIBLE)
+                    {
+                        deleteButton.setVisibility(View.INVISIBLE);
+                    }
+                    else {
+                        deleteButton.setVisibility(View.VISIBLE);
+                        deleteButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
 
 
-                            Comment cmt = commentList.get(position);
+                                Comment cmt = commentList.get(position);
 
-                            commentList.remove(cmt);  // remove the item from list
-                            commentAdapter.notifyItemRemoved(position);
-                            publishedRef.child(keySel).child("comments").addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    Iterator<DataSnapshot> iterator = dataSnapshot.getChildren().iterator();
+                                commentList.remove(cmt);  // remove the item from list
+                                commentAdapter.notifyItemRemoved(position);
+                                publishedRef.child(keySel).child("comments").addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        Iterator<DataSnapshot> iterator = dataSnapshot.getChildren().iterator();
 
-                                    int i = 0;
-                                    // String[] sampleString = new String[length];
-                                    //TODO DELETE
-                                    Log.d("posdel",""+position);
-                                    while (i < position) {
-                                        if(iterator.hasNext()) {
-                                            iterator.next();
-                                            i += 1;
+                                        int i = 0;
+                                        // String[] sampleString = new String[length];
+                                        //TODO DELETE
+                                        Log.d("posdel", "" + position);
+                                        while (i < position) {
+                                            if (iterator.hasNext()) {
+                                                iterator.next();
+                                                i += 1;
+                                            }
+                                        }
+                                        try {
+                                            //get the key using iterator and than delete it
+
+                                            String key = iterator.next().getKey();
+                                            Log.d("keydel", key);
+                                            dataSnapshot.child(key).getRef().removeValue();
+
+                                            return;
+                                        } catch (NoSuchElementException e) {
+                                            e.printStackTrace();
+                                        } catch (Exception ee) {
+                                            ee.printStackTrace();
                                         }
                                     }
-                                    try {
-                                        //get the key using iterator and than delete it
 
-                                        String key = iterator.next().getKey();
-                                        Log.d("keydel", key);
-                                        dataSnapshot.child(key).getRef().removeValue();
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
 
-                                        return;
                                     }
-                                    catch(NoSuchElementException e)
-                                    {
-                                        e.printStackTrace();
-                                    }
-                                    catch(Exception ee)
-                                    {
-                                        ee.printStackTrace();
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-
-                                }
-                            });
+                                });
 
 
+                                Toast.makeText(ArticleDetail.this, "Comment deleted", Toast.LENGTH_SHORT).show();
+                                deleteButton.setVisibility(View.INVISIBLE);
 
-                            Toast.makeText(ArticleDetail.this,"Comment deleted",Toast.LENGTH_SHORT).show();
-                            deleteButton.setVisibility(View.INVISIBLE);
+                            }
 
-                }
-
-            });
+                        });
+                    }
                 }
             }
         });
@@ -238,16 +247,17 @@ public class ArticleDetail extends AppCompatActivity {
                             sharedButton.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
+                                    String msg="Hey check this!"+generateDynamicLinks(keySel);
                                     Intent shareintent = new Intent(Intent.ACTION_SEND);
                                     shareintent.setType("text/plain");
 
 
                                     // shareintent.putExtra(Intent.EXTRA_TEXT, artsel.getContent());
-                                    shareintent.putExtra(android.content.Intent.EXTRA_SUBJECT, artsel.getTitle());
-                                    shareintent.putExtra(android.content.Intent.EXTRA_TEXT, artsel.getContent());
+                                   // shareintent.putExtra(android.content.Intent.EXTRA_SUBJECT, artsel.getTitle());
+                                   // shareintent.putExtra(android.content.Intent.EXTRA_TEXT, artsel.getContent());
                                     // shareintent.putExtra(Intent.EXTRA_TEXT, s1);
                                     // String sendmsg = s1 + uri;
-                                    shareintent.putExtra(Intent.EXTRA_TEXT, artsel.getContent());
+                                    shareintent.putExtra(Intent.EXTRA_TEXT, msg);
                                     startActivity(Intent.createChooser(shareintent, "Share using"));
 
 
@@ -261,29 +271,33 @@ public class ArticleDetail extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
+
+
         //TODO ASYNC in msgreference
         Intent intent = getIntent();
-        if (intent.getStringExtra("intentNotification") != null) {
+        String action=intent.getAction();
+        Uri data=intent.getData();
+        if(data!=null)
+        {
+            Log.d("uri is",data.toString());
+            String path = data.getPath();
+            path=path.substring(0, path.length() - 1);
+            String idStr = path.substring(path.lastIndexOf('/') + 1);
+
+            keySel = idStr;
+            LoadUIFromkey(keySel);
+
+
+        }
+
+       else if (intent.getStringExtra("intentNotification") != null) {
             NotificationJson obj = (NotificationJson) intent.getSerializableExtra("NotificationObject");
             Log.d("intentchk", "notification");
             keySel = obj.getMsg_id();
             Log.d("chkrecikey", keySel);
             Log.d("chkurl", "https://roobaru-duniya-86f7d.firebaseio.com/messages/" + keySel);
+            LoadUIFromkey(keySel);
 
-            msgListener = msgReference.child(keySel).addValueEventListener(new ValueEventListener() {
-                                                                               @Override
-                                                                               public void onDataChange(DataSnapshot dataSnapshot) {
-                                                                                   artsel = dataSnapshot.getValue(RoobaruDuniya.class);
-                                                                                   //updating UI when you have article
-                                                                                   loadUI();
-                                                                                   Log.d("artchktit", artsel.getTitle());
-                                                                               }
-
-                                                                               @Override
-                                                                               public void onCancelled(DatabaseError databaseError) {
-                                                                                   Log.d("dberror", databaseError.toString());
-                                                                               }
-                                                                           });
 
 
 
@@ -293,8 +307,7 @@ public class ArticleDetail extends AppCompatActivity {
 //                Log.d("titleck", rbd.getTitle());
 
         }
-        else if(intent.getStringExtra("bkgnotification")!=null)
-        {
+        else if(intent.getStringExtra("bkgnotification")!=null) {
             JSONObject obj = null;
             try {
                 obj = new JSONObject(intent.getStringExtra("bkgnotification"));
@@ -302,41 +315,30 @@ public class ArticleDetail extends AppCompatActivity {
 
                 Log.d("chkrecikey", keySel);
 
+                LoadUIFromkey(keySel);
 
-
-
-
-                msgListener = msgReference.child(keySel).addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        if(dataSnapshot.exists()) {
-                            artsel = dataSnapshot.getValue(RoobaruDuniya.class);
-                            //updating UI when you have article
-                            loadUI();
-                        }
-
-//                        Log.d("artchktit", artsel.getTitle());
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                      //  Log.d("dberror", databaseError.toString());
-                    }
-                });
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
-
-
         }
         else
             {
             pos = intent.getIntExtra("position", -1);
-            //  Log.d("checkpos", "" + pos);
-           // artsel = (RoobaruDuniya) intent.getSerializableExtra(ArticleDetail.TAG);
-            keySel = intent.getStringExtra("keySelected");
-                msgListener = msgReference.child(keySel).addValueEventListener(new ValueEventListener() {
+            Log.d("checkpos", "" + pos);
+                if(pos==-1)
+                {
+
+
+
+
+                }
+                else {
+                    artsel = (RoobaruDuniya) intent.getSerializableExtra(ArticleDetail.TAG);
+                    Log.d("ckart", artsel.getTitle());
+                    keySel = intent.getStringExtra("keySelected");
+                    loadUI();
+                }
+             /*   msgListener = msgReference.child(keySel).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         artsel = dataSnapshot.getValue(RoobaruDuniya.class);
@@ -350,17 +352,171 @@ public class ArticleDetail extends AppCompatActivity {
                         Log.d("dberror", databaseError.toString());
                     }
                 });
+                */
 
 
-            Log.d("keysel", keySel);
+
         }
+
 
         //Deleting comments;
 
 
 
+
+    }
+
+    private void LoadUIFromkey(String keySel) {
+        msgListener = msgReference.child(keySel).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                artsel = dataSnapshot.getValue(RoobaruDuniya.class);
+                //updating UI when you have article
+                loadUI();
+                Log.d("artchktit", artsel.getTitle());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d("dberror", databaseError.toString());
+            }
+        });
+
+    }
+
+    public void loadUI()
+    {
+        if(artsel!=null) {
+
+            collapsingToolbarLayout.setTitle(artsel.getTitle());
+
+
+            userName = artsel.getUser();
+
+            // Log.d("chkname",userName);
+            userProf = artsel.getUserProfilePhoto();
+            Glide.with(this).load(artsel.getPhoto()).into(ivw);
+            tvtitle.setText(artsel.getTitle());
+
+
+
+           // if(styleRef.child(keySel)!=null) {
+
+                final SpannableStringBuilder str = new SpannableStringBuilder(artsel.getContent());
+                styleRef.child(keySel).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        contentString = artsel.getContent();
+                        if (dataSnapshot.exists()) {
+                            Log.d("ckval", "hasvalue");
+                            for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                Log.d("ckke", ds.getKey());
+
+                                TextFormat tf = ds.getValue(TextFormat.class);
+
+                                Log.d("chktd", tf.getStyle());
+
+                               // SpannableStringBuilder str = new SpannableStringBuilder(contentString);
+
+
+                                if (tf.getStyle().equals("bold")) {
+
+                                    str.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD), tf.getStart(), tf.getEnd(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                    Log.d("ckbold", "" + str);
+
+
+                                }
+                                if (tf.getStyle().equals("italic")) {
+
+                                    str.setSpan(new android.text.style.StyleSpan(Typeface.ITALIC), tf.getStart(), tf.getEnd(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                    Log.d("ckbold", "" + str);
+
+
+                                }
+                                if(tf.getStyle().equals("bullet"))
+                                {
+                                    str.setSpan(new BulletSpan(10), tf.getStart(), tf.getEnd(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                }
+                            //  tvcontent.setText(str);
+
+
+                            }
+                            tvcontent.setText(str);
+                        }
+                        else
+                        {
+                            tvcontent.setText(artsel.getContent());
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+
+
+
+                });
+
+           // }
+
+
+            txtName.setText(userName);
+            Uri uri = Uri.parse(userProf);
+            // Loading profile image
+            Glide.with(this).load(uri)
+                    .crossFade()
+                    .thumbnail(0.5f)
+                    .bitmapTransform(new CircleTransform(this))
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(imgProfile);
+        }
+
+
+
+            }
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        /*
+        FirebaseDynamicLinks.getInstance()
+                .getDynamicLink(getIntent())
+                .addOnSuccessListener(this, new OnSuccessListener<PendingDynamicLinkData>() {
+                    @Override
+                    public void onSuccess(PendingDynamicLinkData pendingDynamicLinkData) {
+                        // Get deep link from result (may be null if no link is found)
+                        Uri deepLink = null;
+                        if (pendingDynamicLinkData != null) {
+                            deepLink = pendingDynamicLinkData.getLink();
+                            Log.d("checkdeep",deepLink.toString());
+                            String path = deepLink.getPath();
+                            path=path.substring(0, path.length() - 1);
+                            String idStr = path.substring(path.lastIndexOf('/') + 1);
+
+                            keySel = idStr;
+                            Log.d("checkksdeep",keySel);
+                            LoadUIFromkey(keySel);
+
+
+                            // Handle the deep link. For example, open the linked
+                            // content, or apply promotional credit to the user's
+                            // account.
+                            // ...
+
+                            // ...
+                        }
+                    }})
+                .addOnFailureListener(this, new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "getDynamicLink:onFailure", e);
+                    }
+                });
+                */
         FavDb favRef = new FavDb(ArticleDetail.this);
         SQLiteDatabase sqldb = favRef.getReadableDatabase();
+        Log.d("ckkse",keySel);
 
         Cursor cursor = favRef.queryKey(sqldb, keySel,"favourite");
         Cursor cr = favRef.queryKey(sqldb, keySel,"booked");
@@ -375,8 +531,8 @@ public class ArticleDetail extends AppCompatActivity {
         if(cr.getCount()>0)
         {
 
-                bookmarkButton.setImageResource(R.drawable.ic_bookmark_white_24dp);
-                isBookMarked = true;
+            bookmarkButton.setImageResource(R.drawable.ic_bookmark_white_24dp);
+            isBookMarked = true;
 
         }
         likeListener = publishedRef.child(keySel).addValueEventListener(new ValueEventListener() {
@@ -385,7 +541,7 @@ public class ArticleDetail extends AppCompatActivity {
                 if (dataSnapshot.exists()) {
                     date = dataSnapshot.child("dateCreated").getValue().toString();
                     datetvw.setText(date);
-                  //  Log.d("ckdate", date);
+                    //  Log.d("ckdate", date);
                     if (dataSnapshot.child("likes").exists()) {
                         String n_Likes = dataSnapshot.child("likes").getValue().toString();
                         nLikes = Integer.parseInt(n_Likes);
@@ -422,8 +578,8 @@ public class ArticleDetail extends AppCompatActivity {
                             Comment c = ds.getValue(Comment.class);
                             commentList.add(c);
                             try {
-                             //   Log.d("checkcname", c.commentorName);
-                               // Log.d("checkcmt", c.comment);
+                                //   Log.d("checkcname", c.commentorName);
+                                // Log.d("checkcmt", c.comment);
                             }
                             catch(NullPointerException e)
                             {
@@ -528,102 +684,7 @@ public class ArticleDetail extends AppCompatActivity {
 
             }
         });
-    }
-    public void loadUI()
-    {
-        if(artsel!=null) {
 
-            collapsingToolbarLayout.setTitle(artsel.getTitle());
-
-
-            userName = artsel.getUser();
-
-            // Log.d("chkname",userName);
-            userProf = artsel.getUserProfilePhoto();
-            Glide.with(this).load(artsel.getPhoto()).into(ivw);
-            tvtitle.setText(artsel.getTitle());
-
-
-
-           // if(styleRef.child(keySel)!=null) {
-
-                final SpannableStringBuilder str = new SpannableStringBuilder(artsel.getContent());
-                styleRef.child(keySel).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        contentString = artsel.getContent();
-                        if (dataSnapshot.exists()) {
-                            Log.d("ckval", "hasvalue");
-                            for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                                Log.d("ckke", ds.getKey());
-
-                                TextFormat tf = ds.getValue(TextFormat.class);
-
-                                Log.d("chktd", tf.getStyle());
-
-                               // SpannableStringBuilder str = new SpannableStringBuilder(contentString);
-
-
-                                if (tf.getStyle().equals("bold")) {
-
-                                    str.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD), tf.getStart(), tf.getEnd(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                                    Log.d("ckbold", "" + str);
-
-
-                                }
-                                if (tf.getStyle().equals("italic")) {
-
-                                    str.setSpan(new android.text.style.StyleSpan(Typeface.ITALIC), tf.getStart(), tf.getEnd(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                                    Log.d("ckbold", "" + str);
-
-
-                                }
-                                if(tf.getStyle().equals("bullet"))
-                                {
-                                    str.setSpan(new BulletSpan(10), tf.getStart(), tf.getEnd(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                                }
-                            //  tvcontent.setText(str);
-
-
-                            }
-                            tvcontent.setText(str);
-                        }
-                        else
-                        {
-                            tvcontent.setText(artsel.getContent());
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-
-
-
-                });
-
-           // }
-
-
-            txtName.setText(userName);
-            Uri uri = Uri.parse(userProf);
-            // Loading profile image
-            Glide.with(this).load(uri)
-                    .crossFade()
-                    .thumbnail(0.5f)
-                    .bitmapTransform(new CircleTransform(this))
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(imgProfile);
-        }
-
-
-
-            }
-    @Override
-    public void onResume()
-    {
-        super.onResume();
 
 
 
@@ -840,6 +901,20 @@ public class ArticleDetail extends AppCompatActivity {
 
 
     }
+    public static String generateDynamicLinks(String key)
+    {
+        return "https://a6qgq.app.goo.gl/?link=https://roobaruduniya.com/"+key+"/&apn=com.samiapps.kv.roobaruduniya";
+    }
+
+
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Log.d("where","I am called");
+        setIntent(intent);
+
+
+    }
+
 
  /* @Override
     public void onBackPressed() {

@@ -11,7 +11,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -99,7 +98,7 @@ public class HomeFragment extends Fragment {
         catdapter = new categoryAdapter(rubaru, getContext());
         //StaggeredGridLayoutManager sglm = new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
         //sglm.setReverseLayout(true);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), OrientationHelper.VERTICAL, false);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
 
         mRecycleView.setLayoutManager(linearLayoutManager);
         error = (TextView) rootView.findViewById(R.id.error);
@@ -189,19 +188,19 @@ public class HomeFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.hasChildren()) {
-                    DisplayEvent e = new DisplayEvent("रूबरू स्पॉटलाइट", null, 0);
-                    keys.add(null);
-                    rubaru.add(e);
+                    DisplayEvent e = new DisplayEvent();
+                    e.setHeader("रूबरू स्पॉटलाइट");
+                    //keys.add(null);
+                    ArrayList<HomeDisplay> hmList=new ArrayList<HomeDisplay>();
 
                     for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                         String key = postSnapshot.getKey();
                         Log.d("ckk",key);
                         keys.add(key);
                         HomeDisplay hm = postSnapshot.getValue(HomeDisplay.class);
-                        DisplayEvent ev = new DisplayEvent(null, hm, 1);
+                       hmList.add(hm);
                         Log.d("ckv",hm.getTitle());
-                        rubaru.add(ev);
-                        catdapter.notifyDataSetChanged();
+
 
 
 
@@ -209,6 +208,11 @@ public class HomeFragment extends Fragment {
 
 
                     }
+                    e.setAllItemsInSection(hmList);
+                    rubaru.add(e);
+                    Log.d("ckrubaru",""+rubaru.size());
+
+                    catdapter.notifyDataSetChanged();
                 }
 
 
@@ -219,6 +223,7 @@ public class HomeFragment extends Fragment {
 
             }
         });
+        /*
         categoryRef.child("मैं घुमंतू").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -250,6 +255,7 @@ public class HomeFragment extends Fragment {
 
             }
         });
+        */
     }
 
 
