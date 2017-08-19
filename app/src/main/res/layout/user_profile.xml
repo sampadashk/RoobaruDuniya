@@ -32,6 +32,7 @@
                     android:paddingTop="@dimen/nav_header_vertical_spacing"
                     android:gravity="center"
 
+
                     app:srcCompat="@android:drawable/sym_def_app_icon" />
 
                 <TextView
@@ -93,5 +94,16 @@
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:id="@+id/publishedProfileRecycle"></android.support.v7.widget.RecyclerView>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        android:id="@+id/no_published"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:text="NO Published Article"
+        />
+
 
 </LinearLayout>

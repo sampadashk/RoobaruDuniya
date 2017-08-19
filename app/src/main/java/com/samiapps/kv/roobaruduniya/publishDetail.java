@@ -57,7 +57,7 @@ public class publishDetail extends AppCompatActivity {
         // this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         setContentView(R.layout.publish_layout);
-
+//TODO : DISPLAY EMPTY WHEN NO PUBLISHED
 
 
    

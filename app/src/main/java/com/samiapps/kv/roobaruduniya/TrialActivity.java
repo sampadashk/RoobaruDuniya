@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -29,7 +31,10 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
 import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.IdpResponse;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -60,6 +65,7 @@ public class TrialActivity extends AppCompatActivity
     public static final String ANONYMOUS = "anonymous";
     private static final int RC_SIGN_IN = 123;
     Uri photoUri;
+    Toast t;
     private View navHeader;
     public static String[] activityTitles;
     private ImageView imgProfile;
@@ -107,6 +113,10 @@ public class TrialActivity extends AppCompatActivity
         mUsername = ANONYMOUS;
         userStatus = "Blogger";
         shouldLoadHomeFragOnBackPress = true;
+
+
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        AppEventsLogger.activateApp(this);
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -225,6 +235,7 @@ public class TrialActivity extends AppCompatActivity
 
             }
         };
+       registerReceiver(ConnectivityReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         //registering our receiver
         this.registerReceiver(mReceiver, intentFilter);
 
@@ -408,10 +419,15 @@ public class TrialActivity extends AppCompatActivity
     public void onActivityResult(int requestcode, int resultcode, Intent data) {
         super.onActivityResult(requestcode, resultcode, data);
         if (requestcode == RC_SIGN_IN) {
+            IdpResponse response = IdpResponse.fromResultIntent(data);
             if (resultcode == RESULT_OK) {
                 Toast.makeText(this, "Signed in!", Toast.LENGTH_SHORT).show();
 
-            } else if (resultcode == RESULT_CANCELED) {
+            }
+
+
+
+            else if (resultcode == RESULT_CANCELED) {
                 Toast.makeText(this, "Signed OUT!", Toast.LENGTH_SHORT).show();
                 finish();
             }
@@ -710,6 +726,35 @@ public class TrialActivity extends AppCompatActivity
             //fragmentTransaction.addToBackStack(null);
             fragmentTransaction.replace(R.id.frame, hmFragment).commit();
         }
+    }
+    public boolean isNetworkUp()
+    {
+        ConnectivityManager cm= (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo=cm.getActiveNetworkInfo();
+        return networkInfo != null && networkInfo.isConnectedOrConnecting();
+    }
+    private BroadcastReceiver ConnectivityReceiver=new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent){
+            if (!isNetworkUp()) {
+                // Log.d("hi","show");
+            t=  Toast.makeText(TrialActivity.this,"No Connectivity",Toast.LENGTH_SHORT);
+                t.show();
+            }
+            else
+            {
+
+                if (t!=null)
+                    t.cancel();
+
+            }
+            //  snackbar.setActionTextColor(getResources().getColor(R.color.material_red_700));
+
+
+
+        }
+    };
 
 
 
@@ -734,4 +779,3 @@ public class TrialActivity extends AppCompatActivity
     }
     */
     }
-}

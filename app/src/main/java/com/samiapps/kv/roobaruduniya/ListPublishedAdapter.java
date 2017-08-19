@@ -35,9 +35,11 @@ public class ListPublishedAdapter extends RecyclerView.Adapter<ListPublishedAdap
 
     @Override
     public void onBindViewHolder(ListPublishedAdapter.ViewHolder holder, int position) {
-        RoobaruDuniya rb=articles.get(position);
-        String title=rb.getTitle();
-        holder.publishedTitle.setText(title);
+        if(articles.size()>0) {
+            RoobaruDuniya rb = articles.get(position);
+            String title = rb.getTitle();
+            holder.publishedTitle.setText(title);
+        }
 
     }
     public void setOnItemClickListener(ListPublishedAdapter.ClickListener clickListener) {

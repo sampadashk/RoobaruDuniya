@@ -23,6 +23,7 @@
             android:textStyle="bold"
             android:textSize="12dp"
             android:clickable="true"
+            android:autoLink="web"
 
             android:id="@+id/uc_name"/>
         <TextView

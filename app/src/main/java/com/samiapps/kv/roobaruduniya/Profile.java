@@ -31,6 +31,7 @@ public class Profile extends AppCompatActivity {
     TextView uStatusTextView;
     TextView uNameTextView;
     ImageView userPhotoView;
+    TextView noPublishedText;
     String uemai;
     String uname;
     String uid;
@@ -57,6 +58,7 @@ public class Profile extends AppCompatActivity {
         firebasedb = FirebaseDatabase.getInstance();
         dbUser = firebasedb.getReference("user");
         msgReference=firebasedb.getReference("messages");
+        noPublishedText=(TextView) findViewById(R.id.no_published);
         rvc = (RecyclerView) findViewById(R.id.publishedProfileRecycle);
         listPublishedAdapter = new ListPublishedAdapter(rubaru, this);
         //   pgbar=(ProgressBar) rootView.findViewById(R.id.pbar);
@@ -142,6 +144,12 @@ public class Profile extends AppCompatActivity {
 
                     }
 
+
+                }
+                else
+                {
+                    rvc.setVisibility(View.INVISIBLE);
+                    noPublishedText.setVisibility(View.VISIBLE);
 
                 }
             }

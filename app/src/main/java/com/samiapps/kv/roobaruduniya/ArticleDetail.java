@@ -1,8 +1,10 @@
 package com.samiapps.kv.roobaruduniya;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,6 +13,7 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,11 +25,14 @@ import android.text.SpannableStringBuilder;
 import android.text.TextWatcher;
 import android.text.style.BulletSpan;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -62,10 +68,14 @@ public class ArticleDetail extends AppCompatActivity {
     ValueEventListener notificationListener;
     CollapsingToolbarLayout collapsingToolbarLayout;
     CoordinatorLayout cdlayout;
+    LinearLayout displayCont;
     TextView num_Of_likes;
     ArrayList<TextFormat> textFormatList;
     String contentString;
+    ImageButton homeButton;
    GoogleApiClient googleApiClient;
+    TextView tx;
+    String[] optTexrSize = { "small","medium","large","Extra Large" };
 
 
 
@@ -129,6 +139,8 @@ public class ArticleDetail extends AppCompatActivity {
         num_Of_likes = (TextView) findViewById(R.id.num_likes);
         bookmarkButton=(ImageButton) findViewById(R.id.bookmark);
         cdlayout=(CoordinatorLayout) findViewById(R.id.draw_insets_frame_layout);
+        homeButton=(ImageButton) findViewById(R.id.home_but);
+        displayCont=(LinearLayout) findViewById(R.id.display_content);
 
         imgProfile = (ImageView) findViewById(R.id.img_profile);
         ivw = (ImageView) findViewById(R.id.display_image);
@@ -137,6 +149,20 @@ public class ArticleDetail extends AppCompatActivity {
         favButton = (FloatingActionButton) findViewById(R.id.share_fab);
         datetvw = (TextView) findViewById(R.id.published_date);
         textFormatList=new ArrayList<>();
+
+      /*  //TrialTextSize
+        final ArrayAdapter<String> adp = new ArrayAdapter<String>(ArticleDetail.this,
+                android.R.layout.simple_spinner_item, optTexrSize);
+
+
+        final Spinner sp = new Spinner(ArticleDetail.this);
+        sp.setLayoutParams(new LinearLayout.LayoutParams(LinearLayoutCompat.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        sp.setAdapter(adp);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(ArticleDetail.this);
+        builder.setView(sp);
+        builder.create().show();
+        */
 
 
 
@@ -244,7 +270,21 @@ public class ArticleDetail extends AppCompatActivity {
                 }
             }
         });
+        tvcontent.setOnLongClickListener(new View.OnLongClickListener() {
 
+            @Override
+            public boolean onLongClick(View v) {
+                showAlertTextSize();
+                return false;
+            }
+                                             });
+        homeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentHome=new Intent(ArticleDetail.this,TrialActivity.class);
+                startActivity(intentHome);
+            }
+        });
 
 
 
@@ -253,7 +293,7 @@ public class ArticleDetail extends AppCompatActivity {
                             sharedButton.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    String msg="Hey check this!"+generateDynamicLinks(keySel);
+                                    String msg="Hey check this Article "+artsel.getTitle()+" by "+artsel.getUser()+" in Roobaru Duniya "+generateDynamicLinks(keySel);
                                     Intent shareintent = new Intent(Intent.ACTION_SEND);
                                     shareintent.setType("text/plain");
 
@@ -263,6 +303,8 @@ public class ArticleDetail extends AppCompatActivity {
                                    // shareintent.putExtra(android.content.Intent.EXTRA_TEXT, artsel.getContent());
                                     // shareintent.putExtra(Intent.EXTRA_TEXT, s1);
                                     // String sendmsg = s1 + uri;
+
+                                    shareintent.putExtra(Intent.EXTRA_SUBJECT,artsel.getTitle());
                                     shareintent.putExtra(Intent.EXTRA_TEXT, msg);
                                     startActivity(Intent.createChooser(shareintent, "Share using"));
 
@@ -272,6 +314,76 @@ public class ArticleDetail extends AppCompatActivity {
 
 
                         }
+
+    private void showAlertTextSize() {
+
+        //following code will be in your activity.java file
+        final CharSequence[] items = {"small","Medium","Large"};
+        // arraylist to keep the selected items
+      //  final ArrayList seletedItems=new ArrayList();
+        final int[] selectedPosition = new int[1];
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Select The Font Size");
+        builder.setSingleChoiceItems(items,1, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                 selectedPosition[0] = ((AlertDialog)dialog).getListView().getCheckedItemPosition();
+
+            }
+        })
+
+
+                // Set the action buttons
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                         Log.d("checksi","here");
+                        switch(selectedPosition[0])
+                        {
+                            case 0:
+                                setFontForContainer(displayCont,14);
+                               // tvcontent.setTextSize(TypedValue.COMPLEX_UNIT_SP,14);
+
+                                break;
+                            case 1:
+                                setFontForContainer(displayCont,18);
+                              //  tvcontent.setTextSize(TypedValue.COMPLEX_UNIT_SP,18);
+                                break;
+                            case 2:
+                                setFontForContainer(displayCont,22);
+                               // tvcontent.setTextSize(TypedValue.COMPLEX_UNIT_SP,22);
+                                break;
+
+                        }
+                           // tvcontent.setTextSize(TypedValue.COMPLEX_UNIT_SP,30);
+
+                        //  Your code when user icked on OK
+                        //  You can write the code  to save the selected item here
+
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        //  Your code when user clicked on Cancel
+
+                    }
+                });
+
+        AlertDialog dialog  = builder.create();//AlertDialog dialog; create like this outside onClick
+        dialog.show();
+
+    }
+    private void setFontForContainer(ViewGroup contentLayout,int font) {
+        for (int i=0; i < contentLayout.getChildCount(); i++) {
+            View view = contentLayout.getChildAt(i);
+            if (view instanceof TextView)
+                ((TextView)view).setTextSize(TypedValue.COMPLEX_UNIT_SP,font);
+            else if (view instanceof ViewGroup)
+                setFontForContainer((ViewGroup) view,font);
+        }
+    }
 
 
     @Override
@@ -465,9 +577,21 @@ public class ArticleDetail extends AppCompatActivity {
                 });
 
            // }
+            txtName.setPaintFlags(txtName.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
 
 
             txtName.setText(userName);
+            txtName.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String uid=artsel.getuserId();
+                    String uphoto=artsel.getUserProfilePhoto();
+                    Intent intent=new Intent(ArticleDetail.this,Profile.class);
+                    intent.putExtra("senuid",uid);
+                    intent.putExtra("senphoto",uphoto);
+                    startActivity(intent);
+                }
+            });
             Uri uri = Uri.parse(userProf);
             // Loading profile image
             Glide.with(this).load(uri)
@@ -921,6 +1045,7 @@ public class ArticleDetail extends AppCompatActivity {
 
 
     }
+
 
 
  /* @Override
