@@ -270,7 +270,7 @@ public class ArticleDetail extends AppCompatActivity {
                 }
             }
         });
-        tvcontent.setOnLongClickListener(new View.OnLongClickListener() {
+        displayCont.setOnLongClickListener(new View.OnLongClickListener() {
 
             @Override
             public boolean onLongClick(View v) {

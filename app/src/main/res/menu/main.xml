@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:appcompat="http://schemas.android.com/tools">
+    <item android:id="@+id/searchid"
+        android:title="search"
+        android:icon="@android:drawable/ic_menu_search"
+        app:showAsAction="always"
+
+        app:actionViewClass="android.support.v7.widget.SearchView"/>
 
 
     <item android:id="@+id/write_blog"
         android:title="write_blog"
-        app:showAsAction="ifRoom"
+        app:showAsAction="collapseActionView|ifRoom"
         android:icon="@drawable/ic_action_border_color"
         />
     <item

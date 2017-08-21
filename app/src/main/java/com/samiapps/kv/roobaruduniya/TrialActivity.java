@@ -1,5 +1,6 @@
 package com.samiapps.kv.roobaruduniya;
 
+import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +19,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -51,13 +53,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class TrialActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, SearchView.OnQueryTextListener {
     private FirebaseAuth mAuth;
     static Button notifCount;
     static int mNotifCount = 0;
     String notificationMessage;
     ArrayList<Notification> notificationArrList;
     ArrayList<NotificationJson> notificationJsonList;
+
     private static String LAST_OPENED_FRAGMENT_REF;
 
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -67,6 +70,7 @@ public class TrialActivity extends AppCompatActivity
     Uri photoUri;
     Toast t;
     private View navHeader;
+
     public static String[] activityTitles;
     private ImageView imgProfile;
     private TextView txtName, txtStatus;
@@ -339,6 +343,8 @@ public class TrialActivity extends AppCompatActivity
 
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main, menu);
+
+
         View count = menu.findItem(R.id.badge).getActionView();
         notifCount = (Button) count.findViewById(R.id.notif_count);
         notifCount.setText(String.valueOf(mNotifCount));
@@ -398,9 +404,26 @@ public class TrialActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         switch (id) {
+            case R.id.searchid:
+            {
+
+                SearchManager searchManager =
+                        (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+                SearchView searchView =
+                        (SearchView) item.getActionView();
+
+
+                searchView.setSearchableInfo(
+                    searchManager.getSearchableInfo(getComponentName()));
+                break;
+
+
+
+            }
 
             //noinspection SimplifiableIfStatement
             case R.id.write_blog: {
+                Log.d("heyhey","here");
                 Intent intent = new Intent(this, WriteArticleActivity.class);
                 startActivity(intent);
                 break;
@@ -755,6 +778,16 @@ public class TrialActivity extends AppCompatActivity
 
         }
     };
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        return false;
+    }
 
 
 
