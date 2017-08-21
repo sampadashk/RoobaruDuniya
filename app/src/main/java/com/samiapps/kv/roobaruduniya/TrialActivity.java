@@ -411,10 +411,35 @@ public class TrialActivity extends AppCompatActivity
                         (SearchManager) getSystemService(Context.SEARCH_SERVICE);
                 SearchView searchView =
                         (SearchView) item.getActionView();
+                Log.d("checksearc",searchView.getQuery().toString());
 
 
                 searchView.setSearchableInfo(
                     searchManager.getSearchableInfo(getComponentName()));
+
+                searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String query) {
+                        Log.d("here","we");
+                        Intent intent=new Intent(TrialActivity.this,SearchResultsActivity.class);
+                        intent.setAction(Intent.ACTION_SEARCH);
+                        intent.putExtra(SearchManager.QUERY,query);
+                        startActivity(intent);
+
+
+                        return true;
+                    }
+
+                    @Override
+                    public boolean onQueryTextChange(String newText) {
+                        Log.d("here","we");
+                        Intent intent=new Intent(TrialActivity.this,SearchResultsActivity.class);
+                        intent.setAction(Intent.ACTION_SEARCH);
+                        intent.putExtra(SearchManager.QUERY,newText);
+                        startActivity(intent);
+                        return true;
+                    }
+                });
                 break;
 
 
