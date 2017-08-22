@@ -68,6 +68,7 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
     ImageButton bulletButton;
     Spinner spinner;
     ArrayAdapter<CharSequence> adapter;
+    DatabaseReference dbtitlepublished;
     int it;
     DatabaseReference category;
 
@@ -139,6 +140,7 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
 
 
 
+
         firebaseAuth = FirebaseAuth.getInstance();
         user = firebaseAuth.getCurrentUser();
         userEmail = user.getEmail();
@@ -172,6 +174,7 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
         dbPendingArticle = db.getReference("pending");
         publishedRef=db.getReference("published");
         contentStyleRef=db.getReference("contentStyle");
+        dbtitlepublished=db.getReference("publishedTitle");
         firebaseStorage = FirebaseStorage.getInstance();
         storageReference = firebaseStorage.getReference().child("article_photo");
         //  FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG);
@@ -792,6 +795,7 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
         String dateString = sdf.format(date);
        // Log.d("checkDate",dateString);
         publishedRef.child(key).child("dateCreated").setValue(dateString);
+        dbtitlepublished.child(key).setValue(rbd.getTitle());
     }
 
     private void saveNclose() {

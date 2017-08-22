@@ -1,6 +1,5 @@
 package com.samiapps.kv.roobaruduniya;
 
-import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -406,8 +405,11 @@ public class TrialActivity extends AppCompatActivity
         switch (id) {
             case R.id.searchid:
             {
+                Intent intent=new Intent(TrialActivity.this,SearchResultsActivity.class);
+                startActivity(intent);
 
-                SearchManager searchManager =
+
+            /*  SearchManager searchManager =
                         (SearchManager) getSystemService(Context.SEARCH_SERVICE);
                 SearchView searchView =
                         (SearchView) item.getActionView();
@@ -432,15 +434,13 @@ public class TrialActivity extends AppCompatActivity
 
                     @Override
                     public boolean onQueryTextChange(String newText) {
-                        Log.d("here","we");
-                        Intent intent=new Intent(TrialActivity.this,SearchResultsActivity.class);
-                        intent.setAction(Intent.ACTION_SEARCH);
-                        intent.putExtra(SearchManager.QUERY,newText);
-                        startActivity(intent);
-                        return true;
+
+                        return false;
                     }
                 });
+                */
                 break;
+
 
 
 

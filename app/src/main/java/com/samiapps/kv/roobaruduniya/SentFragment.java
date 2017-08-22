@@ -134,12 +134,12 @@ public class SentFragment extends Fragment {
                     Intent intent = new Intent(getContext(), EditorArticleActivity.class);
                     intent.putExtra("position", position);
                     intent.putExtra("Keypos",key);
-                   // Bundle b=new Bundle();
-                    //b.putSerializable(SentFragment.TAG,item);
-                    //intent.putExtras(b);
+                    Bundle b=new Bundle();
+                  b.putSerializable(SentFragment.TAG,item);
+                   intent.putExtras(b);
 
 
-                    //intent.putExtra("article",rd);
+
 
                     startActivity(intent);
                 }

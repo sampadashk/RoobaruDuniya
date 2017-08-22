@@ -41,6 +41,7 @@ public class EditorArticleActivity extends AppCompatActivity implements AdapterV
     DatabaseReference dbPendingArticle;
     DatabaseReference publishedRef;
     DatabaseReference category;
+    private DatabaseReference dbtitlepublished;
     ImageButton photoButton;
     int pos;
     String key;
@@ -70,6 +71,7 @@ public class EditorArticleActivity extends AppCompatActivity implements AdapterV
         dbEditor=db.getReference("editor");
         dbRefUser = db.getReference("user");
         dbPendingArticle=db.getReference("pending");
+        dbtitlepublished=db.getReference("publishedTitle");
         publishedRef=db.getReference("published");
         firebaseStorage = FirebaseStorage.getInstance();
         storageReference = firebaseStorage.getReference().child("article_photo");
@@ -334,6 +336,7 @@ public class EditorArticleActivity extends AppCompatActivity implements AdapterV
        // Log.d("checkDate",dateString);
         publishedRef.child(key).child("dateCreated").setValue(dateString);
         publishedRef.child(key).child("likes").setValue(0);
+        dbtitlepublished.child(key).setValue(rbd.getTitle());
 
     }
 

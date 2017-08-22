@@ -177,7 +177,7 @@ public class CategoryActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 RoobaruDuniya rbd = dataSnapshot.getValue(RoobaruDuniya.class);
 
-                 Log.d("titleck", rbd.getTitle());
+
                 rubaru.add(rbd);
                 imageAdapter.notifyDataSetChanged();
 

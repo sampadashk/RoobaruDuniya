@@ -33,9 +33,9 @@
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
 
-            <meta-data
+            <!--<meta-data
                 android:name="android.app.default_searchable"
-                android:value=".SearchResultsActivity" />
+                android:value=".SearchResultsActivity" /> -->
 
 
             <intent-filter>
@@ -92,6 +92,7 @@
         <activity android:name=".AboutUsActivity"></activity>
         <activity android:name=".CategoryActivity"></activity>
         <activity android:name=".SearchResultsActivity"
+            android:launchMode="singleTop"
             android:label="@string/app_name">
 
             <!-- This intent-filter identifies this activity as "searchable" -->

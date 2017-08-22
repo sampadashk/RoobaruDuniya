@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -69,6 +70,7 @@ public class ArticleDetail extends AppCompatActivity {
     CollapsingToolbarLayout collapsingToolbarLayout;
     CoordinatorLayout cdlayout;
     LinearLayout displayCont;
+    Bitmap bitmap;
     TextView num_Of_likes;
     ArrayList<TextFormat> textFormatList;
     String contentString;
@@ -290,6 +292,7 @@ public class ArticleDetail extends AppCompatActivity {
 
                             // FirebaseAuth.getInstance().
 
+
                             sharedButton.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
@@ -297,16 +300,31 @@ public class ArticleDetail extends AppCompatActivity {
                                     Intent shareintent = new Intent(Intent.ACTION_SEND);
                                     shareintent.setType("text/plain");
 
+                                  /*  try{
+                                        byte [] encodeByte= Base64.decode(artsel.getPhoto(),Base64.DEFAULT);
+                                        bitmap= BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
 
-                                    // shareintent.putExtra(Intent.EXTRA_TEXT, artsel.getContent());
-                                   // shareintent.putExtra(android.content.Intent.EXTRA_SUBJECT, artsel.getTitle());
-                                   // shareintent.putExtra(android.content.Intent.EXTRA_TEXT, artsel.getContent());
-                                    // shareintent.putExtra(Intent.EXTRA_TEXT, s1);
-                                    // String sendmsg = s1 + uri;
+                                    }catch(Exception e){
+                                        e.getMessage();
+
+                                    }
+                                   // Bitmap image =artsel.getPhoto();
+                                    SharePhoto photo = new SharePhoto.Builder()
+                                            .setBitmap(bitmap)
+                                            .build();
+                                    SharePhotoContent content = new SharePhotoContent.Builder()
+                                            .addPhoto(photo).setContentUrl(Uri.parse(generateDynamicLinks(keySel)))
+                                            .build();
+                                    ShareDialog.show(ArticleDetail.this,content);
+                                    */
+
+
+
 
                                     shareintent.putExtra(Intent.EXTRA_SUBJECT,artsel.getTitle());
                                     shareintent.putExtra(Intent.EXTRA_TEXT, msg);
                                     startActivity(Intent.createChooser(shareintent, "Share using"));
+
 
 
                                 }
@@ -438,6 +456,17 @@ public class ArticleDetail extends AppCompatActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+        }
+        else if(intent.getStringExtra("searchString")!=null)
+        {
+         keySel = intent.getStringExtra("searchString");
+            Log.d("kkk",keySel);
+
+            if(keySel!=null) {
+                LoadUIFromkey(keySel);
+            }
+
+
         }
         else
             {
@@ -646,7 +675,7 @@ public class ArticleDetail extends AppCompatActivity {
                 */
         FavDb favRef = new FavDb(ArticleDetail.this);
         SQLiteDatabase sqldb = favRef.getReadableDatabase();
-        Log.d("ckkse",keySel);
+
 
         Cursor cursor = favRef.queryKey(sqldb, keySel,"favourite");
         Cursor cr = favRef.queryKey(sqldb, keySel,"booked");

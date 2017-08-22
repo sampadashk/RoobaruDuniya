@@ -99,14 +99,23 @@ public class Profile extends AppCompatActivity {
         dbUser.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                uemai = dataSnapshot.child("email").getValue(String.class);
-                Log.d("emai", uemai);
-                uname = dataSnapshot.child("name").getValue(String.class);
-                status = dataSnapshot.child("status").getValue(String.class);
+                try {
+                    uname = dataSnapshot.child("name").getValue(String.class);
+                    status = dataSnapshot.child("status").getValue(String.class);
+                    uemai = dataSnapshot.child("email").getValue(String.class);
+                    uNameTextView.setText(uname);
+                    uStatusTextView.setText(status);
+                    if(uemai!=null) {
 
-                emailTextView.setText(uemai);
-                uNameTextView.setText(uname);
-                uStatusTextView.setText(status);
+
+                        emailTextView.setText(uemai);
+                    }
+
+                }
+                catch(NullPointerException ee)
+                {
+                    ee.printStackTrace();
+                }
 
 
             }
