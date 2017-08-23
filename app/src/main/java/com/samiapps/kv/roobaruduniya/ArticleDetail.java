@@ -100,6 +100,7 @@ public class ArticleDetail extends AppCompatActivity {
     DatabaseReference msgReference;
     DatabaseReference notificationRef;
     DatabaseReference styleRef;
+    DatabaseReference userRef;
     Uri userPhoto;
     String keySel;
     boolean isFav;
@@ -118,6 +119,7 @@ public class ArticleDetail extends AppCompatActivity {
     CommentAdapter commentAdapter;
     private ShareActionProvider mShareActionProvider;
     private String userId;
+    private String wname;
     // ArrayList<RoobaruDuniya> rbd;
 
     public void onCreate(Bundle savedInstanceState) {
@@ -192,6 +194,7 @@ public class ArticleDetail extends AppCompatActivity {
         styleRef=db.getReference("contentStyle");
         notificationRef.keepSynced(true);
         msgReference = db.getReference("messages");
+        userRef=db.getReference("user");
 
        // msgReference.keepSynced(true);
         commentAdapter.setOnItemClickListener(new CommentAdapter.ClickListener()
@@ -610,15 +613,39 @@ public class ArticleDetail extends AppCompatActivity {
 
 
             txtName.setText(userName);
+            String usid=artsel.getuserId();
+            userRef.child(usid).child("name").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                   wname= dataSnapshot.getValue().toString();
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+
             txtName.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     String uid=artsel.getuserId();
-                    String uphoto=artsel.getUserProfilePhoto();
-                    Intent intent=new Intent(ArticleDetail.this,Profile.class);
-                    intent.putExtra("senuid",uid);
-                    intent.putExtra("senphoto",uphoto);
-                    startActivity(intent);
+
+                    Log.d("checkname",wname);
+                    Log.d("checkuser",userName);
+                    if(wname.equals(userName)) {
+
+                        // String uphoto=artsel.getUserProfilePhoto();
+                        Intent intent = new Intent(ArticleDetail.this, Profile.class);
+                        intent.putExtra("senuid", uid);
+                        // intent.putExtra("senphoto",uphoto);
+                        startActivity(intent);
+                    }
+                    else
+                    {
+                        Snackbar.make(cdlayout,R.string.no_profile,Snackbar.LENGTH_SHORT).show();
+                    }
                 }
             });
             Uri uri = Uri.parse(userProf);

@@ -102,7 +102,14 @@ Newspapers for India, Govt of India) द्वारा पंजीयत ह�
     <string name="cat14">कविताएँ</string>
 
     <string name="category_prompt">Select Category</string>
-    <string name="search_hint">Enter Article Title</string>
+    <string name="search_hint">Enter Article Title or Author Name</string>
+    <string name="no_result">No Result Found</string>
+    <string name="no_profile">No Profile Found</string>
+    <string name="contact_us">contact us</string>
+    <string name="like_button">like Button</string>
+    <string name="go_home">Go to home Screen</string>
+    <string name="bookmark_button">bookmark article</string>
+    <string name="share_button">share article</string>
 
 
 

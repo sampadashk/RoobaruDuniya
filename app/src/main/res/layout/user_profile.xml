@@ -56,8 +56,8 @@
                     android:textSize="18sp"
                     android:textColor="@android:color/black"
 
-                    android:text="sha@gmail.com"
-                    android:visibility="visible" />
+
+                    />
 
 
             </RelativeLayout>

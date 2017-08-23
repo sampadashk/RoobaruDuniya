@@ -10,7 +10,7 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -40,6 +40,7 @@ public class CategoryActivity extends AppCompatActivity {
     Snackbar snackbar;
     LinearLayout homeLayout;
     ProgressBar mLoadingIndicator;
+
 
     TextView error;
     int msg;
@@ -78,12 +79,14 @@ public class CategoryActivity extends AppCompatActivity {
         imageAdapter=new imgAdapter(rubaru,this);
         //StaggeredGridLayoutManager sglm = new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
         //sglm.setReverseLayout(true);
-        GridLayoutManager gridLayoutManager=new GridLayoutManager(this,2);
+       // GridLayoutManager gridLayoutManager=new GridLayoutManager(this,2);
+        LinearLayoutManager linearLayoutManager=new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,true);
+        linearLayoutManager.setStackFromEnd(true);
         //to display in reverse order;setreverselayout(true)
 
 
 
-        mRecycleView.setLayoutManager(gridLayoutManager);
+        mRecycleView.setLayoutManager(linearLayoutManager);
 
         error= (TextView) findViewById(R.id.error);
         mRecycleView.setItemAnimator(new DefaultItemAnimator());
@@ -96,6 +99,31 @@ public class CategoryActivity extends AppCompatActivity {
        category=intent.getStringExtra("articlecat");
         Log.d("categorycheck",category);
         setTitle(category);
+     /*   categoryRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.hasChild(category))
+                {
+                    mLoadingIndicator.setVisibility(View.VISIBLE);
+                    getArticleByCategory();
+
+
+                }
+                else
+                {
+                    mRecycleView.setVisibility(View.GONE);
+                    error.setText("No Data");
+                    error.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        */
+
         getArticleByCategory();
         imageAdapter.setOnItemClickListener(new imgAdapter.ClickListener() {
             @Override
@@ -117,57 +145,71 @@ public class CategoryActivity extends AppCompatActivity {
         // mLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         // mRecycleView.setHasFixedSize(true);
         mLoadingIndicator.setVisibility(View.VISIBLE);
+
        registerReceiver(MyReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
     }
 
     private void getArticleByCategory() {
-      // Query q= categoryRef.child(category).orderByChild("timestamp").limitToFirst(15);
-
-        categoryRef.child(category).orderByKey().limitToLast(20).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChildren()) {
-
-                    //keys.add(null);
+        // Query q= categoryRef.child(category).orderByChild("timestamp").limitToFirst(15);
 
 
-                    for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                        String key = postSnapshot.getKey();
-                        Log.d("ckk",key);
-                        keys.add(key);
-                       getMessageData(key);
+            categoryRef.child(category).orderByKey().limitToLast(20).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.hasChildren()) {
 
-                        error.setVisibility(View.GONE);
+                        //keys.add(null);
 
+
+                        for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+
+                            String key = postSnapshot.getKey();
+                            Log.d("ckk", key);
+                            keys.add(key);
+                            error.setVisibility(View.GONE);
+                            mRecycleView.setVisibility(View.VISIBLE);
+
+                            mLoadingIndicator.setVisibility(View.VISIBLE);
+                            getMessageData(key);
+
+
+
+
+                            // imageAdapter.notifyDataSetChanged();
+
+
+                            // displayArticles(postSnapshot.getKey());
+
+
+                        }
+
+
+                    }
+                    else
+                    {
                         mLoadingIndicator.setVisibility(View.INVISIBLE);
-
-                       // imageAdapter.notifyDataSetChanged();
-
-
-
-
-                        // displayArticles(postSnapshot.getKey());
-
+                        mRecycleView.setVisibility(View.GONE);
+                        error.setText("No Data");
+                        error.setVisibility(View.VISIBLE);
 
                     }
 
 
+                }
 
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
 
                 }
+            });
 
 
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
 
 
-    }
+        }
+
+
 
 
 
@@ -177,7 +219,7 @@ public class CategoryActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 RoobaruDuniya rbd = dataSnapshot.getValue(RoobaruDuniya.class);
 
-
+                mLoadingIndicator.setVisibility(View.INVISIBLE);
                 rubaru.add(rbd);
                 imageAdapter.notifyDataSetChanged();
 
@@ -235,7 +277,8 @@ public class CategoryActivity extends AppCompatActivity {
                 publishedRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.hasChildren()) {
+                        if (dataSnapshot.hasChild(category)) {
+
                             error.setText(R.string.wait_msg);
                         } else
                             error.setText(R.string.no_data);
@@ -253,6 +296,7 @@ public class CategoryActivity extends AppCompatActivity {
             // error.setText(msg);
             error.setVisibility(View.VISIBLE);
         } else {
+            error.setVisibility(View.INVISIBLE);
 
         }
 
@@ -272,6 +316,7 @@ public class CategoryActivity extends AppCompatActivity {
             MyReceiver=null;
         }
         rubaru.clear();
+
         super.onDestroy();
     }
 

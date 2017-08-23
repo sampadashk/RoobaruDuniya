@@ -45,6 +45,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         Log.d("getImage",""+category.getImage());
         int d=category.getImage();
         Glide.with(context).load(d).into(((ViewHolder) holder).imageView);
+        ((ViewHolder) holder).imageView.setContentDescription(category.getText());
 
 
     }

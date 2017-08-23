@@ -53,13 +53,13 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
             public void onClick(View v) {
                 Comment cmt=comments.get(position);
                 String name=cmt.commentorName;
-                String uphoto=cmt.getuPhoto();
+
                 Log.d("commentorname",name);
                 String uid=cmt.getUid();
                 Log.d("getuid",uid);
                 Intent intent=new Intent(context,Profile.class);
                 intent.putExtra("senuid",uid);
-                intent.putExtra("senphoto",uphoto);
+
                 context.startActivity(intent);
             }
         });

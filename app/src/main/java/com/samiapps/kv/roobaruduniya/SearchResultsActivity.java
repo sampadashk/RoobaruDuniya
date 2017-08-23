@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -32,6 +33,8 @@ public class SearchResultsActivity extends AppCompatActivity {
     FirebaseDatabase dbfb;
     DatabaseReference dbsearch;
     DatabaseReference userReference;
+    TextView noResTextView;
+
     String query;
     ListView lvw;
     TabLayout tabLayout;
@@ -50,6 +53,7 @@ public class SearchResultsActivity extends AppCompatActivity {
         userReference=dbfb.getReference("user");
         lvw=(ListView) findViewById(R.id.listview);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
+        noResTextView=(TextView) findViewById(R.id.noResult);
         tabLayout.addTab(tabLayout.newTab().setText("Search By Title"));
         tabLayout.addTab(tabLayout.newTab().setText("Search By Author"));
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -89,24 +93,31 @@ public class SearchResultsActivity extends AppCompatActivity {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String key=klist.get(position);
-                Intent inten=new Intent(SearchResultsActivity.this,ArticleDetail.class);
-                inten.putExtra("searchString",key);
-                startActivity(inten);
+                if(!isAuthor) {
+                    String key = klist.get(position);
+                    Intent inten = new Intent(SearchResultsActivity.this, ArticleDetail.class);
+                    inten.putExtra("searchString", key);
+                    startActivity(inten);
+                }
+                else
+                {
+                    String userId=klist.get(position);
+                    Intent inten = new Intent(SearchResultsActivity.this, Profile.class);
+                    inten.putExtra("senuid", userId);
+                    startActivity(inten);
+                }
+                }
 
-            }
+
         });
-        performSearch();
+
 
 
        // handleIntent(getIntent());
 
     }
 
-    private void performSearch() {
 
-
-    }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
@@ -145,47 +156,60 @@ public class SearchResultsActivity extends AppCompatActivity {
                 {
                     queryAuthor(query);
                 }
-                Log.d("here","we");
-                list.clear();
-                listAdapter.clear();
-                klist.clear();
-             //   dbsearch.orderByValue("title").addChildEventListener(new ChildEventListener() {
-                dbsearch.orderByValue().addChildEventListener(new ChildEventListener() {
-                    @Override
-                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                        Log.d("check",dataSnapshot.getValue().toString());
+                else {
+                    Log.d("here", "we");
+                    list.clear();
+                    listAdapter.clear();
+                    klist.clear();
+                    //   dbsearch.orderByValue("title").addChildEventListener(new ChildEventListener() {
+                    dbsearch.orderByValue().addChildEventListener(new ChildEventListener() {
+                        @Override
+                        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                            Log.d("check", dataSnapshot.getValue().toString());
 
 
-                        String st=dataSnapshot.getValue().toString();
-                      if(st.toLowerCase().contains(query.toLowerCase())) {
-                          klist.add(dataSnapshot.getKey());
-                          list.add(st);
-                          listAdapter.notifyDataSetChanged();
-                      }
+                            String st = dataSnapshot.getValue().toString();
+                            if (st.toLowerCase().contains(query.toLowerCase())) {
+
+                                noResTextView.setVisibility(View.INVISIBLE);
+
+                                klist.add(dataSnapshot.getKey());
+                                list.add(st);
+                                listAdapter.notifyDataSetChanged();
+                            }
 
 
-                    }
 
-                    @Override
-                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                        }
 
-                    }
+                        @Override
+                        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
-                    @Override
-                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+                        }
 
-                    }
+                        @Override
+                        public void onChildRemoved(DataSnapshot dataSnapshot) {
 
-                    @Override
-                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                        }
 
-                    }
+                        @Override
+                        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                        }
 
-                    }
-                });
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+
+                    });
+
+
+                }
+                if(list.isEmpty())
+                {
+                    noResTextView.setVisibility(View.VISIBLE);
+                }
 
 
 
@@ -212,10 +236,15 @@ public class SearchResultsActivity extends AppCompatActivity {
                 Log.d("checknm",nm);
                 if(nm.toLowerCase().contains(query.toLowerCase()))
                 {
+
+
+
                    list.add(nm);
                     listAdapter.notifyDataSetChanged();
                     klist.add(dataSnapshot.getKey());
+                    noResTextView.setVisibility(View.GONE);
                 }
+
 
             }
 

@@ -621,6 +621,11 @@ public class TrialActivity extends AppCompatActivity
             mReceiver = null;
 
         }
+        if(ConnectivityReceiver!=null)
+        {
+            unregisterReceiver(ConnectivityReceiver);
+            ConnectivityReceiver=null;
+        }
 
     }
 
@@ -682,18 +687,22 @@ public class TrialActivity extends AppCompatActivity
       userDtabase.addListenerForSingleValueEvent(new ValueEventListener() {
           @Override
           public void onDataChange(DataSnapshot dataSnapshot) {
-              String uid=FirebaseAuth.getInstance().getCurrentUser().getUid();
-              Log.d("testui",uid);
-              if(dataSnapshot.hasChild(uid))
-              {
-                  Log.d("haschi","true");
-                 return;
+              try {
+                  String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                  Log.d("testui", uid);
+                  if (dataSnapshot.hasChild(uid)) {
+                      Log.d("haschi", "true");
+                      return;
+                  } else {
+                      Log.d("haschi", "false");
+                      String uphoto = FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl().toString();
+                      User u = new User(uname, uemail, null, TrialActivity.userStatus, uphoto);
+                      userDtabase.child(uid).setValue(u);
+                  }
               }
-              else
+              catch(NullPointerException e)
               {
-                  Log.d("haschi","false");
-                  User u= new User(uname,uemail,null,TrialActivity.userStatus);
-                  userDtabase.child(uid).setValue(u);
+                  e.printStackTrace();
               }
           }
 
@@ -761,6 +770,7 @@ public class TrialActivity extends AppCompatActivity
         super.onPause();
         //unregisterReceiver(mReceiver);
     }
+
 
     @Override
     public void onNewIntent(Intent intent) {

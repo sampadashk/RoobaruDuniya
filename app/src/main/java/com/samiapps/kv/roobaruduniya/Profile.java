@@ -92,8 +92,8 @@ public class Profile extends AppCompatActivity {
         rvc.setAdapter(listPublishedAdapter);
         Intent intent = getIntent();
         uid = intent.getStringExtra("senuid");
-        String uPhoto = intent.getStringExtra("senphoto");
-        Glide.with(this).load(uPhoto).into(userPhotoView);
+       // String uPhoto = intent.getStringExtra("senphoto");
+       // Glide.with(this).load(uPhoto).into(userPhotoView);
         Log.d("guid", uid);
 
         dbUser.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -103,6 +103,8 @@ public class Profile extends AppCompatActivity {
                     uname = dataSnapshot.child("name").getValue(String.class);
                     status = dataSnapshot.child("status").getValue(String.class);
                     uemai = dataSnapshot.child("email").getValue(String.class);
+                    String uPhoto=dataSnapshot.child("uPhoto").getValue(String.class);
+                    Glide.with(Profile.this).load(uPhoto).into(userPhotoView);
                     uNameTextView.setText(uname);
                     uStatusTextView.setText(status);
                     if(uemai!=null) {
@@ -131,6 +133,7 @@ public class Profile extends AppCompatActivity {
     }
 
     private void readmsgId() {
+
 
         // Log.d("actchk","3");
 
@@ -181,10 +184,12 @@ public class Profile extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 RoobaruDuniya rbd = dataSnapshot.getValue(RoobaruDuniya.class);
+                if(rbd.getUser().equals(uname)) {
 
-                //  Log.d("titleck", rbd.getTitle());
-                rubaru.add(rbd);
-                listPublishedAdapter.notifyDataSetChanged();
+                    //  Log.d("titleck", rbd.getTitle());
+                    rubaru.add(rbd);
+                    listPublishedAdapter.notifyDataSetChanged();
+                }
 
             }
 

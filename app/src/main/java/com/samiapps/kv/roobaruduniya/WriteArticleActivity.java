@@ -38,8 +38,6 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
@@ -50,7 +48,6 @@ import com.google.firebase.storage.UploadTask;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Random;
 
 
@@ -114,7 +111,7 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
     User u;
     Boolean b;
     int pos;
-    List<String> uids;
+
     RoobaruDuniya artsel;
     ProgressBar progressBar;
 
@@ -217,7 +214,7 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
         */
 
 
-        uids = new ArrayList<>();
+
         photoButton = (ImageButton) findViewById(R.id.photoPickerButton);
         writerDetail = (Button) findViewById(R.id.writer_detail);
         photoButton.setEnabled(false);
@@ -554,7 +551,7 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
         */
 
 
-        checkUserDb();
+
 
         super.onStart();
     }
@@ -598,17 +595,9 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
                     }
                     */
 
-                    Boolean b1 = uids.contains(userId);
-                    if (b1) {
 
                         dbRefUser.child(userId).child("articleStatus").child(key).setValue("draft");
-                    } else {
-                        if (u == null) {
-                            u = new User(user.getDisplayName(), userEmail, "draft", userPos);
-                        }
-                        dbRefUser.child(userId).setValue(u);
-                        dbRefUser.child(userId).child("articleStatus").child(key).setValue("draft");
-                    }
+
 
 
                     Toast.makeText(this, "Draft saved", Toast.LENGTH_LONG).show();
@@ -625,9 +614,9 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
                 break;
             }
             case R.id.publish: {
-                if(content.length()<500)
+                if(content.length()<200)
                 {
-                    Snackbar.make(llout,"Please write altleast 500 words to publish",Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(llout,"Please write altleast 200 words to publish",Snackbar.LENGTH_LONG).show();
                     break;
                 }
                 if(title.length()<2)
@@ -688,6 +677,7 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
                     }
 
 
+
                     if (userPos.equals("editor")) {
 
                         //TODO: publish editor
@@ -726,21 +716,16 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
                     } else {
 
 
-                        if (u == null) {
-                            u = new User(user.getDisplayName(), userEmail, "sent", userPos);
-                        } else if (u != null) {
-                            u.setArticleStatus("sent");
-                        }
+
+
+
                        // Log.d("chkuse", u.getarticleStatus());
-                        Boolean b2 = uids.contains(userId);
-                        if (b2) {
+
                           //  Log.d("pubbool", "" + b2);
                           //  Log.d("pubkey", key);
+
                             dbRefUser.child(userId).child("articleStatus").child(key).setValue("sent");
-                        } else {
-                            dbRefUser.child(userId).setValue(u);
-                            dbRefUser.child(userId).child("articleStatus").child(key).setValue("sent");
-                        }
+
 
 
                         //catch(Exception e){
@@ -775,27 +760,20 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
 
     private void publishEditor() {
 
-      if (u == null) {
-        u = new User(user.getDisplayName(), userEmail, "published", userPos);
-    } else if(u!=null) {
-        u.setArticleStatus("published");
-    }
+
+
+
                   //  Log.d("chkuse", u.getarticleStatus());
-    Boolean b2 = uids.contains(userId);
-                    if (b2) {
-       // Log.d("pubbool", "" + b2);
-       // Log.d("pubkey", key);
+
         dbRefUser.child(userId).child("articleStatus").child(key).setValue("published");
-    } else {
-        dbRefUser.child(userId).setValue(u);
-        dbRefUser.child(userId).child("articleStatus").child(key).setValue("published");
-    }
+
         long date = System.currentTimeMillis();
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         String dateString = sdf.format(date);
        // Log.d("checkDate",dateString);
         publishedRef.child(key).child("dateCreated").setValue(dateString);
         dbtitlepublished.child(key).setValue(rbd.getTitle());
+        new sendEmail().execute(rbd);
     }
 
     private void saveNclose() {
@@ -814,36 +792,7 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
         }
     }
 
-    private void checkUserDb() {
-        //We are checking usernames in userdatabase and adding it in list
-        if (eventListener == null) {
-            eventListener = new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
 
-                    Iterable<DataSnapshot> iterable = dataSnapshot.getChildren();
-
-                    for (DataSnapshot uid : iterable) {
-                        String s = uid.getKey();
-                      //  Log.d("ckk", s);
-                        uids.add(s);
-
-                    }
-
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            };
-
-
-            dbRefUser.addValueEventListener(eventListener);
-        }
-
-    }
 
     @Override
     public void onBackPressed() {
@@ -986,6 +935,8 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
 
 
     }
+
+
 
 }
 

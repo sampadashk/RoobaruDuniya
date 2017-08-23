@@ -274,6 +274,7 @@ public class EditorArticleActivity extends AppCompatActivity implements AdapterV
 
                 b.show();
                 */
+              new sendEmail().execute(rbd);
                 addPublishedDatabase();
                 //CHANGE VALUE OF ARTICLE STATUS IN USERDB TO PUBLISHED
                 changeUserDB();
@@ -283,6 +284,7 @@ public class EditorArticleActivity extends AppCompatActivity implements AdapterV
                 //approveButton.setEnabled(false);
                 saveEditorButton.setEnabled(false);
                 rejectButton.setEnabled(false);
+
                 close();
 
 
