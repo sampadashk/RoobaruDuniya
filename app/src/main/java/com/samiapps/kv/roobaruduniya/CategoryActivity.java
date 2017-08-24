@@ -96,7 +96,12 @@ public class CategoryActivity extends AppCompatActivity {
 
         mRecycleView.setAdapter(imageAdapter);
         Intent intent=getIntent();
-       category=intent.getStringExtra("articlecat");
+        if(intent.getStringExtra("articlecat")!=null) {
+            category = intent.getStringExtra("articlecat");
+        }
+        else {
+           category= intent.getStringExtra(RoobaruWidgetProvider.EXTRA_STRING);
+        }
         Log.d("categorycheck",category);
         setTitle(category);
      /*   categoryRef.addListenerForSingleValueEvent(new ValueEventListener() {

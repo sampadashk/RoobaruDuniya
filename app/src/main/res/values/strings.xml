@@ -68,7 +68,7 @@ Newspapers for India, Govt of India) द्वारा पंजीयत ह�
 इसे पहले से भी अधिक ऊँचाइयों तक पहुँचाएगा.\n\n
 
 इस पत्रिका की मुख्य संपादक व प्रकाशक अंकिता जैन हैं |</string>
-    <string name="facebook_application_id" translatable="false">1948414998767993</string>
+    <string name="facebook_application_id">1948414998767993</string>
     <string name="facebook_login_protocol_scheme" translatable="false">fbAPP_ID</string>
 
     <string name="action_settings">Settings</string>
@@ -110,7 +110,8 @@ Newspapers for India, Govt of India) द्वारा पंजीयत ह�
     <string name="go_home">Go to home Screen</string>
     <string name="bookmark_button">bookmark article</string>
     <string name="share_button">share article</string>
-
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
 
 
 </resources>

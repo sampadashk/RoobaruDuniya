@@ -486,6 +486,7 @@ public class ArticleDetail extends AppCompatActivity {
                     artsel = (RoobaruDuniya) intent.getSerializableExtra(ArticleDetail.TAG);
                     Log.d("ckart", artsel.getTitle());
                     keySel = intent.getStringExtra("keySelected");
+                    Log.d("ck",keySel);
                     loadUI();
                 }
              /*   msgListener = msgReference.child(keySel).addValueEventListener(new ValueEventListener() {
@@ -1062,6 +1063,7 @@ public class ArticleDetail extends AppCompatActivity {
 
     public void onDestroy() {
         super.onDestroy();
+
         commentList.clear();
         if (commentListener != null) {
             publishedRef.child(keySel).child("comments")

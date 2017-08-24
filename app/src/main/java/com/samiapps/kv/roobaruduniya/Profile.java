@@ -72,6 +72,7 @@ public class Profile extends AppCompatActivity {
             public void onItemClick(int position, View v) {
                 RoobaruDuniya item = rubaru.get(position);
                 Intent intent = new Intent(Profile.this, ArticleDetail.class);
+
                 String key=keyList.get(position);
                 intent.putExtra("keySelected",key);
                 intent.putExtra("position", position);
@@ -146,6 +147,7 @@ public class Profile extends AppCompatActivity {
                         //  Log.d("valck",ds.getValue()+"");
                         if (ds.getValue().equals("published")) {
 
+
                             //msgList.add(ds.getKey());
                             //  Log.d("keyck", ds.getKey());
                             checkMessages(ds.getKey());
@@ -175,9 +177,9 @@ public class Profile extends AppCompatActivity {
 
     }
 
-    private void checkMessages(String key) {
+    private void checkMessages(final String key) {
         // Log.d("actchk","4");
-        keyList.add(key);
+
 
 
         msgReference.child(key).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -188,6 +190,7 @@ public class Profile extends AppCompatActivity {
 
                     //  Log.d("titleck", rbd.getTitle());
                     rubaru.add(rbd);
+                    keyList.add(key);
                     listPublishedAdapter.notifyDataSetChanged();
                 }
 
