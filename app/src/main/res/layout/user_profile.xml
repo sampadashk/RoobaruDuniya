@@ -31,6 +31,7 @@
                     android:layout_height="85dp"
                     android:paddingTop="@dimen/nav_header_vertical_spacing"
                     android:gravity="center"
+                    android:contentDescription="@string/writer_profile"
 
 
                     app:srcCompat="@android:drawable/sym_def_app_icon" />

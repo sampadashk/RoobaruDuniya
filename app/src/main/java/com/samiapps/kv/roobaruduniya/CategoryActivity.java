@@ -52,7 +52,7 @@ public class CategoryActivity extends AppCompatActivity {
 
 
 
-    private imgAdapter imageAdapter;
+    private ImgAdapter imageAdapter;
     ArrayList<RoobaruDuniya> rubaru=new ArrayList<RoobaruDuniya>();
     ArrayList<String> keys=new ArrayList<>();
 
@@ -76,17 +76,21 @@ public class CategoryActivity extends AppCompatActivity {
         mRecycleView = (RecyclerView) findViewById(R.id.editor_recycleview);
         categoryRef = firebaseDtabase.getReference("categories");
 
-        imageAdapter=new imgAdapter(rubaru,this);
+        imageAdapter=new ImgAdapter(rubaru,this);
         //StaggeredGridLayoutManager sglm = new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
         //sglm.setReverseLayout(true);
        // GridLayoutManager gridLayoutManager=new GridLayoutManager(this,2);
-        LinearLayoutManager linearLayoutManager=new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,true);
+        LinearLayoutManager linearLayoutManager=new LinearLayoutManager(CategoryActivity.this);
+        linearLayoutManager.setReverseLayout(true);
+
         linearLayoutManager.setStackFromEnd(true);
+
         //to display in reverse order;setreverselayout(true)
 
 
 
         mRecycleView.setLayoutManager(linearLayoutManager);
+
 
         error= (TextView) findViewById(R.id.error);
         mRecycleView.setItemAnimator(new DefaultItemAnimator());
@@ -130,7 +134,7 @@ public class CategoryActivity extends AppCompatActivity {
         */
 
         getArticleByCategory();
-        imageAdapter.setOnItemClickListener(new imgAdapter.ClickListener() {
+        imageAdapter.setOnItemClickListener(new ImgAdapter.ClickListener() {
             @Override
             public void onItemClick(int position, View v) {
 

@@ -4,7 +4,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -39,7 +38,6 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -70,14 +68,11 @@ public class ArticleDetail extends AppCompatActivity {
     CollapsingToolbarLayout collapsingToolbarLayout;
     CoordinatorLayout cdlayout;
     LinearLayout displayCont;
-    Bitmap bitmap;
+
     TextView num_Of_likes;
     ArrayList<TextFormat> textFormatList;
     String contentString;
     ImageButton homeButton;
-   GoogleApiClient googleApiClient;
-    TextView tx;
-    String[] optTexrSize = { "small","medium","large","Extra Large" };
 
 
 
@@ -94,7 +89,7 @@ public class ArticleDetail extends AppCompatActivity {
     ImageButton bookmarkButton;
     String date;
     private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
+
     FloatingActionButton favButton;
     DatabaseReference publishedRef;
     DatabaseReference msgReference;
@@ -102,7 +97,7 @@ public class ArticleDetail extends AppCompatActivity {
     DatabaseReference styleRef;
     DatabaseReference userRef;
     Uri userPhoto;
-    String keySel;
+    private String keySel;
     boolean isFav;
     boolean isBookMarked;
     FirebaseDatabase db;
@@ -130,6 +125,7 @@ public class ArticleDetail extends AppCompatActivity {
 
 
         commentEditText = (EditText) findViewById(R.id.w_comment);
+        artsel=new RoobaruDuniya();
         sendCmt = (Button) findViewById(R.id.send_comment);
         cmtrecyclerV = (RecyclerView) findViewById(R.id.list_comment);
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collaptool_layout);
@@ -207,7 +203,7 @@ public class ArticleDetail extends AppCompatActivity {
 
 
                 Comment c=commentList.get(position);
-                Log.d("posdelf",""+position);
+              //  Log.d("posdelf",""+position);
                 //only give delete right to the person who wrote the comment;Than only delete button will be visisble
                 if(c.commentorName.equals(TrialActivity.mUsername))
                 {
@@ -236,7 +232,7 @@ public class ArticleDetail extends AppCompatActivity {
                                         int i = 0;
                                         // String[] sampleString = new String[length];
                                         //TODO DELETE
-                                        Log.d("posdel", "" + position);
+                                //        Log.d("posdel", "" + position);
                                         while (i < position) {
                                             if (iterator.hasNext()) {
                                                 iterator.next();
@@ -247,7 +243,7 @@ public class ArticleDetail extends AppCompatActivity {
                                             //get the key using iterator and than delete it
 
                                             String key = iterator.next().getKey();
-                                            Log.d("keydel", key);
+                                 //           Log.d("keydel", key);
                                             dataSnapshot.child(key).getRef().removeValue();
 
                                             return;
@@ -359,7 +355,7 @@ public class ArticleDetail extends AppCompatActivity {
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                         Log.d("checksi","here");
+                    //     Log.d("checksi","here");
                         switch(selectedPosition[0])
                         {
                             case 0:
@@ -418,7 +414,7 @@ public class ArticleDetail extends AppCompatActivity {
         Uri data=intent.getData();
         if(data!=null)
         {
-            Log.d("uri is",data.toString());
+         //   Log.d("uri is",data.toString());
             String path = data.getPath();
             path=path.substring(0, path.length() - 1);
             String idStr = path.substring(path.lastIndexOf('/') + 1);
@@ -431,10 +427,10 @@ public class ArticleDetail extends AppCompatActivity {
 
        else if (intent.getStringExtra("intentNotification") != null) {
             NotificationJson obj = (NotificationJson) intent.getSerializableExtra("NotificationObject");
-            Log.d("intentchk", "notification");
+          //  Log.d("intentchk", "notification");
             keySel = obj.getMsg_id();
-            Log.d("chkrecikey", keySel);
-            Log.d("chkurl", "https://roobaru-duniya-86f7d.firebaseio.com/messages/" + keySel);
+           // Log.d("chkrecikey", keySel);
+           // Log.d("chkurl", "https://roobaru-duniya-86f7d.firebaseio.com/messages/" + keySel);
             LoadUIFromkey(keySel);
 
 
@@ -452,7 +448,7 @@ public class ArticleDetail extends AppCompatActivity {
                 obj = new JSONObject(intent.getStringExtra("bkgnotification"));
                 keySel = obj.get("msgid").toString();
 
-                Log.d("chkrecikey", keySel);
+              //  Log.d("chkrecikey", keySel);
 
                 LoadUIFromkey(keySel);
 
@@ -463,7 +459,7 @@ public class ArticleDetail extends AppCompatActivity {
         else if(intent.getStringExtra("searchString")!=null)
         {
          keySel = intent.getStringExtra("searchString");
-            Log.d("kkk",keySel);
+          //  Log.d("kkk",keySel);
 
             if(keySel!=null) {
                 LoadUIFromkey(keySel);
@@ -474,21 +470,15 @@ public class ArticleDetail extends AppCompatActivity {
         else
             {
             pos = intent.getIntExtra("position", -1);
-            Log.d("checkpos", "" + pos);
-                if(pos==-1)
-                {
+           // Log.d("checkpos", "" + pos);
 
 
-
-
-                }
-                else {
-                    artsel = (RoobaruDuniya) intent.getSerializableExtra(ArticleDetail.TAG);
-                    Log.d("ckart", artsel.getTitle());
+                    //artsel = (RoobaruDuniya) intent.getSerializableExtra(ArticleDetail.TAG);
+                   // Log.d("ckart", artsel.getTitle());
                     keySel = intent.getStringExtra("keySelected");
-                    Log.d("ck",keySel);
-                    loadUI();
-                }
+                  //  Log.d("ck",keySel);
+                LoadUIFromkey(keySel);
+
              /*   msgListener = msgReference.child(keySel).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -518,18 +508,19 @@ public class ArticleDetail extends AppCompatActivity {
     }
 
     private void LoadUIFromkey(String keySel) {
+        Log.d("kratika",keySel);
         msgListener = msgReference.child(keySel).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 artsel = dataSnapshot.getValue(RoobaruDuniya.class);
                 //updating UI when you have article
                 loadUI();
-                Log.d("artchktit", artsel.getTitle());
+              //  Log.d("artchktit", artsel.getTitle());
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.d("dberror", databaseError.toString());
+              //  Log.d("dberror", databaseError.toString());
             }
         });
 
@@ -559,28 +550,28 @@ public class ArticleDetail extends AppCompatActivity {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         contentString = artsel.getContent();
                         if (dataSnapshot.exists()) {
-                            Log.d("ckval", "hasvalue");
+                          //  Log.d("ckval", "hasvalue");
                             for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                                Log.d("ckke", ds.getKey());
+                              //  Log.d("ckke", ds.getKey());
 
                                 TextFormat tf = ds.getValue(TextFormat.class);
 
-                                Log.d("chktd", tf.getStyle());
-
+                             //   Log.d("chktd", tf.getStyle());
+//
                                // SpannableStringBuilder str = new SpannableStringBuilder(contentString);
 
 
                                 if (tf.getStyle().equals("bold")) {
 
                                     str.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD), tf.getStart(), tf.getEnd(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                                    Log.d("ckbold", "" + str);
+                                  //  Log.d("ckbold", "" + str);
 
 
                                 }
                                 if (tf.getStyle().equals("italic")) {
 
                                     str.setSpan(new android.text.style.StyleSpan(Typeface.ITALIC), tf.getStart(), tf.getEnd(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                                    Log.d("ckbold", "" + str);
+                                //    Log.d("ckbold", "" + str);
 
 
                                 }
@@ -633,8 +624,8 @@ public class ArticleDetail extends AppCompatActivity {
                 public void onClick(View v) {
                     String uid=artsel.getuserId();
 
-                    Log.d("checkname",wname);
-                    Log.d("checkuser",userName);
+                  //  Log.d("checkname",wname);
+                   // Log.d("checkuser",userName);
                     if(wname.equals(userName)) {
 
                         // String uphoto=artsel.getUserProfilePhoto();
@@ -658,14 +649,62 @@ public class ArticleDetail extends AppCompatActivity {
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(imgProfile);
         }
+        loadComment();
 
 
+
+            }
+
+            public void loadComment()
+            {
+                if (commentListener == null) {
+                    commentListener = new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+
+//clear the arraylist before display so that duplicate result is not printed
+                            Log.d("commentcheck","check");
+                            commentList.clear();
+
+                            if (dataSnapshot.exists()) {
+                                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                    Log.d("commentkey",keySel);
+
+
+                                    Comment c = ds.getValue(Comment.class);
+                                    commentList.add(c);
+                                    commentAdapter.notifyDataSetChanged();
+                                    try {
+                                        Log.d("checkcmt", c.comment);
+                                         Log.d("checkcname", c.commentorName);
+
+                                    }
+                                    catch(NullPointerException e)
+                                    {
+                                        e.printStackTrace();
+                                    }
+
+                                }
+
+
+                            }
+
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    };
+                    publishedRef.child(keySel).child("comments").addValueEventListener(commentListener);
+                }
 
             }
     @Override
     public void onResume()
     {
         super.onResume();
+        Log.d("resume","here");
         /*
         FirebaseDynamicLinks.getInstance()
                 .getDynamicLink(getIntent())
@@ -751,42 +790,6 @@ public class ArticleDetail extends AppCompatActivity {
         // Log.d("chkobj",""+artsel);
 
 
-        if (commentListener == null) {
-            commentListener = new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-
-//clear the arraylist before display so that duplicate result is not printed
-                    commentList.clear();
-                    if (dataSnapshot.exists()) {
-                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
-
-
-                            Comment c = ds.getValue(Comment.class);
-                            commentList.add(c);
-                            try {
-                                //   Log.d("checkcname", c.commentorName);
-                                // Log.d("checkcmt", c.comment);
-                            }
-                            catch(NullPointerException e)
-                            {
-                                e.printStackTrace();
-                            }
-                            commentAdapter.notifyDataSetChanged();
-                        }
-
-
-                    }
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            };
-            publishedRef.child(keySel).child("comments").addValueEventListener(commentListener);
-        }
 
 
        /* publishedRef.child(keySel).child("comments").addValueEventListener(new ValueEventListener() {
@@ -836,7 +839,8 @@ public class ArticleDetail extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String comment = commentEditText.getText().toString();
-                String cName = TrialActivity.mUsername;
+                String cName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+
 
                 long date = System.currentTimeMillis();
 
@@ -859,10 +863,10 @@ public class ArticleDetail extends AppCompatActivity {
                 HashMap<String, String> notificationData = new HashMap<String, String>();
                 notificationData.put("from", mAuth.getCurrentUser().getUid());
                 notificationData.put("type", "comment");
-                checkValue();
+               // checkValue();
 
 
-                notificationData.put("commentNo", Integer.toString(cNo + 1));
+                notificationData.put("commentNo", Long.toString(System.currentTimeMillis()));
                 notificationRef.child(artsel.getuserId()).child(keySel).setValue(notificationData);
 
                 sendCmt.setEnabled(false);
@@ -1063,6 +1067,7 @@ public class ArticleDetail extends AppCompatActivity {
 
     public void onDestroy() {
         super.onDestroy();
+        Log.d("detaildestroy","destory");
 
         commentList.clear();
         if (commentListener != null) {
@@ -1098,7 +1103,7 @@ public class ArticleDetail extends AppCompatActivity {
 
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        Log.d("where","I am called");
+      //  Log.d("where","I am called");
         setIntent(intent);
 
 
@@ -1106,14 +1111,8 @@ public class ArticleDetail extends AppCompatActivity {
 
 
 
- /* @Override
-    public void onBackPressed() {
 
-        super.onBackPressed();
-      Intent it=new Intent(ArticleDetail.this,TrialActivity.class);
-      startActivity(it);
-    }
-    */
+
 
 
 

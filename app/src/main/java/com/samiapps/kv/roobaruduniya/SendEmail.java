@@ -7,8 +7,8 @@ import android.util.Log;
  * Created by KV on 23/8/17.
  */
 
-public class sendEmail extends AsyncTask<RoobaruDuniya,Void,Void> {
-    public sendEmail() {
+public class SendEmail extends AsyncTask<RoobaruDuniya,Void,Void> {
+    public SendEmail() {
     }
 
     @Override

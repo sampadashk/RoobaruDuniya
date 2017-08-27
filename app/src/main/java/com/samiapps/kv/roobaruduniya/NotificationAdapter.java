@@ -13,12 +13,12 @@ import java.util.ArrayList;
  * Created by KV on 21/7/17.
  */
 
-public class notificationAdapter extends RecyclerView.Adapter<notificationAdapter.ViewHolder> {
+public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.ViewHolder> {
     Context context;
     ArrayList<Notification> notifications;
-    private static notificationAdapter.ClickListener clickListener;
+    private static NotificationAdapter.ClickListener clickListener;
 
-    notificationAdapter(Context context,ArrayList<Notification> notifications)
+    NotificationAdapter(Context context, ArrayList<Notification> notifications)
     {
         this.context=context;
         this.notifications=notifications;
@@ -26,12 +26,12 @@ public class notificationAdapter extends RecyclerView.Adapter<notificationAdapte
 
 
     @Override
-    public notificationAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public NotificationAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v=LayoutInflater.from(context).inflate(R.layout.notification_item,parent,false);
         return new ViewHolder(v);
     }
-    public void setOnItemClickListener(notificationAdapter.ClickListener clickListener) {
-        notificationAdapter.clickListener = clickListener;
+    public void setOnItemClickListener(NotificationAdapter.ClickListener clickListener) {
+        NotificationAdapter.clickListener = clickListener;
     }
 
     @Override

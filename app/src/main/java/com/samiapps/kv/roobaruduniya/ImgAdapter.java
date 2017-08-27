@@ -16,12 +16,12 @@ import java.util.ArrayList;
  * Created by KV on 13/3/17.
  */
 
-public class imgAdapter extends RecyclerView.Adapter<imgAdapter.ViewHolder> {
+public class ImgAdapter extends RecyclerView.Adapter<ImgAdapter.ViewHolder> {
     private static ClickListener clickListener;
     Context context;
     private ArrayList<RoobaruDuniya> articles;
 
-    public imgAdapter(ArrayList<RoobaruDuniya> articles, Context context) {
+    public ImgAdapter(ArrayList<RoobaruDuniya> articles, Context context) {
         this.articles = articles;
         this.context = context;
 
@@ -69,7 +69,7 @@ public class imgAdapter extends RecyclerView.Adapter<imgAdapter.ViewHolder> {
         return articles.size();
     }
     public void setOnItemClickListener(ClickListener clickListener) {
-        imgAdapter.clickListener = clickListener;
+        ImgAdapter.clickListener = clickListener;
     }
     public interface ClickListener {
         void onItemClick(int position, View v);

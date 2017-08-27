@@ -21,12 +21,12 @@ import java.util.List;
  * Created by KV on 13/3/17.
  */
 
-public class categoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static ClickListener clickListener;
     Context context;
     private List<DisplayEvent> mList;
 
-    public categoryAdapter(ArrayList<DisplayEvent> articles, Context context) {
+    public CategoryAdapter(ArrayList<DisplayEvent> articles, Context context) {
         this.mList = articles;
         this.context = context;
     }
@@ -78,7 +78,7 @@ public class categoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     public void setOnItemClickListener(ClickListener clickListener) {
-        categoryAdapter.clickListener = clickListener;
+        CategoryAdapter.clickListener = clickListener;
     }
 
     public interface ClickListener {

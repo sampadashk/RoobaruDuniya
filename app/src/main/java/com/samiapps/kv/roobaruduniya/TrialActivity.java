@@ -32,8 +32,6 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.facebook.FacebookSdk;
-import com.facebook.appevents.AppEventsLogger;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.firebase.auth.FirebaseAuth;
@@ -108,7 +106,7 @@ public class TrialActivity extends AppCompatActivity
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //  Log.d(TAG,"ONCREATE 1");
+         Log.d(TAG,"ONCREATE 1");
         setContentView(R.layout.activity_trial);
 
 
@@ -116,25 +114,31 @@ public class TrialActivity extends AppCompatActivity
         mUsername = ANONYMOUS;
         userStatus = "Blogger";
         shouldLoadHomeFragOnBackPress = true;
+        navItemIndex = 0;
+         CURRENT_TAG = TAG_HOME;
 
 
-        FacebookSdk.sdkInitialize(getApplicationContext());
-        AppEventsLogger.activateApp(this);
+
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
 
-                // String s=firebaseAuth.getCurrentUser().getUid();
-                if (user != null) {
-                 Log.d(TAG,"Signed in 3");
+
+               if (user != null) {
 
 
-                    onSignedInInitialize(user.getDisplayName(), user.getEmail(), user.getPhotoUrl(), savedInstanceState);
+                       Log.d(TAG, "Signed in 3");
 
 
-                } else {
+                       onSignedInInitialize(user.getDisplayName(), user.getEmail(), user.getPhotoUrl(), savedInstanceState);
+
+
+
+
+               }
+                 else {
                  Log.d(TAG,"Signed in 2");
                     onSignedOutCleanup();
                     startActivityForResult(
@@ -174,13 +178,6 @@ public class TrialActivity extends AppCompatActivity
             public void onClick(View view) {
                 String email = "roobaru.duniya@gmail.com";
                 Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + email));
-                //  intent.putExtra(Intent.EXTRA_EMAIL,"roobaru.duniya@gmail.com");
-                // intent.setType("text/html");
-
-                // intent.putExtra(Intent.EXTRA_EMAIL,"roobaru.duniya@gmail.com");
-                //  intent.putExtra(Intent.EXTRA_SUBJECT, "Subject");
-                //intent.putExtra(Intent.EXTRA_TEXT, "I'm email body.");
-
                 startActivity(Intent.createChooser(intent, "Send Email"));
             }
         });
@@ -194,7 +191,7 @@ public class TrialActivity extends AppCompatActivity
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         Menu navmenu = navigationView.getMenu();
         sentart = navmenu.findItem(R.id.nav_sent);
-        // loadNavHeader();
+
 
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -273,6 +270,7 @@ public class TrialActivity extends AppCompatActivity
 
             }
         });
+        checkUserDb();
 
         //  Log.d("checkedit",""+isEditor);
         //   Log.d("checkstatus",userStatus);
@@ -577,6 +575,7 @@ public class TrialActivity extends AppCompatActivity
     @Override
     public void onResume() {
         super.onResume();
+        Log.d("checkmain",CURRENT_TAG);
         //  Log.d(TAG,"resume");
 
    /*    FirebaseUser user=FirebaseAuth.getInstance().getCurrentUser();
@@ -604,18 +603,23 @@ public class TrialActivity extends AppCompatActivity
     @Override
     public void onStop() {
         super.onStop();
-        // Log.d(TAG,"onStop()");
         if (mAuthListener != null) {
+
             mAuth.removeAuthStateListener(mAuthListener);
 
+
+
         }
+         Log.d(TAG,"onStop()");
+
 
 
     }
 
     public void onDestroy() {
         super.onDestroy();
-        //  Log.d(TAG,"onDestroy()");
+         Log.d("TrialOndestroy",""+userStatus);
+
         if (mReceiver != null) {
             unregisterReceiver(mReceiver);
             mReceiver = null;
@@ -645,6 +649,7 @@ public class TrialActivity extends AppCompatActivity
             photoUri = photo;
             uemail = email;
             mHandler = new Handler();
+
            Log.d("cname", uname);
           Log.d("curi", photoUri.toString());
 
@@ -664,12 +669,12 @@ public class TrialActivity extends AppCompatActivity
         }
 
         checkEditor();
-        checkUserDb();
+       // checkUserDb();
 
         loadNavHeader();
         if (savedInstanceState == null) {
-            navItemIndex = 0;
-            CURRENT_TAG = TAG_HOME;
+         //   navItemIndex = 0;
+          //  CURRENT_TAG = TAG_HOME;
             loadHomeFragment();
         }
 
@@ -696,7 +701,7 @@ public class TrialActivity extends AppCompatActivity
                   } else {
                       Log.d("haschi", "false");
                       String uphoto = FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl().toString();
-                      User u = new User(uname, uemail, null, TrialActivity.userStatus, uphoto);
+                      User u = new User(uname,uemail,null,TrialActivity.userStatus,uphoto);
                       userDtabase.child(uid).setValue(u);
                   }
               }
@@ -759,6 +764,7 @@ public class TrialActivity extends AppCompatActivity
             default:
                 return new MainPage();
         }
+
     }
 
     private void setToolbarTitle() {
@@ -775,16 +781,18 @@ public class TrialActivity extends AppCompatActivity
     @Override
     public void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        setIntent(intent);
 
-        String get_Fragment = intent.getStringExtra("menuFragment");
+   /*     String get_Fragment = intent.getStringExtra("menuFragment");
         // Log.d("getnotif",get_Fragment);
         if (get_Fragment.equals("HomeFragment")) {
             HomeFragment hmFragment = new HomeFragment();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             //fragmentTransaction.addToBackStack(null);
             fragmentTransaction.replace(R.id.frame, hmFragment).commit();
+            */
         }
-    }
+
     public boolean isNetworkUp()
     {
         ConnectivityManager cm= (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);

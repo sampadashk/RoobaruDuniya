@@ -232,17 +232,21 @@ public class SearchResultsActivity extends AppCompatActivity {
         userReference.orderByChild("name").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                String nm=dataSnapshot.child("name").getValue().toString();
-                Log.d("checknm",nm);
-                if(nm.toLowerCase().contains(query.toLowerCase()))
+                try {
+                    String nm = dataSnapshot.child("name").getValue().toString();
+                    //  Log.d("checknm",nm);
+                    if (nm.toLowerCase().contains(query.toLowerCase())) {
+
+
+                        list.add(nm);
+                        listAdapter.notifyDataSetChanged();
+                        klist.add(dataSnapshot.getKey());
+                        noResTextView.setVisibility(View.GONE);
+                    }
+                }
+                catch (NullPointerException e)
                 {
-
-
-
-                   list.add(nm);
-                    listAdapter.notifyDataSetChanged();
-                    klist.add(dataSnapshot.getKey());
-                    noResTextView.setVisibility(View.GONE);
+                    e.printStackTrace();
                 }
 
 

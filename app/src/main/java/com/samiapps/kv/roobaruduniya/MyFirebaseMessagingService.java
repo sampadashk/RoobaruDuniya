@@ -75,16 +75,18 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 ;
 
         Intent resultIntent = new Intent(this,ArticleDetail.class);
+        resultIntent.setAction(Long.toString(System.currentTimeMillis()));
        // Log.d("getAction",click_action);
         resultIntent.putExtra("bkgnotification",object.toString());
-        resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+      //  resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
 // Because clicking the notification opens a new ("special") activity, there's
 // no need to create an artificial back stack.
+        int mNotificationId = (int) System.currentTimeMillis();
         PendingIntent resultPendingIntent =
                 PendingIntent.getActivity(
                         this,
-                        0,
+                        0 ,
                         resultIntent,
                         PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_ONE_SHOT)
                 ;
@@ -92,7 +94,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
 
 // Sets an ID for the notification
-        int mNotificationId = (int) System.currentTimeMillis();
+
+
+
 // Gets an instance of the NotificationManager service
         NotificationManager mNotifyMgr =
                 (NotificationManager) getSystemService(NOTIFICATION_SERVICE);

@@ -87,6 +87,7 @@
             android:layout_alignParentBottom="true"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:contentDescription="@string/choose_article_image"
 
             android:background="@android:drawable/ic_menu_gallery" />
         <Button
@@ -115,6 +116,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_alignParentBottom="true"
+            android:contentDescription="@string/italic_button"
             android:background="@drawable/ic_format_list_bulleted_black_24dp"
             android:layout_toRightOf="@id/italic_button"/>
 

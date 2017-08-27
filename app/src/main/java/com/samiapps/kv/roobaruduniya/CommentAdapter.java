@@ -42,6 +42,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         String commnt=cmt.getComment();
         String date=cmt.getDate();
         String imgCommentor=cmt.getuPhoto();
+     //   Log.d("commentname",cmtName);
         holder.cName.setText(cmtName);
         holder.cmnt.setText(commnt);
         holder.dateTextView.setText(date);

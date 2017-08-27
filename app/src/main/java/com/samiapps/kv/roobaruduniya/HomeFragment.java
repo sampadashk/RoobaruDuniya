@@ -50,7 +50,7 @@ public class HomeFragment extends Fragment {
     int column;
 
 
-    private categoryAdapter catdapter;
+    private CategoryAdapter catdapter;
     ArrayList<DisplayEvent> rubaru = new ArrayList<DisplayEvent>();
     ArrayList<String> keys = new ArrayList<>();
 
@@ -95,7 +95,7 @@ public class HomeFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.headlinelayout, container, false);
         mLoadingIndicator = (ProgressBar) rootView.findViewById(R.id.pb_loading_indicator);
         mRecycleView = (RecyclerView) rootView.findViewById(R.id.editor_recycleview);
-        catdapter = new categoryAdapter(rubaru, getContext());
+        catdapter = new CategoryAdapter(rubaru, getContext());
         //StaggeredGridLayoutManager sglm = new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
         //sglm.setReverseLayout(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
@@ -116,7 +116,7 @@ public class HomeFragment extends Fragment {
 
 
 
-     catdapter.setOnItemClickListener(new categoryAdapter.ClickListener() {
+     catdapter.setOnItemClickListener(new CategoryAdapter.ClickListener() {
             @Override
             public void onItemClick(int position, View v) {
 

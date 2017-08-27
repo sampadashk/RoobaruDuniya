@@ -33,7 +33,7 @@ public class FavFragment extends Fragment {
     private FirebaseDatabase firebaseDbase;
     private DatabaseReference dReference;
     private DatabaseReference mReference;
-    private imgAdapter imageAdapter;
+    private ImgAdapter imageAdapter;
     ArrayList<RoobaruDuniya> rubaru = new ArrayList<RoobaruDuniya>();
     ArrayList<String> kList;
     Cursor c;
@@ -131,14 +131,14 @@ public class FavFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.headlinelayout, container, false);
       //  Log.d(TAG,"favonCreateView");
         mRecycleView = (RecyclerView) rootView.findViewById(R.id.editor_recycleview);
-        imageAdapter = new imgAdapter(rubaru, getContext());
+        imageAdapter = new ImgAdapter(rubaru, getContext());
         mRecycleView.setLayoutManager(new GridLayoutManager(getContext(), 2));
         mRecycleView.setItemAnimator(new DefaultItemAnimator());
         mRecycleView.setAdapter(imageAdapter);
 
 
 
-        imageAdapter.setOnItemClickListener(new imgAdapter.ClickListener() {
+        imageAdapter.setOnItemClickListener(new ImgAdapter.ClickListener() {
             @Override
             public void onItemClick(int position, View v) {
 
@@ -167,6 +167,7 @@ public class FavFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+
        // Log.d(TAG,"favstop");
        // rubaru.clear();
 

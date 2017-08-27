@@ -22,7 +22,7 @@ public class NotificationList extends AppCompatActivity {
     RecyclerView notificationRecyclerView;
     ArrayList<Notification> notificationArrayList;
     ArrayList<NotificationJson> jsonArrayList;
-    notificationAdapter notifiadapter;
+    NotificationAdapter notifiadapter;
     public void onCreate(Bundle savedInstanceState)
     {
 
@@ -61,7 +61,7 @@ public class NotificationList extends AppCompatActivity {
 
         //TODO: add msg in arraylist
 
-        notifiadapter=new notificationAdapter(this,notificationArrayList);
+        notifiadapter=new NotificationAdapter(this,notificationArrayList);
         RecyclerView.LayoutManager layoutManager=new LinearLayoutManager(getApplicationContext());
         SeparatorDecoration decoration = new SeparatorDecoration(this, Color.GRAY, 1.5f);
         notificationRecyclerView.addItemDecoration(decoration);
@@ -72,7 +72,7 @@ public class NotificationList extends AppCompatActivity {
 
 
         notificationRecyclerView.setAdapter(notifiadapter);
-        notifiadapter.setOnItemClickListener(new notificationAdapter.ClickListener() {
+        notifiadapter.setOnItemClickListener(new NotificationAdapter.ClickListener() {
             @Override
             public void onItemClick(int position, View v) {
                 NotificationJson nj=jsonArrayList.get(position);

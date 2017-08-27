@@ -20,6 +20,7 @@
                 android:id="@+id/widget_img_launcher"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
+                android:contentDescription="@string/widget_launcher"
                 android:layout_gravity="center_vertical"
                 android:src="@drawable/roobaru_logo"/>
             <TextView

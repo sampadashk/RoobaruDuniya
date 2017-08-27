@@ -144,6 +144,7 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
         formatList=new ArrayList<>();
         userId = user.getUid();
         uStatus=TrialActivity.userStatus;
+        Log.d("TrialOnStatus",uStatus);
         firebaseStorage=FirebaseStorage.getInstance();
         defaultPhoto=firebaseStorage.getReference().child("default");
         //userPos = "Blogger";
@@ -279,7 +280,7 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
 
                             //TODO: SET user profile photo
                         } else if (rbd == null) {
-                            rbd = new RoobaruDuniya(title.getText().toString(), content.getText().toString(), null, wName, null, null, 0, 0);
+                            rbd = new RoobaruDuniya(title.getText().toString(), content.getText().toString(), null, wName, userId, null, 0, 0);
                             if(downloadProfileUrl!=null)
                             {
                                 rbd.setUserProfilePhoto(downloadProfileUrl.toString());
@@ -304,6 +305,7 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
     }
 
     public void onStart() {
+        Log.d("TrialOnStat",uStatus);
 
         try {
             if (uStatus.equals("editor")) {
@@ -773,14 +775,15 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
        // Log.d("checkDate",dateString);
         publishedRef.child(key).child("dateCreated").setValue(dateString);
         dbtitlepublished.child(key).setValue(rbd.getTitle());
-        new sendEmail().execute(rbd);
+        new SendEmail().execute(rbd);
     }
 
     private void saveNclose() {
         draftPressed = 0;
         key = null;
-        Intent inti = new Intent(this, TrialActivity.class);
-        startActivity(inti);
+        super.onBackPressed();
+      //  Intent inti = new Intent(this, TrialActivity.class);
+       // startActivity(inti);
 
     }
 

@@ -22,9 +22,9 @@ import com.google.firebase.database.ValueEventListener;
  * Created by KV on 17/7/17.
  */
 
-public class publishDetail extends AppCompatActivity {
+public class PublishDetail extends AppCompatActivity {
     int pos;
-    public static final String TAG=publishDetail.class.getName();
+    public static final String TAG=PublishDetail.class.getName();
     RoobaruDuniya artpub;
    
     CollapsingToolbarLayout collapToolbar;
@@ -81,7 +81,7 @@ public class publishDetail extends AppCompatActivity {
         Intent intent=getIntent();
         pos=intent.getIntExtra("position",-1);
        // Log.d("checkpos",""+pos);
-        artpub=(RoobaruDuniya)intent.getSerializableExtra(publishDetail.TAG);
+        artpub=(RoobaruDuniya)intent.getSerializableExtra(PublishDetail.TAG);
         keySel=intent.getStringExtra("keySelected");
        // Log.d("keysel",keySel);
 

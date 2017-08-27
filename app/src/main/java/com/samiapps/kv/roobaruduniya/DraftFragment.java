@@ -37,7 +37,7 @@ public class DraftFragment extends Fragment {
     private ChildEventListener userListener;
 
 
-    private imgAdapter imageAdapter;
+    private ImgAdapter imageAdapter;
     ArrayList<RoobaruDuniya> rubaru = new ArrayList<RoobaruDuniya>();
     ArrayList<String> keyList ;
 
@@ -84,7 +84,7 @@ public class DraftFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.headlinelayout, container, false);
         mRecycleView = (RecyclerView) rootView.findViewById(R.id.editor_recycleview);
-        imageAdapter = new imgAdapter(rubaru, getContext());
+        imageAdapter = new ImgAdapter(rubaru, getContext());
      //   pgbar=(ProgressBar) rootView.findViewById(R.id.pbar);
       //  noDraftText=(TextView) rootView.findViewById(R.id.nodraftText);
         mRecycleView.setLayoutManager(new GridLayoutManager(getContext(), 2));
@@ -95,7 +95,7 @@ public class DraftFragment extends Fragment {
         //FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG);
 
        readmsgId();
-        imageAdapter.setOnItemClickListener(new imgAdapter.ClickListener() {
+        imageAdapter.setOnItemClickListener(new ImgAdapter.ClickListener() {
             @Override
             public void onItemClick(int position, View v) {
 
