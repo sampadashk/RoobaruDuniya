@@ -725,7 +725,7 @@ public class ArticleDetail extends AppCompatActivity {
                         nLikes = Integer.parseInt(n_Likes);
 
 
-                        num_Of_likes.setText(n_Likes + "like");
+                        num_Of_likes.setText(n_Likes + R.string.like);
                     }
 
 

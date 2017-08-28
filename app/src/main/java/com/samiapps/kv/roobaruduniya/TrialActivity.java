@@ -250,7 +250,7 @@ public class TrialActivity extends AppCompatActivity
                         userStatus = "editor";
                         activityTitles[4] = getString(R.string.editor_unpublished);
                         sentart.setTitle(R.string.editor_unpublished);
-                        txtStatus.setText("Editor");
+                        txtStatus.setText(R.string.editor);
 
                         break;
 

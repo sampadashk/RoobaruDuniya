@@ -184,7 +184,7 @@ public class CategoryActivity extends AppCompatActivity {
                 } else {
                     mLoadingIndicator.setVisibility(View.INVISIBLE);
                     mRecycleView.setVisibility(View.GONE);
-                    error.setText("No Data");
+                    error.setText(R.string.no_data);
                     error.setVisibility(View.VISIBLE);
 
                 }
