@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 /**
  * Created by KV on 2/7/17.
@@ -25,10 +24,10 @@ public class FavDb extends SQLiteOpenHelper {
 
         {
             final String SQL_CREATE_Fav_TABLE = "CREATE TABLE " + RoobaruContract.tableName + "(" + RoobaruContract.COLUMN_KEY + " TEXT NOT NULL," + RoobaruContract.category + " TEXT NOT NULL);";
-            Log.d("checksql", SQL_CREATE_Fav_TABLE);
+           // Log.d("checksql", SQL_CREATE_Fav_TABLE);
             db.execSQL(SQL_CREATE_Fav_TABLE);
         } catch (Exception e) {
-            Log.e("ERROR", e.toString());
+           // Log.e("ERROR", e.toString());
         }
     }
 
@@ -45,14 +44,14 @@ public class FavDb extends SQLiteOpenHelper {
         cv.put(RoobaruContract.category, category);
         db.insert(RoobaruContract.tableName, null, cv);
 
-        Log.d("insertkey", "key inserted");
+        //Log.d("insertkey", "key inserted");
         Cursor c = db.query(RoobaruContract.tableName, null, null, null, null, null, null);
         String[] columnNames = c.getColumnNames();
         Cursor res = db.rawQuery("select * from fav", null);
         if (res.moveToFirst()) {
             while (!res.isAfterLast()) {
                 String name = res.getString(res.getColumnIndex(RoobaruContract.category));
-                Log.d("ckvalname", name);
+               // Log.d("ckvalname", name);
 
 
                 res.moveToNext();
@@ -62,10 +61,7 @@ public class FavDb extends SQLiteOpenHelper {
         }
 
 
-        for (String s : columnNames) {
-            Log.d("getColumnNme", s);
 
-        }
 
 
     }
@@ -76,7 +72,7 @@ public class FavDb extends SQLiteOpenHelper {
         cv.put(RoobaruContract.category, category);
 
         db.delete(RoobaruContract.tableName, "key=? and category=?", new String[]{key, category});
-        Log.d("deletedkey", "key");
+        //Log.d("deletedkey", "key");
 
     }
 

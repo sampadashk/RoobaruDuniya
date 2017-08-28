@@ -24,7 +24,6 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextWatcher;
 import android.text.style.BulletSpan;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -318,13 +317,13 @@ public class ArticleDetail extends AppCompatActivity {
     private void showAlertTextSize() {
 
         //following code will be in your activity.java file
-        final CharSequence[] items = {"small", "Medium", "Large"};
+        final CharSequence[] items = {getString(R.string.small),getString(R.string.medium),getString(R.string.large)};
         // arraylist to keep the selected items
         //  final ArrayList seletedItems=new ArrayList();
         final int[] selectedPosition = new int[1];
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Select The Font Size");
+        builder.setTitle(R.string.select_font);
         builder.setSingleChoiceItems(items, 1, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -335,7 +334,7 @@ public class ArticleDetail extends AppCompatActivity {
 
 
                 // Set the action buttons
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         //     Log.d("checksi","here");
@@ -362,7 +361,7 @@ public class ArticleDetail extends AppCompatActivity {
 
                     }
                 })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         //  Your code when user clicked on Cancel
@@ -620,20 +619,20 @@ public class ArticleDetail extends AppCompatActivity {
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
 //clear the arraylist before display so that duplicate result is not printed
-                    Log.d("commentcheck", "check");
+                   // Log.d("commentcheck", "check");
                     commentList.clear();
 
                     if (dataSnapshot.exists()) {
                         for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                            Log.d("commentkey", keySel);
+                        //    Log.d("commentkey", keySel);
 
 
                             Comment c = ds.getValue(Comment.class);
                             commentList.add(c);
                             commentAdapter.notifyDataSetChanged();
                             try {
-                                Log.d("checkcmt", c.comment);
-                                Log.d("checkcname", c.commentorName);
+                               // Log.d("checkcmt", c.comment);
+                               // Log.d("checkcname", c.commentorName);
 
                             } catch (NullPointerException e) {
                                 e.printStackTrace();
@@ -659,7 +658,7 @@ public class ArticleDetail extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        Log.d("resume", "here");
+       // Log.d("resume", "here");
         /*
         FirebaseDynamicLinks.getInstance()
                 .getDynamicLink(getIntent())
@@ -1010,7 +1009,7 @@ public class ArticleDetail extends AppCompatActivity {
 
     public void onDestroy() {
         super.onDestroy();
-        Log.d("detaildestroy", "destory");
+       // Log.d("detaildestroy", "destory");
 
         commentList.clear();
         if (commentListener != null) {

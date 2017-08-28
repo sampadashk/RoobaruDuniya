@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +40,7 @@ public class MainPage extends Fragment {
         // al.add(dp);
         // MainDisplay dp=new MainDisplay(getString(R.string.cat1),R.drawable.spotlight);
         for (int i = 0; i < 14; i++) {
-            Log.d("ckarr", "" + getResources().getIntArray(R.array.drawimage)[0]);
+         //   Log.d("ckarr", "" + getResources().getIntArray(R.array.drawimage)[0]);
 
             MainDisplay dp = new MainDisplay((getResources().getStringArray(R.array.catgs)[i]), imgs.getResourceId(i, -1));
             al.add(dp);

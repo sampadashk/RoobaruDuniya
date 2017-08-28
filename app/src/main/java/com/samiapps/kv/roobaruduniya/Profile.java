@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -95,7 +94,7 @@ public class Profile extends AppCompatActivity {
         uid = intent.getStringExtra("senuid");
         // String uPhoto = intent.getStringExtra("senphoto");
         // Glide.with(this).load(uPhoto).into(userPhotoView);
-        Log.d("guid", uid);
+       // Log.d("guid", uid);
 
         dbUser.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

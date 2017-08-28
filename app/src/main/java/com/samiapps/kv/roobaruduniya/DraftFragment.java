@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,9 +69,9 @@ public class DraftFragment extends Fragment {
         keyList = new ArrayList<>();
 
 
-        Log.d("checkt", dbaseReference.toString());
-        Log.d("msgkt", msgReference.toString());
-        Log.d("actchk", "1");
+       // Log.d("checkt", dbaseReference.toString());
+       // Log.d("msgkt", msgReference.toString());
+       // Log.d("actchk", "1");
 
 
         //setHasOptionsMenu(true);

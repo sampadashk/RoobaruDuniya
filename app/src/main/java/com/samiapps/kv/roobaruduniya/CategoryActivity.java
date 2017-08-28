@@ -12,7 +12,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -97,7 +96,7 @@ public class CategoryActivity extends AppCompatActivity {
         } else {
             category = intent.getStringExtra(RoobaruWidgetProvider.EXTRA_STRING);
         }
-        Log.d("categorycheck", category);
+       // Log.d("categorycheck", category);
         setTitle(category);
      /*   categoryRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -164,7 +163,7 @@ public class CategoryActivity extends AppCompatActivity {
                     for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
 
                         String key = postSnapshot.getKey();
-                        Log.d("ckk", key);
+                       // Log.d("ckk", key);
                         keys.add(key);
                         error.setVisibility(View.GONE);
                         mRecycleView.setVisibility(View.VISIBLE);

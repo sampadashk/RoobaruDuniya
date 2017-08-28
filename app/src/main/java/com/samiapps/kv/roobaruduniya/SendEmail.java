@@ -46,7 +46,7 @@ public class SendEmail extends AsyncTask<RoobaruDuniya, Void, Void> {
                     content,
                     "roobaru.data@gmail.com",
                     "roobaru.duniya@gmail.com");
-            Log.d("checkemail", "Email sent");
+         //   Log.d("checkemail", "Email sent");
 
         } catch (Exception e) {
             Log.e("SendMail", e.getMessage(), e);

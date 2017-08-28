@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -54,13 +53,13 @@ public class SearchResultsActivity extends AppCompatActivity {
         lvw = (ListView) findViewById(R.id.listview);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         noResTextView = (TextView) findViewById(R.id.noResult);
-        tabLayout.addTab(tabLayout.newTab().setText("Search By Title"));
-        tabLayout.addTab(tabLayout.newTab().setText("Search By Author"));
+        tabLayout.addTab(tabLayout.newTab().setText(R.string.search_title));
+        tabLayout.addTab(tabLayout.newTab().setText(R.string.search_author));
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 int i = tab.getPosition();
-                Log.d("ckp", "" + i);
+               // Log.d("ckp", "" + i);
                 if (i == 1) {
                     isAuthor = true;
                 } else
@@ -84,7 +83,7 @@ public class SearchResultsActivity extends AppCompatActivity {
 
         list = new ArrayList<String>();
         listAdapter = new ArrayAdapter<String>(this, R.layout.searchtext, list);
-        Log.d("heyhere", "here");
+       // Log.d("heyhere", "here");
         lvw.setAdapter(listAdapter);
         lvw.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -134,7 +133,7 @@ public class SearchResultsActivity extends AppCompatActivity {
 
 
         searchItem.expandActionView();
-        Log.d("checksearc", searchView.getQuery().toString());
+       // Log.d("checksearc", searchView.getQuery().toString());
 
 
         searchView.setSearchableInfo(
@@ -147,7 +146,7 @@ public class SearchResultsActivity extends AppCompatActivity {
                 if (isAuthor) {
                     queryAuthor(query);
                 } else {
-                    Log.d("here", "we");
+                  //  Log.d("here", "we");
                     list.clear();
                     listAdapter.clear();
                     klist.clear();
@@ -155,7 +154,7 @@ public class SearchResultsActivity extends AppCompatActivity {
                     dbsearch.orderByValue().addChildEventListener(new ChildEventListener() {
                         @Override
                         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                            Log.d("check", dataSnapshot.getValue().toString());
+                           // Log.d("check", dataSnapshot.getValue().toString());
 
 
                             String st = dataSnapshot.getValue().toString();

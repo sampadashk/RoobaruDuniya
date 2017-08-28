@@ -20,7 +20,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -128,7 +127,7 @@ public class TrialActivity extends AppCompatActivity
                 if (user != null) {
 
 
-                    Log.d(TAG, "Signed in 3");
+                  //  Log.d(TAG, "Signed in 3");
 
 
                     onSignedInInitialize(user.getDisplayName(), user.getEmail(), user.getPhotoUrl(), savedInstanceState);

@@ -47,6 +47,10 @@
     <string name="signed_out">Signed Out!</string>
     <string name="sign_out">Sign Out</string>
     <string name="no_connectivity">No Connectivity</string>
+    <string name="search_title">search by title</string>
+    <string name="search_author">search by author</string>
+
+    <string name="select_font">Select The Font Size</string>
 
     <string name="aboutus">यह पत्रिका भारत के समाचारपत्रों के पंजीयन कार्यालय (The Registrar of
 Newspapers for India, Govt of India) द्वारा पंजीयत है जिसका पंजीयन नंबर MPHIN/2012/45819 है। \n
@@ -113,6 +117,8 @@ Newspapers for India, Govt of India) द्वारा पंजीयत ह�
     <string name="draft">draft</string>
     <string name="publish">publish</string>
 
+
+
     <string name="search">search</string>
     <string name="send">SEND</string>
     <string name="other">other</string>
@@ -121,6 +127,9 @@ Newspapers for India, Govt of India) द्वारा पंजीयत ह�
     <string name="no_photo">No Photo Alert</string>
     <string name="unknown_error">Unknown error</string>
     <string name="no_data">No data</string>
+    <string name="small">small</string>
+    <string name="medium">Medium</string>
+    <string name="large">Large</string>
     <string name="select_wphoto">Select Writer Photo</string>
     <string name="writer_profile">Writer Profile Pic</string>
     <string name="article_image">Article Image</string>
