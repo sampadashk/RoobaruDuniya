@@ -24,16 +24,13 @@ public class Notification implements Serializable {
     }
 
 
-
-    public Notification(String message)
-    {
-        this.message=message;
-
+    public Notification(String message) {
+        this.message = message;
 
 
     }
-    public Notification()
-    {
+
+    public Notification() {
 
     }
 

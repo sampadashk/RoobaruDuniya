@@ -75,8 +75,6 @@ public class ArticleDetail extends AppCompatActivity {
     ImageButton homeButton;
 
 
-
-
     String userName;
     String userProf;
     ImageView ivw;
@@ -125,7 +123,7 @@ public class ArticleDetail extends AppCompatActivity {
 
 
         commentEditText = (EditText) findViewById(R.id.w_comment);
-        artsel=new RoobaruDuniya();
+        artsel = new RoobaruDuniya();
         sendCmt = (Button) findViewById(R.id.send_comment);
         cmtrecyclerV = (RecyclerView) findViewById(R.id.list_comment);
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collaptool_layout);
@@ -137,10 +135,10 @@ public class ArticleDetail extends AppCompatActivity {
         txtName = (TextView) findViewById(R.id.name);
         txtStatus = (TextView) findViewById(R.id.user_status);
         num_Of_likes = (TextView) findViewById(R.id.num_likes);
-        bookmarkButton=(ImageButton) findViewById(R.id.bookmark);
-        cdlayout=(CoordinatorLayout) findViewById(R.id.draw_insets_frame_layout);
-        homeButton=(ImageButton) findViewById(R.id.home_but);
-        displayCont=(LinearLayout) findViewById(R.id.display_content);
+        bookmarkButton = (ImageButton) findViewById(R.id.bookmark);
+        cdlayout = (CoordinatorLayout) findViewById(R.id.draw_insets_frame_layout);
+        homeButton = (ImageButton) findViewById(R.id.home_but);
+        displayCont = (LinearLayout) findViewById(R.id.display_content);
 
         imgProfile = (ImageView) findViewById(R.id.img_profile);
         ivw = (ImageView) findViewById(R.id.display_image);
@@ -148,7 +146,7 @@ public class ArticleDetail extends AppCompatActivity {
         tvcontent = (TextView) findViewById(R.id.post_con);
         favButton = (FloatingActionButton) findViewById(R.id.share_fab);
         datetvw = (TextView) findViewById(R.id.published_date);
-        textFormatList=new ArrayList<>();
+        textFormatList = new ArrayList<>();
 
       /*  //TrialTextSize
         final ArrayAdapter<String> adp = new ArrayAdapter<String>(ArticleDetail.this,
@@ -165,16 +163,11 @@ public class ArticleDetail extends AppCompatActivity {
         */
 
 
-
-
-
-
-
         mAuth = FirebaseAuth.getInstance();
 //      getSupportActionBar().setDisplayShowTitleEnabled(false);
         // getSupportActionBar().setLogo(R.drawable.roobaru_logo);
         userPhoto = mAuth.getCurrentUser().getPhotoUrl();
-        userId=mAuth.getCurrentUser().getUid();
+        userId = mAuth.getCurrentUser().getUid();
         commentList = new ArrayList<>();
         commentAdapter = new CommentAdapter(this, commentList);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
@@ -187,33 +180,27 @@ public class ArticleDetail extends AppCompatActivity {
 
         publishedRef = db.getReference("published");
         notificationRef = db.getReference("notification");
-        styleRef=db.getReference("contentStyle");
+        styleRef = db.getReference("contentStyle");
         notificationRef.keepSynced(true);
         msgReference = db.getReference("messages");
-        userRef=db.getReference("user");
+        userRef = db.getReference("user");
 
-       // msgReference.keepSynced(true);
-        commentAdapter.setOnItemClickListener(new CommentAdapter.ClickListener()
-        {
+        // msgReference.keepSynced(true);
+        commentAdapter.setOnItemClickListener(new CommentAdapter.ClickListener() {
 
             @Override
-            public void onItemClick( final int position, View v) {
+            public void onItemClick(final int position, View v) {
 
 
-
-
-                Comment c=commentList.get(position);
-              //  Log.d("posdelf",""+position);
+                Comment c = commentList.get(position);
+                //  Log.d("posdelf",""+position);
                 //only give delete right to the person who wrote the comment;Than only delete button will be visisble
-                if(c.commentorName.equals(TrialActivity.mUsername))
-                {
+                if (c.commentorName.equals(TrialActivity.mUsername)) {
 
-                    final ImageButton deleteButton= (ImageButton) v.findViewById(R.id.delete_button);
-                    if(deleteButton.getVisibility()==View.VISIBLE)
-                    {
+                    final ImageButton deleteButton = (ImageButton) v.findViewById(R.id.delete_button);
+                    if (deleteButton.getVisibility() == View.VISIBLE) {
                         deleteButton.setVisibility(View.INVISIBLE);
-                    }
-                    else {
+                    } else {
                         deleteButton.setVisibility(View.VISIBLE);
                         deleteButton.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -232,7 +219,7 @@ public class ArticleDetail extends AppCompatActivity {
                                         int i = 0;
                                         // String[] sampleString = new String[length];
                                         //TODO DELETE
-                                //        Log.d("posdel", "" + position);
+                                        //        Log.d("posdel", "" + position);
                                         while (i < position) {
                                             if (iterator.hasNext()) {
                                                 iterator.next();
@@ -243,7 +230,7 @@ public class ArticleDetail extends AppCompatActivity {
                                             //get the key using iterator and than delete it
 
                                             String key = iterator.next().getKey();
-                                 //           Log.d("keydel", key);
+                                            //           Log.d("keydel", key);
                                             dataSnapshot.child(key).getRef().removeValue();
 
                                             return;
@@ -261,7 +248,7 @@ public class ArticleDetail extends AppCompatActivity {
                                 });
 
 
-                                Toast.makeText(ArticleDetail.this, "Comment deleted", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ArticleDetail.this, R.string.delete_comment, Toast.LENGTH_SHORT).show();
                                 deleteButton.setVisibility(View.INVISIBLE);
 
                             }
@@ -278,26 +265,25 @@ public class ArticleDetail extends AppCompatActivity {
                 showAlertTextSize();
                 return false;
             }
-                                             });
+        });
         homeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intentHome=new Intent(ArticleDetail.this,TrialActivity.class);
+                Intent intentHome = new Intent(ArticleDetail.this, TrialActivity.class);
                 startActivity(intentHome);
             }
         });
 
 
+        // FirebaseAuth.getInstance().
 
-                            // FirebaseAuth.getInstance().
 
-
-                            sharedButton.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    String msg="Hey check this Article "+artsel.getTitle()+" by "+artsel.getUser()+" in Roobaru Duniya "+generateDynamicLinks(keySel);
-                                    Intent shareintent = new Intent(Intent.ACTION_SEND);
-                                    shareintent.setType("text/plain");
+        sharedButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String msg = "Hey check this Article " + artsel.getTitle() + " by " + artsel.getUser() + " in Roobaru Duniya " + generateDynamicLinks(keySel);
+                Intent shareintent = new Intent(Intent.ACTION_SEND);
+                shareintent.setType("text/plain");
 
                                   /*  try{
                                         byte [] encodeByte= Base64.decode(artsel.getPhoto(),Base64.DEFAULT);
@@ -318,34 +304,31 @@ public class ArticleDetail extends AppCompatActivity {
                                     */
 
 
+                shareintent.putExtra(Intent.EXTRA_SUBJECT, artsel.getTitle());
+                shareintent.putExtra(Intent.EXTRA_TEXT, msg);
+                startActivity(Intent.createChooser(shareintent, "Share using"));
 
 
-                                    shareintent.putExtra(Intent.EXTRA_SUBJECT,artsel.getTitle());
-                                    shareintent.putExtra(Intent.EXTRA_TEXT, msg);
-                                    startActivity(Intent.createChooser(shareintent, "Share using"));
+            }
+        });
 
 
-
-                                }
-                            });
-
-
-                        }
+    }
 
     private void showAlertTextSize() {
 
         //following code will be in your activity.java file
-        final CharSequence[] items = {"small","Medium","Large"};
+        final CharSequence[] items = {"small", "Medium", "Large"};
         // arraylist to keep the selected items
-      //  final ArrayList seletedItems=new ArrayList();
+        //  final ArrayList seletedItems=new ArrayList();
         final int[] selectedPosition = new int[1];
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Select The Font Size");
-        builder.setSingleChoiceItems(items,1, new DialogInterface.OnClickListener() {
+        builder.setSingleChoiceItems(items, 1, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                 selectedPosition[0] = ((AlertDialog)dialog).getListView().getCheckedItemPosition();
+                selectedPosition[0] = ((AlertDialog) dialog).getListView().getCheckedItemPosition();
 
             }
         })
@@ -355,25 +338,24 @@ public class ArticleDetail extends AppCompatActivity {
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                    //     Log.d("checksi","here");
-                        switch(selectedPosition[0])
-                        {
+                        //     Log.d("checksi","here");
+                        switch (selectedPosition[0]) {
                             case 0:
-                                setFontForContainer(displayCont,14);
-                               // tvcontent.setTextSize(TypedValue.COMPLEX_UNIT_SP,14);
+                                setFontForContainer(displayCont, 14);
+                                // tvcontent.setTextSize(TypedValue.COMPLEX_UNIT_SP,14);
 
                                 break;
                             case 1:
-                                setFontForContainer(displayCont,18);
-                              //  tvcontent.setTextSize(TypedValue.COMPLEX_UNIT_SP,18);
+                                setFontForContainer(displayCont, 18);
+                                //  tvcontent.setTextSize(TypedValue.COMPLEX_UNIT_SP,18);
                                 break;
                             case 2:
-                                setFontForContainer(displayCont,22);
-                               // tvcontent.setTextSize(TypedValue.COMPLEX_UNIT_SP,22);
+                                setFontForContainer(displayCont, 22);
+                                // tvcontent.setTextSize(TypedValue.COMPLEX_UNIT_SP,22);
                                 break;
 
                         }
-                           // tvcontent.setTextSize(TypedValue.COMPLEX_UNIT_SP,30);
+                        // tvcontent.setTextSize(TypedValue.COMPLEX_UNIT_SP,30);
 
                         //  Your code when user icked on OK
                         //  You can write the code  to save the selected item here
@@ -388,17 +370,18 @@ public class ArticleDetail extends AppCompatActivity {
                     }
                 });
 
-        AlertDialog dialog  = builder.create();//AlertDialog dialog; create like this outside onClick
+        AlertDialog dialog = builder.create();//AlertDialog dialog; create like this outside onClick
         dialog.show();
 
     }
-    private void setFontForContainer(ViewGroup contentLayout,int font) {
-        for (int i=0; i < contentLayout.getChildCount(); i++) {
+
+    private void setFontForContainer(ViewGroup contentLayout, int font) {
+        for (int i = 0; i < contentLayout.getChildCount(); i++) {
             View view = contentLayout.getChildAt(i);
             if (view instanceof TextView)
-                ((TextView)view).setTextSize(TypedValue.COMPLEX_UNIT_SP,font);
+                ((TextView) view).setTextSize(TypedValue.COMPLEX_UNIT_SP, font);
             else if (view instanceof ViewGroup)
-                setFontForContainer((ViewGroup) view,font);
+                setFontForContainer((ViewGroup) view, font);
         }
     }
 
@@ -410,74 +393,61 @@ public class ArticleDetail extends AppCompatActivity {
 
         //TODO ASYNC in msgreference
         Intent intent = getIntent();
-        String action=intent.getAction();
-        Uri data=intent.getData();
-        if(data!=null)
-        {
-         //   Log.d("uri is",data.toString());
+        String action = intent.getAction();
+        Uri data = intent.getData();
+        if (data != null) {
+            //   Log.d("uri is",data.toString());
             String path = data.getPath();
-            path=path.substring(0, path.length() - 1);
+            path = path.substring(0, path.length() - 1);
             String idStr = path.substring(path.lastIndexOf('/') + 1);
 
             keySel = idStr;
             LoadUIFromkey(keySel);
 
 
-        }
-
-       else if (intent.getStringExtra("intentNotification") != null) {
+        } else if (intent.getStringExtra("intentNotification") != null) {
             NotificationJson obj = (NotificationJson) intent.getSerializableExtra("NotificationObject");
-          //  Log.d("intentchk", "notification");
+            //  Log.d("intentchk", "notification");
             keySel = obj.getMsg_id();
-           // Log.d("chkrecikey", keySel);
-           // Log.d("chkurl", "https://roobaru-duniya-86f7d.firebaseio.com/messages/" + keySel);
+            // Log.d("chkrecikey", keySel);
+            // Log.d("chkurl", "https://roobaru-duniya-86f7d.firebaseio.com/messages/" + keySel);
             LoadUIFromkey(keySel);
-
-
-
-
-
 
 
 //                Log.d("titleck", rbd.getTitle());
 
-        }
-        else if(intent.getStringExtra("bkgnotification")!=null) {
+        } else if (intent.getStringExtra("bkgnotification") != null) {
             JSONObject obj = null;
             try {
                 obj = new JSONObject(intent.getStringExtra("bkgnotification"));
                 keySel = obj.get("msgid").toString();
 
-              //  Log.d("chkrecikey", keySel);
+                //  Log.d("chkrecikey", keySel);
 
                 LoadUIFromkey(keySel);
 
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-        }
-        else if(intent.getStringExtra("searchString")!=null)
-        {
-         keySel = intent.getStringExtra("searchString");
-          //  Log.d("kkk",keySel);
+        } else if (intent.getStringExtra("searchString") != null) {
+            keySel = intent.getStringExtra("searchString");
+            //  Log.d("kkk",keySel);
 
-            if(keySel!=null) {
+            if (keySel != null) {
                 LoadUIFromkey(keySel);
             }
 
 
-        }
-        else
-            {
+        } else {
             pos = intent.getIntExtra("position", -1);
-           // Log.d("checkpos", "" + pos);
+            // Log.d("checkpos", "" + pos);
 
 
-                    //artsel = (RoobaruDuniya) intent.getSerializableExtra(ArticleDetail.TAG);
-                   // Log.d("ckart", artsel.getTitle());
-                    keySel = intent.getStringExtra("keySelected");
-                  //  Log.d("ck",keySel);
-                LoadUIFromkey(keySel);
+            //artsel = (RoobaruDuniya) intent.getSerializableExtra(ArticleDetail.TAG);
+            // Log.d("ckart", artsel.getTitle());
+            keySel = intent.getStringExtra("keySelected");
+            //  Log.d("ck",keySel);
+            LoadUIFromkey(keySel);
 
              /*   msgListener = msgReference.child(keySel).addValueEventListener(new ValueEventListener() {
                     @Override
@@ -496,39 +466,35 @@ public class ArticleDetail extends AppCompatActivity {
                 */
 
 
-
         }
 
 
         //Deleting comments;
 
 
-
-
     }
 
     private void LoadUIFromkey(String keySel) {
-        Log.d("kratika",keySel);
+       // Log.d("kratika", keySel);
         msgListener = msgReference.child(keySel).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 artsel = dataSnapshot.getValue(RoobaruDuniya.class);
                 //updating UI when you have article
                 loadUI();
-              //  Log.d("artchktit", artsel.getTitle());
+                //  Log.d("artchktit", artsel.getTitle());
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-              //  Log.d("dberror", databaseError.toString());
+                //  Log.d("dberror", databaseError.toString());
             }
         });
 
     }
 
-    public void loadUI()
-    {
-        if(artsel!=null) {
+    public void loadUI() {
+        if (artsel != null) {
 
             collapsingToolbarLayout.setTitle(artsel.getTitle());
 
@@ -541,75 +507,70 @@ public class ArticleDetail extends AppCompatActivity {
             tvtitle.setText(artsel.getTitle());
 
 
+            // if(styleRef.child(keySel)!=null) {
 
-           // if(styleRef.child(keySel)!=null) {
+            final SpannableStringBuilder str = new SpannableStringBuilder(artsel.getContent());
+            styleRef.child(keySel).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    contentString = artsel.getContent();
+                    if (dataSnapshot.exists()) {
+                        //  Log.d("ckval", "hasvalue");
+                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                            //  Log.d("ckke", ds.getKey());
 
-                final SpannableStringBuilder str = new SpannableStringBuilder(artsel.getContent());
-                styleRef.child(keySel).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        contentString = artsel.getContent();
-                        if (dataSnapshot.exists()) {
-                          //  Log.d("ckval", "hasvalue");
-                            for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                              //  Log.d("ckke", ds.getKey());
+                            TextFormat tf = ds.getValue(TextFormat.class);
 
-                                TextFormat tf = ds.getValue(TextFormat.class);
-
-                             //   Log.d("chktd", tf.getStyle());
+                            //   Log.d("chktd", tf.getStyle());
 //
-                               // SpannableStringBuilder str = new SpannableStringBuilder(contentString);
+                            // SpannableStringBuilder str = new SpannableStringBuilder(contentString);
 
 
-                                if (tf.getStyle().equals("bold")) {
+                            if (tf.getStyle().equals("bold")) {
 
-                                    str.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD), tf.getStart(), tf.getEnd(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                                  //  Log.d("ckbold", "" + str);
-
-
-                                }
-                                if (tf.getStyle().equals("italic")) {
-
-                                    str.setSpan(new android.text.style.StyleSpan(Typeface.ITALIC), tf.getStart(), tf.getEnd(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                                //    Log.d("ckbold", "" + str);
-
-
-                                }
-                                if(tf.getStyle().equals("bullet"))
-                                {
-                                    str.setSpan(new BulletSpan(10), tf.getStart(), tf.getEnd(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                                }
-                            //  tvcontent.setText(str);
+                                str.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD), tf.getStart(), tf.getEnd(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                //  Log.d("ckbold", "" + str);
 
 
                             }
-                            tvcontent.setText(str);
+                            if (tf.getStyle().equals("italic")) {
+
+                                str.setSpan(new android.text.style.StyleSpan(Typeface.ITALIC), tf.getStart(), tf.getEnd(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                //    Log.d("ckbold", "" + str);
+
+
+                            }
+                            if (tf.getStyle().equals("bullet")) {
+                                str.setSpan(new BulletSpan(10), tf.getStart(), tf.getEnd(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            }
+                            //  tvcontent.setText(str);
+
+
                         }
-                        else
-                        {
-                            tvcontent.setText(artsel.getContent());
-                        }
+                        tvcontent.setText(str);
+                    } else {
+                        tvcontent.setText(artsel.getContent());
                     }
+                }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-                    }
+                }
 
 
+            });
 
-                });
-
-           // }
+            // }
             txtName.setPaintFlags(txtName.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
 
 
             txtName.setText(userName);
-            String usid=artsel.getuserId();
+            String usid = artsel.getuserId();
             userRef.child(usid).child("name").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                   wname= dataSnapshot.getValue().toString();
+                    wname = dataSnapshot.getValue().toString();
                 }
 
                 @Override
@@ -622,21 +583,19 @@ public class ArticleDetail extends AppCompatActivity {
             txtName.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    String uid=artsel.getuserId();
+                    String uid = artsel.getuserId();
 
-                  //  Log.d("checkname",wname);
-                   // Log.d("checkuser",userName);
-                    if(wname.equals(userName)) {
+                    //  Log.d("checkname",wname);
+                    // Log.d("checkuser",userName);
+                    if (wname.equals(userName)) {
 
                         // String uphoto=artsel.getUserProfilePhoto();
                         Intent intent = new Intent(ArticleDetail.this, Profile.class);
                         intent.putExtra("senuid", uid);
                         // intent.putExtra("senphoto",uphoto);
                         startActivity(intent);
-                    }
-                    else
-                    {
-                        Snackbar.make(cdlayout,R.string.no_profile,Snackbar.LENGTH_SHORT).show();
+                    } else {
+                        Snackbar.make(cdlayout, R.string.no_profile, Snackbar.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -652,59 +611,55 @@ public class ArticleDetail extends AppCompatActivity {
         loadComment();
 
 
+    }
 
-            }
-
-            public void loadComment()
-            {
-                if (commentListener == null) {
-                    commentListener = new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
+    public void loadComment() {
+        if (commentListener == null) {
+            commentListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
 
 //clear the arraylist before display so that duplicate result is not printed
-                            Log.d("commentcheck","check");
-                            commentList.clear();
+                    Log.d("commentcheck", "check");
+                    commentList.clear();
 
-                            if (dataSnapshot.exists()) {
-                                for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                                    Log.d("commentkey",keySel);
-
-
-                                    Comment c = ds.getValue(Comment.class);
-                                    commentList.add(c);
-                                    commentAdapter.notifyDataSetChanged();
-                                    try {
-                                        Log.d("checkcmt", c.comment);
-                                         Log.d("checkcname", c.commentorName);
-
-                                    }
-                                    catch(NullPointerException e)
-                                    {
-                                        e.printStackTrace();
-                                    }
-
-                                }
+                    if (dataSnapshot.exists()) {
+                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                            Log.d("commentkey", keySel);
 
 
+                            Comment c = ds.getValue(Comment.class);
+                            commentList.add(c);
+                            commentAdapter.notifyDataSetChanged();
+                            try {
+                                Log.d("checkcmt", c.comment);
+                                Log.d("checkcname", c.commentorName);
+
+                            } catch (NullPointerException e) {
+                                e.printStackTrace();
                             }
 
                         }
 
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
 
-                        }
-                    };
-                    publishedRef.child(keySel).child("comments").addValueEventListener(commentListener);
+                    }
+
                 }
 
-            }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            };
+            publishedRef.child(keySel).child("comments").addValueEventListener(commentListener);
+        }
+
+    }
+
     @Override
-    public void onResume()
-    {
+    public void onResume() {
         super.onResume();
-        Log.d("resume","here");
+        Log.d("resume", "here");
         /*
         FirebaseDynamicLinks.getInstance()
                 .getDynamicLink(getIntent())
@@ -744,18 +699,16 @@ public class ArticleDetail extends AppCompatActivity {
         SQLiteDatabase sqldb = favRef.getReadableDatabase();
 
 
-        Cursor cursor = favRef.queryKey(sqldb, keySel,"favourite");
-        Cursor cr = favRef.queryKey(sqldb, keySel,"booked");
+        Cursor cursor = favRef.queryKey(sqldb, keySel, "favourite");
+        Cursor cr = favRef.queryKey(sqldb, keySel, "booked");
         if (cursor.getCount() > 0) {
-
 
 
             favButton.setImageResource(R.drawable.ic_favorite);
             isFav = true;
         }
 
-        if(cr.getCount()>0)
-        {
+        if (cr.getCount() > 0) {
 
             bookmarkButton.setImageResource(R.drawable.ic_bookmark_white_24dp);
             isBookMarked = true;
@@ -857,13 +810,13 @@ public class ArticleDetail extends AppCompatActivity {
                 }
 
 
-                Comment c = new Comment(cName, comment, dateString, userPhoto.toString(),userId);
+                Comment c = new Comment(cName, comment, dateString, userPhoto.toString(), userId);
                 //commentList.add(c);
                 publishedRef.child(keySel).child("comments").push().setValue(c);
                 HashMap<String, String> notificationData = new HashMap<String, String>();
                 notificationData.put("from", mAuth.getCurrentUser().getUid());
                 notificationData.put("type", "comment");
-               // checkValue();
+                // checkValue();
 
 
                 notificationData.put("commentNo", Long.toString(System.currentTimeMillis()));
@@ -921,33 +874,30 @@ public class ArticleDetail extends AppCompatActivity {
                     });
                     */
                 if (isBookMarked) {
-                    favdbRef.deleteKey(db,keySel,"booked");
+                    favdbRef.deleteKey(db, keySel, "booked");
                     bookmarkButton.setImageResource(R.drawable.ic_bookmark_border_white_24dp);
                     isBookMarked = false;
-                    Snackbar.make(cdlayout,R.string.bookmark_removed,Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(cdlayout, R.string.bookmark_removed, Snackbar.LENGTH_SHORT).show();
 
 
                 } else {
-                    favdbRef.insertKey(db,keySel,"booked");
+                    favdbRef.insertKey(db, keySel, "booked");
                     bookmarkButton.setImageResource(R.drawable.ic_bookmark_white_24dp);
                     isBookMarked = true;
-                    Snackbar.make(cdlayout,R.string.bookmark_saved,Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(cdlayout, R.string.bookmark_saved, Snackbar.LENGTH_SHORT).show();
                 }
 
             }
         });
 
 
+        favButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
 
-
-            favButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-
-                    FavDb favdbRef = new FavDb(ArticleDetail.this);
-                    SQLiteDatabase db = favdbRef.getWritableDatabase();
+                FavDb favdbRef = new FavDb(ArticleDetail.this);
+                SQLiteDatabase db = favdbRef.getWritableDatabase();
                  /*   publishedRef.child(keySel).child("likes").addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -963,44 +913,37 @@ public class ArticleDetail extends AppCompatActivity {
                         }
                     });
                     */
-                    if (isFav) {
-                        favdbRef.deleteKey(db,keySel,"favourite");
-                        favButton.setImageResource(R.drawable.ic_favorite_border);
-                        isFav = false;
-                        if (nLikes > 0) {
-                            nLikes -= 1;
-                        }
-
-                    } else {
-                        favdbRef.insertKey(db,keySel,"favourite");
-                        favButton.setImageResource(R.drawable.ic_favorite);
-                        HashMap<String, String> notificationData = new HashMap<String, String>();
-                        notificationData.put("from", mAuth.getCurrentUser().getUid());
-                        notificationData.put("type", "like");
-                        notificationRef.child(artsel.getuserId()).child(keySel).setValue(notificationData);
-                        isFav = true;
-                        nLikes += 1;
+                if (isFav) {
+                    favdbRef.deleteKey(db, keySel, "favourite");
+                    favButton.setImageResource(R.drawable.ic_favorite_border);
+                    isFav = false;
+                    if (nLikes > 0) {
+                        nLikes -= 1;
                     }
-                    publishedRef.child(keySel).child("likes").setValue(nLikes);
 
+                } else {
+                    favdbRef.insertKey(db, keySel, "favourite");
+                    favButton.setImageResource(R.drawable.ic_favorite);
+                    HashMap<String, String> notificationData = new HashMap<String, String>();
+                    notificationData.put("from", mAuth.getCurrentUser().getUid());
+                    notificationData.put("type", "like");
+                    notificationRef.child(artsel.getuserId()).child(keySel).setValue(notificationData);
+                    isFav = true;
+                    nLikes += 1;
                 }
-            });
+                publishedRef.child(keySel).child("likes").setValue(nLikes);
 
+            }
+        });
 
 
     }
 
 
-
-
-
-            //  TrialActivity.shouldLoadHomeFragOnBackPress=false;
-            // getFragmentManager().popBackStackImmediate();
-            //  finish();
+    //  TrialActivity.shouldLoadHomeFragOnBackPress=false;
+    // getFragmentManager().popBackStackImmediate();
+    //  finish();
 //        getSupportActionBar().setTitle(activityTitles[navItemIndex]);
-
-
-
 
 
     private void checkValue() {
@@ -1067,7 +1010,7 @@ public class ArticleDetail extends AppCompatActivity {
 
     public void onDestroy() {
         super.onDestroy();
-        Log.d("detaildestroy","destory");
+        Log.d("detaildestroy", "destory");
 
         commentList.clear();
         if (commentListener != null) {
@@ -1087,33 +1030,26 @@ public class ArticleDetail extends AppCompatActivity {
             msgReference.child(keySel).removeEventListener(msgListener);
             msgListener = null;
         }
-        if(delcmtListener!=null)
-        {
+        if (delcmtListener != null) {
             publishedRef.child(keySel).child("comments").removeEventListener(delcmtListener);
-            delcmtListener=null;
+            delcmtListener = null;
         }
 
 
     }
-    public static String generateDynamicLinks(String key)
-    {
-        return "https://a6qgq.app.goo.gl/?link=https://roobaruduniya.com/"+key+"/&apn=com.samiapps.kv.roobaruduniya";
+
+    public static String generateDynamicLinks(String key) {
+        return "https://a6qgq.app.goo.gl/?link=https://roobaruduniya.com/" + key + "/&apn=com.samiapps.kv.roobaruduniya";
     }
 
 
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-      //  Log.d("where","I am called");
+        //  Log.d("where","I am called");
         setIntent(intent);
 
 
     }
-
-
-
-
-
-
 
 
 }

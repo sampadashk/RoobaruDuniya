@@ -18,36 +18,37 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     ArrayList<Notification> notifications;
     private static NotificationAdapter.ClickListener clickListener;
 
-    NotificationAdapter(Context context, ArrayList<Notification> notifications)
-    {
-        this.context=context;
-        this.notifications=notifications;
+    NotificationAdapter(Context context, ArrayList<Notification> notifications) {
+        this.context = context;
+        this.notifications = notifications;
     }
 
 
     @Override
     public NotificationAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v=LayoutInflater.from(context).inflate(R.layout.notification_item,parent,false);
+        View v = LayoutInflater.from(context).inflate(R.layout.notification_item, parent, false);
         return new ViewHolder(v);
     }
+
     public void setOnItemClickListener(NotificationAdapter.ClickListener clickListener) {
         NotificationAdapter.clickListener = clickListener;
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Notification n=notifications.get(position);
+        Notification n = notifications.get(position);
 
         /*String type=n.getType();
         String articleTitle=n.getArticle();
         String by=n.getByPerson();
         holder.displaynotification.setText("New "+type+"on"+"article "+articleTitle+"by"+by);
         */
-        String message=n.getMessage();
+        String message = n.getMessage();
         holder.displaynotification.setText(message);
 
 
     }
+
     public interface ClickListener {
         void onItemClick(int position, View v);
     }
@@ -60,9 +61,10 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView displaynotification;
+
         public ViewHolder(View itemView) {
             super(itemView);
-            displaynotification= (TextView) itemView.findViewById(R.id.text_notification);
+            displaynotification = (TextView) itemView.findViewById(R.id.text_notification);
             itemView.setOnClickListener(this);
         }
 

@@ -7,8 +7,8 @@ package com.samiapps.kv.roobaruduniya;
 public class MainDisplay {
     int image;
     String text;
-    public MainDisplay()
-    {
+
+    public MainDisplay() {
 
     }
 
@@ -28,7 +28,7 @@ public class MainDisplay {
         this.text = text;
     }
 
-    public MainDisplay( String text,int image) {
+    public MainDisplay(String text, int image) {
         this.image = image;
 
         this.text = text;

@@ -9,9 +9,6 @@
     android:id="@+id/main_container">
 
 
-
-
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/editor_recycleview"
         android:layout_width="match_parent"
@@ -29,15 +26,13 @@
         android:textSize="22sp"
         android:visibility="gone"
         tools:text="Error message" />
+
     <ProgressBar
         android:id="@+id/pb_loading_indicator"
         android:layout_height="42dp"
         android:layout_width="42dp"
         android:layout_gravity="center"
         android:visibility="invisible" />
-
-
-
 
 
 </LinearLayout>

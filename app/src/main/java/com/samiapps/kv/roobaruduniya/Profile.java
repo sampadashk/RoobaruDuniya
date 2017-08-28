@@ -57,13 +57,13 @@ public class Profile extends AppCompatActivity {
         userPhotoView = (ImageView) findViewById(R.id.img_profile);
         firebasedb = FirebaseDatabase.getInstance();
         dbUser = firebasedb.getReference("user");
-        msgReference=firebasedb.getReference("messages");
-        noPublishedText=(TextView) findViewById(R.id.no_published);
+        msgReference = firebasedb.getReference("messages");
+        noPublishedText = (TextView) findViewById(R.id.no_published);
         rvc = (RecyclerView) findViewById(R.id.publishedProfileRecycle);
         listPublishedAdapter = new ListPublishedAdapter(rubaru, this);
         //   pgbar=(ProgressBar) rootView.findViewById(R.id.pbar);
         //  noDraftText=(TextView) rootView.findViewById(R.id.nodraftText);
-        rvc.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
+        rvc.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         rvc.setItemAnimator(new DefaultItemAnimator());
         SeparatorDecoration decoration = new SeparatorDecoration(this, Color.GRAY, 1.5f);
         rvc.addItemDecoration(decoration);
@@ -73,11 +73,11 @@ public class Profile extends AppCompatActivity {
                 RoobaruDuniya item = rubaru.get(position);
                 Intent intent = new Intent(Profile.this, ArticleDetail.class);
 
-                String key=keyList.get(position);
-                intent.putExtra("keySelected",key);
+                String key = keyList.get(position);
+                intent.putExtra("keySelected", key);
                 intent.putExtra("position", position);
-                Bundle b=new Bundle();
-                b.putSerializable(ArticleDetail.TAG,item);
+                Bundle b = new Bundle();
+                b.putSerializable(ArticleDetail.TAG, item);
                 intent.putExtras(b);
 
 
@@ -88,13 +88,13 @@ public class Profile extends AppCompatActivity {
             }
         });
         // Log.d("actchk","2");
-        keyList=new ArrayList<>();
+        keyList = new ArrayList<>();
 
         rvc.setAdapter(listPublishedAdapter);
         Intent intent = getIntent();
         uid = intent.getStringExtra("senuid");
-       // String uPhoto = intent.getStringExtra("senphoto");
-       // Glide.with(this).load(uPhoto).into(userPhotoView);
+        // String uPhoto = intent.getStringExtra("senphoto");
+        // Glide.with(this).load(uPhoto).into(userPhotoView);
         Log.d("guid", uid);
 
         dbUser.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -104,19 +104,17 @@ public class Profile extends AppCompatActivity {
                     uname = dataSnapshot.child("name").getValue(String.class);
                     status = dataSnapshot.child("status").getValue(String.class);
                     uemai = dataSnapshot.child("email").getValue(String.class);
-                    String uPhoto=dataSnapshot.child("uPhoto").getValue(String.class);
+                    String uPhoto = dataSnapshot.child("uPhoto").getValue(String.class);
                     Glide.with(Profile.this).load(uPhoto).into(userPhotoView);
                     uNameTextView.setText(uname);
                     uStatusTextView.setText(status);
-                    if(uemai!=null) {
+                    if (uemai != null) {
 
 
                         emailTextView.setText(uemai);
                     }
 
-                }
-                catch(NullPointerException ee)
-                {
+                } catch (NullPointerException ee) {
                     ee.printStackTrace();
                 }
 
@@ -159,9 +157,7 @@ public class Profile extends AppCompatActivity {
                     }
 
 
-                }
-                else
-                {
+                } else {
                     rvc.setVisibility(View.INVISIBLE);
                     noPublishedText.setVisibility(View.VISIBLE);
 
@@ -181,12 +177,11 @@ public class Profile extends AppCompatActivity {
         // Log.d("actchk","4");
 
 
-
         msgReference.child(key).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 RoobaruDuniya rbd = dataSnapshot.getValue(RoobaruDuniya.class);
-                if(rbd.getUser().equals(uname)) {
+                if (rbd.getUser().equals(uname)) {
 
                     //  Log.d("titleck", rbd.getTitle());
                     rubaru.add(rbd);

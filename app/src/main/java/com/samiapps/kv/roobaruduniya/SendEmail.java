@@ -7,17 +7,17 @@ import android.util.Log;
  * Created by KV on 23/8/17.
  */
 
-public class SendEmail extends AsyncTask<RoobaruDuniya,Void,Void> {
+public class SendEmail extends AsyncTask<RoobaruDuniya, Void, Void> {
     public SendEmail() {
     }
 
     @Override
     protected Void doInBackground(RoobaruDuniya... params) {
-        RoobaruDuniya roobaruDuniya=params[0];
-        String title=roobaruDuniya.getTitle();
-        String uName=roobaruDuniya.getUser();
-        String uId=roobaruDuniya.getuserId();
-        String content=roobaruDuniya.getContent()+"\n"+" by"+uName+"\n"+" uid "+uId ;
+        RoobaruDuniya roobaruDuniya = params[0];
+        String title = roobaruDuniya.getTitle();
+        String uName = roobaruDuniya.getUser();
+        String uId = roobaruDuniya.getuserId();
+        String content = roobaruDuniya.getContent() + "\n" + " by" + uName + "\n" + " uid " + uId;
 
 
 
@@ -46,7 +46,7 @@ public class SendEmail extends AsyncTask<RoobaruDuniya,Void,Void> {
                     content,
                     "roobaru.data@gmail.com",
                     "roobaru.duniya@gmail.com");
-            Log.d("checkemail","Email sent");
+            Log.d("checkemail", "Email sent");
 
         } catch (Exception e) {
             Log.e("SendMail", e.getMessage(), e);

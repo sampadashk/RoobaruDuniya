@@ -32,7 +32,7 @@
             android:theme="@style/AppTheme.NoActionBar">
 
 
-                <meta-data
+            <meta-data
                 android:name="android.app.default_searchable"
                 android:value=".SearchResultsActivity" />
 
@@ -114,7 +114,8 @@
 
         <!-- 2. The service that will send our collection data to our widget. It needs the
                 permission android.permission.BIND_REMOTEVIEWS -->
-        <service android:name=".WidgetService"
+        <service
+            android:name=".WidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
     </application>
 

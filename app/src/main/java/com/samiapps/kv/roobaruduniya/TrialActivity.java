@@ -93,7 +93,7 @@ public class TrialActivity extends AppCompatActivity
     FloatingActionButton fab;
     public static boolean isEditor;
     FirebaseDatabase firebaseDtabase;
-   DatabaseReference userDtabase;
+    DatabaseReference userDtabase;
     DatabaseReference dbEditor;
     NavigationView navigationView;
     MenuItem sentart;
@@ -106,7 +106,7 @@ public class TrialActivity extends AppCompatActivity
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-         Log.d(TAG,"ONCREATE 1");
+        //Log.d(TAG, "ONCREATE 1");
         setContentView(R.layout.activity_trial);
 
 
@@ -115,8 +115,7 @@ public class TrialActivity extends AppCompatActivity
         userStatus = "Blogger";
         shouldLoadHomeFragOnBackPress = true;
         navItemIndex = 0;
-         CURRENT_TAG = TAG_HOME;
-
+        CURRENT_TAG = TAG_HOME;
 
 
         mAuth = FirebaseAuth.getInstance();
@@ -126,20 +125,17 @@ public class TrialActivity extends AppCompatActivity
                 FirebaseUser user = firebaseAuth.getCurrentUser();
 
 
-               if (user != null) {
+                if (user != null) {
 
 
-                       Log.d(TAG, "Signed in 3");
+                    Log.d(TAG, "Signed in 3");
 
 
-                       onSignedInInitialize(user.getDisplayName(), user.getEmail(), user.getPhotoUrl(), savedInstanceState);
+                    onSignedInInitialize(user.getDisplayName(), user.getEmail(), user.getPhotoUrl(), savedInstanceState);
 
 
-
-
-               }
-                 else {
-                 Log.d(TAG,"Signed in 2");
+                } else {
+                    //Log.d(TAG, "Signed in 2");
                     onSignedOutCleanup();
                     startActivityForResult(
                             AuthUI.getInstance()
@@ -160,7 +156,7 @@ public class TrialActivity extends AppCompatActivity
 
 
         dbEditor = firebaseDtabase.getReference("editor");
-        userDtabase=firebaseDtabase.getReference("user");
+        userDtabase = firebaseDtabase.getReference("user");
         // mAuth.addAuthStateListener(mAuthListener);
         notificationArrList = new ArrayList<>();
         notificationJsonList = new ArrayList<>();
@@ -214,18 +210,18 @@ public class TrialActivity extends AppCompatActivity
                 try {
                     json_object = new JSONObject(intent.getExtras().getString("badge_jsondata"));
                     NotificationJson notificationJson = new NotificationJson(json_object.get("msgid").toString(), json_object.get("userid").toString());
-                    Log.d("ckjsonob", json_object.get("msgid").toString());
-                    Log.d("ckjsonobdev", json_object.get("userid").toString());
+                    //Log.d("ckjsonob", json_object.get("msgid").toString());
+                    //Log.d("ckjsonobdev", json_object.get("userid").toString());
                     notificationJsonList.add(notificationJson);
 
                     Notification n = new Notification(notificationMessage);
-                    Log.d("getmsg", n.getMessage());
+                    //Log.d("getmsg", n.getMessage());
                     notificationArrList.add(n);
 
-                    Log.d("chknsize", "" + notificationArrList);
+                    //Log.d("chknsize", "" + notificationArrList);
                     int count = intent.getIntExtra("badge_count", 0);
                     //log our message value
-                    Log.d("checknotifcount", "" + count);
+                    //Log.d("checknotifcount", "" + count);
                     setNotifCount(count);
                 } catch (NullPointerException e) {
                     e.printStackTrace();
@@ -235,7 +231,7 @@ public class TrialActivity extends AppCompatActivity
 
             }
         };
-       registerReceiver(ConnectivityReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+        registerReceiver(ConnectivityReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         //registering our receiver
         this.registerReceiver(mReceiver, intentFilter);
 
@@ -351,7 +347,7 @@ public class TrialActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 try {
-                    Log.d("ckjs", json_object.get("userid").toString());
+                   //Log.d("ckjs", json_object.get("userid").toString());
 
 
                     setNotifCount(0);
@@ -365,13 +361,8 @@ public class TrialActivity extends AppCompatActivity
 
 
                     startActivity(intent1);
-                }
-                catch(NullPointerException ne)
-                {
+                } catch (NullPointerException ne) {
                     ne.printStackTrace();
-                }
-                catch (JSONException e) {
-                    e.printStackTrace();
                 }
 
                 notificationArrList.clear();
@@ -401,9 +392,8 @@ public class TrialActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         switch (id) {
-            case R.id.searchid:
-            {
-                Intent intent=new Intent(TrialActivity.this,SearchResultsActivity.class);
+            case R.id.searchid: {
+                Intent intent = new Intent(TrialActivity.this, SearchResultsActivity.class);
                 startActivity(intent);
 
 
@@ -440,13 +430,11 @@ public class TrialActivity extends AppCompatActivity
                 break;
 
 
-
-
             }
 
             //noinspection SimplifiableIfStatement
             case R.id.write_blog: {
-                Log.d("heyhey","here");
+                //Log.d("heyhey", "here");
                 Intent intent = new Intent(this, WriteArticleActivity.class);
                 startActivity(intent);
                 break;
@@ -467,14 +455,10 @@ public class TrialActivity extends AppCompatActivity
         if (requestcode == RC_SIGN_IN) {
             IdpResponse response = IdpResponse.fromResultIntent(data);
             if (resultcode == RESULT_OK) {
-                Toast.makeText(this, "Signed in!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.signed_in, Toast.LENGTH_SHORT).show();
 
-            }
-
-
-
-            else if (resultcode == RESULT_CANCELED) {
-                Toast.makeText(this, "Signed OUT!", Toast.LENGTH_SHORT).show();
+            } else if (resultcode == RESULT_CANCELED) {
+                Toast.makeText(this, R.string.signed_out, Toast.LENGTH_SHORT).show();
                 finish();
             }
         }
@@ -575,7 +559,7 @@ public class TrialActivity extends AppCompatActivity
     @Override
     public void onResume() {
         super.onResume();
-        Log.d("checkmain",CURRENT_TAG);
+        //Log.d("checkmain", CURRENT_TAG);
         //  Log.d(TAG,"resume");
 
    /*    FirebaseUser user=FirebaseAuth.getInstance().getCurrentUser();
@@ -608,27 +592,24 @@ public class TrialActivity extends AppCompatActivity
             mAuth.removeAuthStateListener(mAuthListener);
 
 
-
         }
-         Log.d(TAG,"onStop()");
-
+        //Log.d(TAG, "onStop()");
 
 
     }
 
     public void onDestroy() {
         super.onDestroy();
-         Log.d("TrialOndestroy",""+userStatus);
+        //Log.d("TrialOndestroy", "" + userStatus);
 
         if (mReceiver != null) {
             unregisterReceiver(mReceiver);
             mReceiver = null;
 
         }
-        if(ConnectivityReceiver!=null)
-        {
+        if (ConnectivityReceiver != null) {
             unregisterReceiver(ConnectivityReceiver);
-            ConnectivityReceiver=null;
+            ConnectivityReceiver = null;
         }
 
     }
@@ -650,8 +631,8 @@ public class TrialActivity extends AppCompatActivity
             uemail = email;
             mHandler = new Handler();
 
-           Log.d("cname", uname);
-          Log.d("curi", photoUri.toString());
+            //Log.d("cname", uname);
+            //Log.d("curi", photoUri.toString());
 
 
         } catch (NullPointerException e) {
@@ -669,12 +650,12 @@ public class TrialActivity extends AppCompatActivity
         }
 
         checkEditor();
-       // checkUserDb();
+        // checkUserDb();
 
         loadNavHeader();
         if (savedInstanceState == null) {
-         //   navItemIndex = 0;
-          //  CURRENT_TAG = TAG_HOME;
+            //   navItemIndex = 0;
+            //  CURRENT_TAG = TAG_HOME;
             loadHomeFragment();
         }
 
@@ -688,35 +669,32 @@ public class TrialActivity extends AppCompatActivity
     private void checkUserDb() {
 
 
+        userDtabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                try {
+                    String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                    //Log.d("testui", uid);
+                    if (dataSnapshot.hasChild(uid)) {
+                        //Log.d("haschi", "true");
+                        return;
+                    } else {
+                        //Log.d("haschi", "false");
+                        String uphoto = FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl().toString();
+                        User u = new User(uname, uemail, null, TrialActivity.userStatus, uphoto);
+                        userDtabase.child(uid).setValue(u);
+                    }
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
+            }
 
-      userDtabase.addListenerForSingleValueEvent(new ValueEventListener() {
-          @Override
-          public void onDataChange(DataSnapshot dataSnapshot) {
-              try {
-                  String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                  Log.d("testui", uid);
-                  if (dataSnapshot.hasChild(uid)) {
-                      Log.d("haschi", "true");
-                      return;
-                  } else {
-                      Log.d("haschi", "false");
-                      String uphoto = FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl().toString();
-                      User u = new User(uname,uemail,null,TrialActivity.userStatus,uphoto);
-                      userDtabase.child(uid).setValue(u);
-                  }
-              }
-              catch(NullPointerException e)
-              {
-                  e.printStackTrace();
-              }
-          }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                //Log.d("cker", databaseError.toString());
 
-          @Override
-          public void onCancelled(DatabaseError databaseError) {
-              Log.d("cker",databaseError.toString());
-
-          }
-      });
+            }
+        });
 
     }
 
@@ -735,7 +713,7 @@ public class TrialActivity extends AppCompatActivity
     }
 
     private Fragment getHomeFragment() {
-         Log.d(TAG,"GETFrag");
+        //Log.d(TAG, "GETFrag");
         switch (navItemIndex) {
             case 0:
                 // home
@@ -791,32 +769,29 @@ public class TrialActivity extends AppCompatActivity
             //fragmentTransaction.addToBackStack(null);
             fragmentTransaction.replace(R.id.frame, hmFragment).commit();
             */
-        }
+    }
 
-    public boolean isNetworkUp()
-    {
-        ConnectivityManager cm= (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo=cm.getActiveNetworkInfo();
+    public boolean isNetworkUp() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
         return networkInfo != null && networkInfo.isConnectedOrConnecting();
     }
-    private BroadcastReceiver ConnectivityReceiver=new BroadcastReceiver() {
+
+    private BroadcastReceiver ConnectivityReceiver = new BroadcastReceiver() {
 
         @Override
-        public void onReceive(Context context, Intent intent){
+        public void onReceive(Context context, Intent intent) {
             if (!isNetworkUp()) {
                 // Log.d("hi","show");
-            t=  Toast.makeText(TrialActivity.this,"No Connectivity",Toast.LENGTH_SHORT);
+                t = Toast.makeText(TrialActivity.this, R.string.no_connectivity, Toast.LENGTH_SHORT);
                 t.show();
-            }
-            else
-            {
+            } else {
 
-                if (t!=null)
+                if (t != null)
                     t.cancel();
 
             }
             //  snackbar.setActionTextColor(getResources().getColor(R.color.material_red_700));
-
 
 
         }
@@ -854,4 +829,4 @@ public class TrialActivity extends AppCompatActivity
        toggle.onConfigurationChanged(newConfig);
     }
     */
-    }
+}

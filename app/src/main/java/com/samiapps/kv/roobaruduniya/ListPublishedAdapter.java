@@ -2,7 +2,6 @@ package com.samiapps.kv.roobaruduniya;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,38 +27,41 @@ public class ListPublishedAdapter extends RecyclerView.Adapter<ListPublishedAdap
 
     @Override
     public ListPublishedAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view= LayoutInflater.from(context).inflate(R.layout.list_published,parent,false);
+        View view = LayoutInflater.from(context).inflate(R.layout.list_published, parent, false);
 
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(ListPublishedAdapter.ViewHolder holder, int position) {
-        if(articles.size()>0) {
+        if (articles.size() > 0) {
             RoobaruDuniya rb = articles.get(position);
             String title = rb.getTitle();
             holder.publishedTitle.setText(title);
         }
 
     }
+
     public void setOnItemClickListener(ListPublishedAdapter.ClickListener clickListener) {
         ListPublishedAdapter.clickListener = clickListener;
     }
+
     public interface ClickListener {
         void onItemClick(int position, View v);
     }
 
     @Override
     public int getItemCount() {
-        Log.d("pubs",""+articles.size());
+       // Log.d("pubs", "" + articles.size());
         return articles.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView publishedTitle;
+
         public ViewHolder(View itemView) {
             super(itemView);
-            publishedTitle=(TextView)itemView.findViewById(R.id.publishedtitleId);
+            publishedTitle = (TextView) itemView.findViewById(R.id.publishedtitleId);
             itemView.setOnClickListener(this);
         }
 

@@ -22,12 +22,12 @@ public class Comment {
         return date;
     }
 
-    public Comment(String commentorName, String comment, String date, String uPhoto,String uid) {
+    public Comment(String commentorName, String comment, String date, String uPhoto, String uid) {
         this.commentorName = commentorName;
         this.comment = comment;
         this.date = date;
         this.uPhoto = uPhoto;
-        this.uid=uid;
+        this.uid = uid;
 
 
     }
@@ -46,8 +46,8 @@ public class Comment {
 
     String date;
     String uPhoto;
-    public Comment()
-    {
+
+    public Comment() {
 
     }
 
@@ -66,8 +66,6 @@ public class Comment {
     public void setComment(String comment) {
         this.comment = comment;
     }
-
-
 
 
     public Comment(String commentorName, String comment) {

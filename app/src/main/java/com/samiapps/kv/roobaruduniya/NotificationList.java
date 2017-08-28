@@ -23,16 +23,16 @@ public class NotificationList extends AppCompatActivity {
     ArrayList<Notification> notificationArrayList;
     ArrayList<NotificationJson> jsonArrayList;
     NotificationAdapter notifiadapter;
-    public void onCreate(Bundle savedInstanceState)
-    {
+
+    public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.notification_list);
-        notificationRecyclerView=(RecyclerView)findViewById(R.id.notificationList);
-        Intent i=getIntent();
-        String msg=i.getStringExtra("msgNotification");
+        notificationRecyclerView = (RecyclerView) findViewById(R.id.notificationList);
+        Intent i = getIntent();
+        String msg = i.getStringExtra("msgNotification");
 
-        JSONObject resjson= null;
+        JSONObject resjson = null;
         try {
             resjson = new JSONObject(i.getStringExtra("jsondetail"));
         } catch (JSONException e) {
@@ -40,9 +40,9 @@ public class NotificationList extends AppCompatActivity {
         }
         //JSONObject resjson= (JSONObject) i.getSerializableExtra("jsondetail");
         try {
-           // Log.d("checkvjson1",resjson.get("msgid").toString());
-            String msgid=resjson.get("msgid").toString();
-            String userid=resjson.get("userid").toString();
+            // Log.d("checkvjson1",resjson.get("msgid").toString());
+            String msgid = resjson.get("msgid").toString();
+            String userid = resjson.get("userid").toString();
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -50,23 +50,22 @@ public class NotificationList extends AppCompatActivity {
 
 
         notificationArrayList = (ArrayList<Notification>) i.getSerializableExtra("passObject");
-        jsonArrayList=(ArrayList<NotificationJson>)i.getSerializableExtra("passdataObject");
+        jsonArrayList = (ArrayList<NotificationJson>) i.getSerializableExtra("passdataObject");
         //i.getSerializableExtra("passObject");
         // Notification notification=new Notification(msg);
         //notificationArrayList.add(notification);
-       // Log.d("sizechk",""+notificationArrayList.size());
-       // notifiadapter.notifyDataSetChanged();
-
+        // Log.d("sizechk",""+notificationArrayList.size());
+        // notifiadapter.notifyDataSetChanged();
 
 
         //TODO: add msg in arraylist
 
-        notifiadapter=new NotificationAdapter(this,notificationArrayList);
-        RecyclerView.LayoutManager layoutManager=new LinearLayoutManager(getApplicationContext());
+        notifiadapter = new NotificationAdapter(this, notificationArrayList);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         SeparatorDecoration decoration = new SeparatorDecoration(this, Color.GRAY, 1.5f);
         notificationRecyclerView.addItemDecoration(decoration);
         //SpacesItemDecoration s=new SpacesItemDecoration(1);
-      // notificationRecyclerView.addItemDecoration(s);
+        // notificationRecyclerView.addItemDecoration(s);
         notificationRecyclerView.setLayoutManager(layoutManager);
         notificationRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
@@ -75,26 +74,24 @@ public class NotificationList extends AppCompatActivity {
         notifiadapter.setOnItemClickListener(new NotificationAdapter.ClickListener() {
             @Override
             public void onItemClick(int position, View v) {
-                NotificationJson nj=jsonArrayList.get(position);
-                Intent intent=new Intent(NotificationList.this,ArticleDetail.class);
-                intent.putExtra("intentNotification","NotificationDetail");
-                intent.putExtra("NotificationObject",nj);
-               // Log.d("chknj",nj.getMsg_id());
+                NotificationJson nj = jsonArrayList.get(position);
+                Intent intent = new Intent(NotificationList.this, ArticleDetail.class);
+                intent.putExtra("intentNotification", "NotificationDetail");
+                intent.putExtra("NotificationObject", nj);
+                // Log.d("chknj",nj.getMsg_id());
 
                 startActivity(intent);
-
-
 
 
             }
         });
     }
-    public void onStart()
-    {
+
+    public void onStart() {
         super.onStart();
     }
-    public void onDestroy()
-    {
+
+    public void onDestroy() {
         super.onDestroy();
         notificationArrayList.clear();
         jsonArrayList.clear();

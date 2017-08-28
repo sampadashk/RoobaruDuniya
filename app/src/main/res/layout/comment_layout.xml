@@ -4,10 +4,11 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
+
     <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-       >
+        android:layout_height="wrap_content">
+
         <ImageView
             android:id="@+id/img_profile"
             android:layout_width="@dimen/profile_width"
@@ -15,6 +16,7 @@
             android:contentDescription="@string/commentor_profile"
 
             app:srcCompat="@android:drawable/sym_def_app_icon" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -26,7 +28,8 @@
             android:clickable="true"
             android:autoLink="web"
 
-            android:id="@+id/uc_name"/>
+            android:id="@+id/uc_name" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -34,7 +37,8 @@
 
             android:textSize="12dp"
             android:layout_toRightOf="@id/img_profile"
-            android:layout_below="@id/uc_name"/>
+            android:layout_below="@id/uc_name" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -42,7 +46,8 @@
 
             android:layout_below="@id/cmt_data"
             android:layout_toRightOf="@id/img_profile"
-            android:id="@+id/uc_comment"/>
+            android:id="@+id/uc_comment" />
+
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -53,6 +58,7 @@
             android:visibility="gone"
 
             />
+
         <ProgressBar
             android:layout_height="42dp"
             android:layout_width="42dp"

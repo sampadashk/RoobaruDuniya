@@ -24,9 +24,9 @@ import com.google.firebase.database.ValueEventListener;
 
 public class PublishDetail extends AppCompatActivity {
     int pos;
-    public static final String TAG=PublishDetail.class.getName();
+    public static final String TAG = PublishDetail.class.getName();
     RoobaruDuniya artpub;
-   
+
     CollapsingToolbarLayout collapToolbar;
 
     String uName;
@@ -34,10 +34,10 @@ public class PublishDetail extends AppCompatActivity {
     ImageView iview;
     TextView ttitle;
     TextView tcontent;
-    TextView txtName,txtStatus;
+    TextView txtName, txtStatus;
     ImageView iprofile;
 
-   
+
     String date;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -45,14 +45,13 @@ public class PublishDetail extends AppCompatActivity {
     DatabaseReference publishedRef;
     Uri uPhoto;
     String keySel;
-   
+
     FirebaseDatabase dbase;
- 
-  
+
+
     TextView datetvw;
 
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
@@ -60,46 +59,36 @@ public class PublishDetail extends AppCompatActivity {
 //TODO : DISPLAY EMPTY WHEN NO PUBLISHED
 
 
-   
-
-        collapToolbar= (CollapsingToolbarLayout) findViewById(R.id.c_layout);
+        collapToolbar = (CollapsingToolbarLayout) findViewById(R.id.c_layout);
 
         collapToolbar.setCollapsedTitleTextAppearance(R.style.collapsedappbar);
         collapToolbar.setExpandedTitleTextAppearance(R.style.expandedappbar);
-        iprofile=(ImageView) findViewById(R.id.i_profile);
+        iprofile = (ImageView) findViewById(R.id.i_profile);
 
 
-
-
-
-
-        
-        dbase=FirebaseDatabase.getInstance();
-        publishedRef=dbase.getReference("published");
+        dbase = FirebaseDatabase.getInstance();
+        publishedRef = dbase.getReference("published");
 
         // FirebaseAuth.getInstance().
-        Intent intent=getIntent();
-        pos=intent.getIntExtra("position",-1);
-       // Log.d("checkpos",""+pos);
-        artpub=(RoobaruDuniya)intent.getSerializableExtra(PublishDetail.TAG);
-        keySel=intent.getStringExtra("keySelected");
-       // Log.d("keysel",keySel);
+        Intent intent = getIntent();
+        pos = intent.getIntExtra("position", -1);
+        // Log.d("checkpos",""+pos);
+        artpub = (RoobaruDuniya) intent.getSerializableExtra(PublishDetail.TAG);
+        keySel = intent.getStringExtra("keySelected");
+        // Log.d("keysel",keySel);
 
 
-
-        uName=artpub.getUser();
+        uName = artpub.getUser();
 
         // Log.d("chkname",userName);
-        uProf=artpub.getUserProfilePhoto();
+        uProf = artpub.getUserProfilePhoto();
         publishedRef.child(keySel).child("dateCreated").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 try {
                     date = dataSnapshot.getValue().toString();
-                  //  Log.d("ckdate", date);
-                }
-                catch (NullPointerException e)
-                {
+                    //  Log.d("ckdate", date);
+                } catch (NullPointerException e) {
                     e.printStackTrace();
                 }
 
@@ -115,24 +104,17 @@ public class PublishDetail extends AppCompatActivity {
         txtStatus = (TextView) findViewById(R.id.u_status);
 
 
-        iview=(ImageView) findViewById(R.id.d_image);
-        ttitle=(TextView)findViewById(R.id.p_title);
-        tcontent=(TextView)findViewById(R.id.p_content);
-
-
-
-
-
-      
-
+        iview = (ImageView) findViewById(R.id.d_image);
+        ttitle = (TextView) findViewById(R.id.p_title);
+        tcontent = (TextView) findViewById(R.id.p_content);
 
 
         Glide.with(this).load(artpub.getPhoto()).into(iview);
         ttitle.setText(artpub.getTitle());
         tcontent.setText(artpub.getContent());
         txtName.setText(uName);
-      
-        Uri uri=Uri.parse(uProf);
+
+        Uri uri = Uri.parse(uProf);
         // Loading profile image
         Glide.with(this).load(uri)
                 .crossFade()
@@ -140,24 +122,20 @@ public class PublishDetail extends AppCompatActivity {
                 .bitmapTransform(new CircleTransform(this))
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(iprofile);
-       
-
 
 
         // Log.d("chkobj",""+artpub);
 
 
-
     }
+
     @Override
-    public void onStart()
-    {
+    public void onStart() {
         super.onStart();
 
-   
 
-  
     }
+
     /*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -180,9 +158,8 @@ public class PublishDetail extends AppCompatActivity {
     }
     */
     @Override
-    public void onDestroy()
-    {
+    public void onDestroy() {
         super.onDestroy();
-        
+
     }
 }

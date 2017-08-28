@@ -10,22 +10,25 @@ public class DisplayEvent {
 
     private String heading;
     private ArrayList<HomeDisplay> mDescriptions;
-    public DisplayEvent()
-    {
+
+    public DisplayEvent() {
 
     }
 
-    public DisplayEvent(String name,ArrayList<HomeDisplay> mDescriptions ) {
+    public DisplayEvent(String name, ArrayList<HomeDisplay> mDescriptions) {
         this.heading = name;
         this.mDescriptions = mDescriptions;
 
     }
+
     public String getHeader() {
         return heading;
     }
+
     public void setHeader(String name) {
         this.heading = name;
     }
+
     public ArrayList<HomeDisplay> getAllItemsInSection() {
         return mDescriptions;
     }

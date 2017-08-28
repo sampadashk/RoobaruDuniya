@@ -9,17 +9,17 @@
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
 
-
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:orientation="vertical"
         android:padding="@dimen/activity_horizontal_margin">
+
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            >
+            android:layout_height="wrap_content">
+
             <ImageView
                 android:id="@+id/img_profile"
                 android:layout_width="@dimen/profile_width"
@@ -34,7 +34,7 @@
                 android:id="@+id/name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="sampada shukla"
+
                 android:layout_toRightOf="@+id/img_profile"
                 android:paddingTop="40dp"
 
@@ -44,20 +44,15 @@
         </RelativeLayout>
 
 
+        <TextView
+            android:id="@+id/user_status"
 
+            android:textColor="@android:color/black"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
 
-            <TextView
-                android:id="@+id/user_status"
-
-                android:textColor="@android:color/black"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-
-                android:text="Blogger"
-                android:paddingLeft="16dp" />
-
-
-
+            android:text="@string/default_status"
+            android:paddingLeft="16dp" />
 
 
     </LinearLayout>

@@ -31,39 +31,37 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         String notificatication_type = remoteMessage.getData().get("title");
         String msgTitle = remoteMessage.getData().get("body");
-        String user=remoteMessage.getData().get("userName");
+        String user = remoteMessage.getData().get("userName");
         String notification_body;
         String notification_title;
 
-        if(user!=null)
-        {
-           notification_body="New "+notificatication_type+" on your article "+msgTitle+" by "+user;
-            notification_title="New"+notificatication_type;
+        if (user != null) {
+            notification_body = "New " + notificatication_type + " on your article " + msgTitle + " by " + user;
+            notification_title = "New" + notificatication_type;
 
 
-        }
-        else {
-            notification_body = notificatication_type +" "+msgTitle;
-            notification_title="New Article";
+        } else {
+            notification_body = notificatication_type + " " + msgTitle;
+            notification_title = "New Article";
         }
 
 
-        Log.d("notification_body",notification_body);
+       // Log.d("notification_body", notification_body);
         //TODO new article notification
-     // String click_action = remoteMessage.getNotification().getClickAction();
-        String mid=remoteMessage.getData().get("msgid");
-        String uid=remoteMessage.getData().get("userid");
-        Map<String, String> params=new HashMap<String,String>();
+        // String click_action = remoteMessage.getNotification().getClickAction();
+        String mid = remoteMessage.getData().get("msgid");
+        String uid = remoteMessage.getData().get("userid");
+        Map<String, String> params = new HashMap<String, String>();
         //params = remoteMessage.getData().get("msgid"),remoteMessage.getData().get("userid");
-        params.put("msgid",mid);
-        params.put("userid",uid);
+        params.put("msgid", mid);
+        params.put("userid", uid);
         JSONObject object = new JSONObject(params);
-        Log.d("JSON_OBJECT", object.toString());
+      //  Log.d("JSON_OBJECT", object.toString());
 
 
         int countNo = TrialActivity.mNotifCount;
         countNo += 1;
-        setBadge(getApplicationContext(),countNo,notification_body,object);
+        setBadge(getApplicationContext(), countNo, notification_body, object);
 
 
         NotificationCompat.Builder mBuilder =
@@ -71,14 +69,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         .setSmallIcon(R.drawable.roobaru_logo)
                         .setContentTitle(notification_title)
                         .setContentText(notification_body)
-                        .setAutoCancel(true)
-                ;
+                        .setAutoCancel(true);
 
-        Intent resultIntent = new Intent(this,ArticleDetail.class);
+        Intent resultIntent = new Intent(this, ArticleDetail.class);
         resultIntent.setAction(Long.toString(System.currentTimeMillis()));
-       // Log.d("getAction",click_action);
-        resultIntent.putExtra("bkgnotification",object.toString());
-      //  resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        // Log.d("getAction",click_action);
+        resultIntent.putExtra("bkgnotification", object.toString());
+        //  resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
 // Because clicking the notification opens a new ("special") activity, there's
 // no need to create an artificial back stack.
@@ -86,15 +83,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         PendingIntent resultPendingIntent =
                 PendingIntent.getActivity(
                         this,
-                        0 ,
+                        0,
                         resultIntent,
-                        PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_ONE_SHOT)
-                ;
+                        PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_ONE_SHOT);
         mBuilder.setContentIntent(resultPendingIntent);
 
 
 // Sets an ID for the notification
-
 
 
 // Gets an instance of the NotificationManager service
@@ -115,19 +110,19 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     }
 
-    public static void setBadge(Context applicationContext, int countNo,String msg,JSONObject ob) {
+    public static void setBadge(Context applicationContext, int countNo, String msg, JSONObject ob) {
         String launcherClassName = getLauncherClassName(applicationContext);
         if (launcherClassName == null) {
-         Log.e("classname", "null");
+            Log.e("classname", "null");
             return;
         }
         Intent intent = new Intent("android.intent.action.BADGE_COUNT_UPDATE");
         intent.putExtra("badge_count", countNo);
         intent.putExtra("badge_count_package_name", applicationContext.getPackageName());
         intent.putExtra("badge_count_class_name", launcherClassName);
-        intent.putExtra("badge_count_msg",msg);
-        intent.putExtra("badge_jsondata",ob.toString());
-     Log.d("ckjso",ob.toString());
+        intent.putExtra("badge_count_msg", msg);
+        intent.putExtra("badge_jsondata", ob.toString());
+      //  Log.d("ckjso", ob.toString());
         applicationContext.sendBroadcast(intent);
     }
 
@@ -143,7 +138,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             String pkgName = resolveInfo.activityInfo.applicationInfo.packageName;
             if (pkgName.equalsIgnoreCase(context.getPackageName())) {
                 String className = resolveInfo.activityInfo.name;
-              //  Log.d("classNme",className);
+                //  Log.d("classNme",className);
                 return className;
             }
         }

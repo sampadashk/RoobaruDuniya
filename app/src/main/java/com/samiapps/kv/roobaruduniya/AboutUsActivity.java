@@ -9,8 +9,7 @@ import android.support.v7.app.AppCompatActivity;
  */
 
 public class AboutUsActivity extends AppCompatActivity {
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.about_us);
 

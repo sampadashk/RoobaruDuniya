@@ -17,6 +17,7 @@ import android.widget.RemoteViews;
 public class RoobaruWidgetProvider extends AppWidgetProvider {
 
     public static final String EXTRA_STRING = "com.example.android.stackwidget.EXTRA_ITEM";
+
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.roobaru_widget_provider);
@@ -39,7 +40,7 @@ public class RoobaruWidgetProvider extends AppWidgetProvider {
             RemoteViews mView = initViews(context, appWidgetManager, widgetId);
             // Adding collection list item handler
             final Intent onItemClick = new Intent(context, CategoryActivity.class);
-           // onItemClick.setAction(ACTION_TOAST);
+            // onItemClick.setAction(ACTION_TOAST);
 
             onItemClick.setData(Uri.parse(onItemClick
                     .toUri(Intent.URI_INTENT_SCHEME)));
@@ -53,6 +54,7 @@ public class RoobaruWidgetProvider extends AppWidgetProvider {
         }
         super.onUpdate(context, appWidgetManager, appWidgetIds);
     }
+
     private RemoteViews initViews(Context context,
                                   AppWidgetManager widgetManager, int widgetId) {
 

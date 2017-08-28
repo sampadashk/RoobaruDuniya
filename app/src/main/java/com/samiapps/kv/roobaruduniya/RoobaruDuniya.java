@@ -15,8 +15,8 @@ public class RoobaruDuniya implements Serializable {
     String userProfilePhoto;
     int draft;
     int sent;
-    public RoobaruDuniya()
-    {
+
+    public RoobaruDuniya() {
 
     }
 
@@ -48,9 +48,9 @@ public class RoobaruDuniya implements Serializable {
         this.title = title;
         this.content = content;
         this.photo = photo;
-        this.user=user;
+        this.user = user;
         this.uId = uId;
-        this.userProfilePhoto=userProfilePhoto;
+        this.userProfilePhoto = userProfilePhoto;
         this.draft = draft;
         this.sent = sent;
 
@@ -96,7 +96,6 @@ public class RoobaruDuniya implements Serializable {
     public void setSent(int sent) {
         this.sent = sent;
     }
-
 
 
 }

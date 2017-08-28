@@ -8,8 +8,7 @@ import android.support.v7.app.AppCompatActivity;
  */
 
 public class NotificationDetail extends AppCompatActivity {
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.detail_layout);
     }

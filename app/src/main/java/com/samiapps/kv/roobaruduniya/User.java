@@ -10,11 +10,11 @@ public class User {
     String articleStatus;
     String status;
     String uPhoto;
+
     //published
-  //  String drafted;
-   // String sent;
-    public User()
-    {
+    //  String drafted;
+    // String sent;
+    public User() {
 
     }
 
@@ -39,7 +39,6 @@ public class User {
     }
 
 
-
     public String getStatus() {
         return status;
     }
@@ -48,12 +47,12 @@ public class User {
         this.status = status;
     }
 
-    public User(String name, String email, String articleStatus, String status,String uPhoto) {
+    public User(String name, String email, String articleStatus, String status, String uPhoto) {
         this.name = name;
         this.email = email;
         this.articleStatus = articleStatus;
-        this.status=status;
-        this.uPhoto=uPhoto;
+        this.status = status;
+        this.uPhoto = uPhoto;
 
     }
 
@@ -64,7 +63,6 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
-
 
 
     public void setArticleStatus(String articleStatus) {

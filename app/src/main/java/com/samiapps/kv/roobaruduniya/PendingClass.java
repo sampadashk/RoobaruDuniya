@@ -9,15 +9,14 @@ public class PendingClass {
     boolean approved;
     String editorName;
 
-    PendingClass(boolean checked)
-    {
-        this.checked=checked;
+    PendingClass(boolean checked) {
+        this.checked = checked;
     }
-    PendingClass(boolean checked,boolean approved,String editorName)
-    {
-        this.checked=checked;
-        this.approved=approved;
-        this.editorName=editorName;
+
+    PendingClass(boolean checked, boolean approved, String editorName) {
+        this.checked = checked;
+        this.approved = approved;
+        this.editorName = editorName;
     }
 
 
@@ -44,8 +43,6 @@ public class PendingClass {
     public void setEditorName(String editorName) {
         this.editorName = editorName;
     }
-
-
 
 
 }

@@ -3,30 +3,31 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/delete_draft"
-        android:title="delete"
+        android:title="@string/delete"
         app:showAsAction="always"
 
         android:enabled="false"
-        android:text="delete"
-        />
+        android:text="@string/delete" />
 
-    <item android:id="@+id/savecl"
+    <item
+        android:id="@+id/savecl"
         android:title="@string/savenclose"
         app:showAsAction="always"
 
         android:enabled="false"
-        android:text="saveNclose"/>
+        android:text="@string/savenclose" />
 
 
-
-    <item android:id="@+id/draft"
-        android:title="draft"
+    <item
+        android:id="@+id/draft"
+        android:title="@string/draft"
         app:showAsAction="always"
-        android:text="Draft"
-        android:enabled="false"/>
-    <item android:title="publish"
+        android:text="@string/draft"
+        android:enabled="false" />
+    <item
+        android:title="@string/publish"
         android:id="@+id/publish"
-        android:text="publish"
+        android:text="@string/publish"
         app:showAsAction="always"
-        android:enabled="false"/>
+        android:enabled="false" />
 </menu>

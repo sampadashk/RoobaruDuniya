@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">RoobaruDuniya</string>
+    <string name="roobaru">Roobaru Duniya</string>
     <string name="post_title_hint">Give your post a title</string>
     <string name="post_body_hint">Type something here…</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -36,6 +37,16 @@
     <string name="privacy_policy">Privacy Policy</string>
     <string name="title_activity_trial">TrialActivity</string>
     <string name="error_no_network">No network connectivity! Will load articles when the network is available.</string>
+
+    <string name="published_caption">Published Articles</string>
+    <string name="no_published">NO Published Article</string>
+    <string name="bold">B</string>
+    <string name="italic">I</string>
+    <string name="writer_detail">W</string>
+    <string name="signed_in">Signed in!</string>
+    <string name="signed_out">Signed Out!</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="no_connectivity">No Connectivity</string>
 
     <string name="aboutus">यह पत्रिका भारत के समाचारपत्रों के पंजीयन कार्यालय (The Registrar of
 Newspapers for India, Govt of India) द्वारा पंजीयत है जिसका पंजीयन नंबर MPHIN/2012/45819 है। \n
@@ -85,11 +96,22 @@ Newspapers for India, Govt of India) द्वारा पंजीयत ह�
     <string name="default_notificationNum">0</string>
     <string name="write_blog">write_blog</string>
     <string name="notification">notification</string>
-    <string name="sign_out">sign out</string>
+
     <string name="Share">Share</string>
     <string name="approved">approved</string>
     <string name="approve">approve</string>
     <string name="reject">reject</string>
+    <string name="save">Save</string>
+    <string name="delete">delete</string>
+    <string name="delete_comment">Comment Deleted</string>
+    <string name="draft_saved">Draft Saved</string>
+    <string name="send_approval">Article sent!will be published once it gets approved by editor</string>
+    <string name="wait_photo">Please wait!Photo uploading to server</string>
+    <string name="word_limit_msg">Please write altleast 200 words to publish</string>
+    <string name="article_title_msg">Please give your article a title</string>
+    <string name="photo_uploaded">Photo uploaded</string>
+    <string name="draft">draft</string>
+    <string name="publish">publish</string>
 
     <string name="search">search</string>
     <string name="send">SEND</string>

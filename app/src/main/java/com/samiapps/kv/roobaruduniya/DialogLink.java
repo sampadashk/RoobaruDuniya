@@ -12,13 +12,13 @@ import android.widget.EditText;
 public class DialogLink extends AppCompatActivity {
     EditText urlText;
     EditText urlLink;
-    public void onCreate(Bundle savedInstanceState)
-    {
+
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_link);
-        urlText=(EditText)findViewById(R.id.url_text);
-        urlLink=(EditText)findViewById(R.id.url_edit);
-        Intent i=getIntent();
+        urlText = (EditText) findViewById(R.id.url_text);
+        urlLink = (EditText) findViewById(R.id.url_edit);
+        Intent i = getIntent();
 
 
     }

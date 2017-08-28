@@ -41,32 +41,30 @@ public class SearchResultsActivity extends AppCompatActivity {
     ArrayList<String> list;
     ArrayList<String> klist;
     boolean isAuthor;
-    private ArrayAdapter<String> listAdapter ;
+    private ArrayAdapter<String> listAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.show_search);
 
-        dbfb=FirebaseDatabase.getInstance();
-        dbsearch=dbfb.getReference("publishedTitle");
-        userReference=dbfb.getReference("user");
-        lvw=(ListView) findViewById(R.id.listview);
+        dbfb = FirebaseDatabase.getInstance();
+        dbsearch = dbfb.getReference("publishedTitle");
+        userReference = dbfb.getReference("user");
+        lvw = (ListView) findViewById(R.id.listview);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
-        noResTextView=(TextView) findViewById(R.id.noResult);
+        noResTextView = (TextView) findViewById(R.id.noResult);
         tabLayout.addTab(tabLayout.newTab().setText("Search By Title"));
         tabLayout.addTab(tabLayout.newTab().setText("Search By Author"));
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-               int i= tab.getPosition();
-                Log.d("ckp",""+i);
-                if(i==1)
-                {
-                    isAuthor=true;
-                }
-                else
-                    isAuthor=false;
+                int i = tab.getPosition();
+                Log.d("ckp", "" + i);
+                if (i == 1) {
+                    isAuthor = true;
+                } else
+                    isAuthor = false;
             }
 
             @Override
@@ -81,42 +79,37 @@ public class SearchResultsActivity extends AppCompatActivity {
         });
 
 
-        klist=new ArrayList<String>();
-
+        klist = new ArrayList<String>();
 
 
         list = new ArrayList<String>();
         listAdapter = new ArrayAdapter<String>(this, R.layout.searchtext, list);
-        Log.d("heyhere","here");
-        lvw.setAdapter( listAdapter );
+        Log.d("heyhere", "here");
+        lvw.setAdapter(listAdapter);
         lvw.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(!isAuthor) {
+                if (!isAuthor) {
                     String key = klist.get(position);
                     Intent inten = new Intent(SearchResultsActivity.this, ArticleDetail.class);
                     inten.putExtra("searchString", key);
                     startActivity(inten);
-                }
-                else
-                {
-                    String userId=klist.get(position);
+                } else {
+                    String userId = klist.get(position);
                     Intent inten = new Intent(SearchResultsActivity.this, Profile.class);
                     inten.putExtra("senuid", userId);
                     startActivity(inten);
                 }
-                }
+            }
 
 
         });
 
 
-
-       // handleIntent(getIntent());
+        // handleIntent(getIntent());
 
     }
-
 
 
     @Override
@@ -131,7 +124,7 @@ public class SearchResultsActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_search,menu);
+        getMenuInflater().inflate(R.menu.menu_search, menu);
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         MenuItem searchItem = menu.findItem(R.id.searchi);
@@ -141,8 +134,7 @@ public class SearchResultsActivity extends AppCompatActivity {
 
 
         searchItem.expandActionView();
-        Log.d("checksearc",searchView.getQuery().toString());
-
+        Log.d("checksearc", searchView.getQuery().toString());
 
 
         searchView.setSearchableInfo(
@@ -152,11 +144,9 @@ public class SearchResultsActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(final String query) {
 
-                if(isAuthor)
-                {
+                if (isAuthor) {
                     queryAuthor(query);
-                }
-                else {
+                } else {
                     Log.d("here", "we");
                     list.clear();
                     listAdapter.clear();
@@ -177,7 +167,6 @@ public class SearchResultsActivity extends AppCompatActivity {
                                 list.add(st);
                                 listAdapter.notifyDataSetChanged();
                             }
-
 
 
                         }
@@ -206,11 +195,9 @@ public class SearchResultsActivity extends AppCompatActivity {
 
 
                 }
-                if(list.isEmpty())
-                {
+                if (list.isEmpty()) {
                     noResTextView.setVisibility(View.VISIBLE);
                 }
-
 
 
                 return true;
@@ -243,9 +230,7 @@ public class SearchResultsActivity extends AppCompatActivity {
                         klist.add(dataSnapshot.getKey());
                         noResTextView.setVisibility(View.GONE);
                     }
-                }
-                catch (NullPointerException e)
-                {
+                } catch (NullPointerException e) {
                     e.printStackTrace();
                 }
 
@@ -272,15 +257,14 @@ public class SearchResultsActivity extends AppCompatActivity {
 
             }
         });
-        
+
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id) {
-            case R.id.searchi:
-                {
+            case R.id.searchi: {
 
              /*  SearchManager searchManager =
                         (SearchManager) getSystemService(Context.SEARCH_SERVICE);

@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -56,11 +55,12 @@ public class EditorArticleActivity extends AppCompatActivity implements AdapterV
     ArrayAdapter<CharSequence> adapter;
     Spinner categorySpinner;
     private boolean titleChanged;
-    int it=0;
+    int it = 0;
 
     private boolean contentChanged;
     String categoryChoosen;
     private static final int RC_PHOTO_PICK = 3;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.write_article);
@@ -68,16 +68,16 @@ public class EditorArticleActivity extends AppCompatActivity implements AdapterV
         content = (EditText) findViewById(R.id.post_content);
         db = FirebaseDatabase.getInstance();
         dbRefMsg = db.getReference("messages");
-        dbEditor=db.getReference("editor");
+        dbEditor = db.getReference("editor");
         dbRefUser = db.getReference("user");
-        dbPendingArticle=db.getReference("pending");
-        dbtitlepublished=db.getReference("publishedTitle");
-        publishedRef=db.getReference("published");
+        dbPendingArticle = db.getReference("pending");
+        dbtitlepublished = db.getReference("publishedTitle");
+        publishedRef = db.getReference("published");
         firebaseStorage = FirebaseStorage.getInstance();
         storageReference = firebaseStorage.getReference().child("article_photo");
-        category=db.getReference("categories");
-        defaultPhoto=firebaseStorage.getReference().child("default");
-        categorySpinner=(Spinner) findViewById(R.id.spinner1);
+        category = db.getReference("categories");
+        defaultPhoto = firebaseStorage.getReference().child("default");
+        categorySpinner = (Spinner) findViewById(R.id.spinner1);
         categorySpinner.setVisibility(View.VISIBLE);
         adapter = ArrayAdapter.createFromResource(this,
                 R.array.catgs, android.R.layout.simple_spinner_item);
@@ -86,29 +86,27 @@ public class EditorArticleActivity extends AppCompatActivity implements AdapterV
         categorySpinner.setAdapter(adapter);
 
         categorySpinner.setOnItemSelectedListener(this);
-        Intent intent=getIntent();
+        Intent intent = getIntent();
         try {
             pos = intent.getIntExtra("position", -1);
-            key=intent.getStringExtra("Keypos");
+            key = intent.getStringExtra("Keypos");
 
-           // Log.d("keypos",key);
+            // Log.d("keypos",key);
 
-           // Log.d("checkpos", "" + pos);
-            rbd= (RoobaruDuniya) intent.getSerializableExtra(SentFragment.TAG);
-            writerId=rbd.getuserId();
+            // Log.d("checkpos", "" + pos);
+            rbd = (RoobaruDuniya) intent.getSerializableExtra(SentFragment.TAG);
+            writerId = rbd.getuserId();
             title.setText(rbd.getTitle());
             content.setText(rbd.getContent());
             //draftPressed+=1;
-        }
-        catch(NullPointerException e)
-        {
+        } catch (NullPointerException e) {
             e.printStackTrace();
         }
         photoButton = (ImageButton) findViewById(R.id.photoPickerButton);
         photoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               // Log.d("ckphtot","photoslected");
+                // Log.d("ckphtot","photoslected");
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                 intent.setType("image/jpeg");
                 intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
@@ -119,16 +117,17 @@ public class EditorArticleActivity extends AppCompatActivity implements AdapterV
 
 
     }
+
     @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
+    public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.menu_editor,menu);
-        approveButton = (MenuItem)menu.findItem(R.id.approved);
-        saveEditorButton = (MenuItem)menu.findItem(R.id.saveEditor);
-        rejectButton=(MenuItem)menu.findItem(R.id.reject);
+        getMenuInflater().inflate(R.menu.menu_editor, menu);
+        approveButton = (MenuItem) menu.findItem(R.id.approved);
+        saveEditorButton = (MenuItem) menu.findItem(R.id.saveEditor);
+        rejectButton = (MenuItem) menu.findItem(R.id.reject);
         return true;
     }
+
     public void onStart() {
 
         title.addTextChangedListener(new TextWatcher() {
@@ -139,12 +138,11 @@ public class EditorArticleActivity extends AppCompatActivity implements AdapterV
 
             @Override
             public void onTextChanged(CharSequence st, int start, int before, int count) {
-                titleChanged=true;
+                titleChanged = true;
                 if ((st.toString().trim().length()) > 0)
 
                 {
-                    if(rbd!=null)
-                    {
+                    if (rbd != null) {
                         rbd.setTitle(st.toString());
                         saveEditorButton.setEnabled(true);
 
@@ -154,8 +152,6 @@ public class EditorArticleActivity extends AppCompatActivity implements AdapterV
                 }
 
             }
-
-
 
 
             @Override
@@ -172,12 +168,11 @@ public class EditorArticleActivity extends AppCompatActivity implements AdapterV
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                contentChanged=true;
+                contentChanged = true;
                 if ((s.toString().trim().length()) > 0)
 
                 {
-                    if(rbd!=null)
-                    {
+                    if (rbd != null) {
                         rbd.setContent(s.toString());
                     }
 
@@ -185,8 +180,7 @@ public class EditorArticleActivity extends AppCompatActivity implements AdapterV
                     if ((s.toString().trim().length()) > 50) {
                         saveEditorButton.setEnabled(true);
                         approveButton.setEnabled(true);
-                    }
-                    else
+                    } else
                         approveButton.setEnabled(false);
 
                 }
@@ -202,47 +196,42 @@ public class EditorArticleActivity extends AppCompatActivity implements AdapterV
 
         super.onStart();
     }
+
     @Override
-    public boolean onOptionsItemSelected(MenuItem menuItem)
-    {
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
         int id = menuItem.getItemId();
-        switch (id)
-        {
-            case R.id.approved:
-            {
-                 //TODO: photo displaying late\
+        switch (id) {
+            case R.id.approved: {
+                //TODO: photo displaying late\
 
 
                 //check if photo is null
-                if(rbd.getPhoto()==null)
-                {
+                if (rbd.getPhoto() == null) {
                     //select random photo from storage and put in rbd object and firebase database
 
-                            Random rand = new Random();
+                    Random rand = new Random();
                     int value = rand.nextInt(4);
-                    String st=value+".jpg";
-                   // Log.d("image",st);
-                    defaultPhoto.child(st).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>()
-                    {
+                    String st = value + ".jpg";
+                    // Log.d("image",st);
+                    defaultPhoto.child(st).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
 
                         @Override
                         public void onSuccess(Uri uri) {
-                          //  Log.d("imageuri",uri.toString());
+                            //  Log.d("imageuri",uri.toString());
                             rbd.setPhoto(uri.toString());
                             dbRefMsg.child(key).child("photo").setValue(rbd.getPhoto());
                         }
                     });
 
                 }
-                if(contentChanged||titleChanged)
-                {
+                if (contentChanged || titleChanged) {
                     rbd.setTitle(title.getText().toString());
                     rbd.setContent(content.getText().toString());
                     dbRefMsg.child(key).setValue(rbd);
 
                 }
 
-                PendingClass pc=new PendingClass(true,true,TrialActivity.mUsername);
+                PendingClass pc = new PendingClass(true, true, TrialActivity.mUsername);
                 dbPendingArticle.child(key).setValue(pc);
               /*  AlertDialog.Builder b = new AlertDialog.Builder(this);
                 b.setTitle("Choose Category");
@@ -274,13 +263,13 @@ public class EditorArticleActivity extends AppCompatActivity implements AdapterV
 
                 b.show();
                 */
-              new SendEmail().execute(rbd);
+                new SendEmail().execute(rbd);
                 addPublishedDatabase();
                 //CHANGE VALUE OF ARTICLE STATUS IN USERDB TO PUBLISHED
                 changeUserDB();
                 addCategoryDb();
 
-               // FirebaseMessagingService
+                // FirebaseMessagingService
                 //approveButton.setEnabled(false);
                 saveEditorButton.setEnabled(false);
                 rejectButton.setEnabled(false);
@@ -290,19 +279,17 @@ public class EditorArticleActivity extends AppCompatActivity implements AdapterV
 
                 break;
             }
-            case R.id.reject:
-            {
-                PendingClass pc=new PendingClass(true,false,TrialActivity.mUsername);
+            case R.id.reject: {
+                PendingClass pc = new PendingClass(true, false, TrialActivity.mUsername);
                 dbPendingArticle.child(key).setValue(pc);
                 approveButton.setEnabled(false);
                 saveEditorButton.setEnabled(false);
                 removeDB();
                 //TODO REMOVE FROM DB
                 close();
-               break;
+                break;
             }
-            case R.id.saveEditor:
-            {
+            case R.id.saveEditor: {
                 dbRefMsg.child(key).setValue(rbd);
                 break;
             }
@@ -312,14 +299,14 @@ public class EditorArticleActivity extends AppCompatActivity implements AdapterV
     }
 
     private void addCategoryDb() {
-        Log.d("catc",categoryChoosen);
-        Log.d("ckk",key);
-        HomeDisplay hm=new HomeDisplay(rbd.getTitle(),rbd.getPhoto());
+     //   Log.d("catc", categoryChoosen);
+      //  Log.d("ckk", key);
+        HomeDisplay hm = new HomeDisplay(rbd.getTitle(), rbd.getPhoto());
 
-       // it+=1;
-       category.child(categoryChoosen).child(key).setValue(hm);
-      //  long times=-1 * new Date().getTime();
-      //  category.child(categoryChoosen).child(key).child("timestamp").setValue(times);
+        // it+=1;
+        category.child(categoryChoosen).child(key).setValue(hm);
+        //  long times=-1 * new Date().getTime();
+        //  category.child(categoryChoosen).child(key).child("timestamp").setValue(times);
     }
 
     private void removeDB() {
@@ -335,7 +322,7 @@ public class EditorArticleActivity extends AppCompatActivity implements AdapterV
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         String dateString = sdf.format(date);
-       // Log.d("checkDate",dateString);
+        // Log.d("checkDate",dateString);
         publishedRef.child(key).child("dateCreated").setValue(dateString);
         publishedRef.child(key).child("likes").setValue(0);
         dbtitlepublished.child(key).setValue(rbd.getTitle());
@@ -343,18 +330,17 @@ public class EditorArticleActivity extends AppCompatActivity implements AdapterV
     }
 
     private void changeUserDB() {
-      //  Log.d("writerId",writerId);
+        //  Log.d("writerId",writerId);
         dbRefUser.child(writerId).child("articleStatus").child(key).setValue("published");
-
-
 
 
     }
 
     private void close() {
-        Intent intent=new Intent(this,TrialActivity.class);
+        Intent intent = new Intent(this, TrialActivity.class);
         startActivity(intent);
     }
+
     public void onActivityResult(int requestcode, int resultcode, Intent data) {
 
         if (requestcode == RC_PHOTO_PICK && resultcode == RESULT_OK) {
@@ -375,11 +361,11 @@ public class EditorArticleActivity extends AppCompatActivity implements AdapterV
 
 
                         } catch (NullPointerException e) {
-                          //  Log.d("exception", "" + e);
+                            //  Log.d("exception", "" + e);
                         }
                     }
                 });
-                Toast.makeText(this, "Photo uploaded", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.photo_uploaded, Toast.LENGTH_LONG).show();
 
 
             }
@@ -389,12 +375,12 @@ public class EditorArticleActivity extends AppCompatActivity implements AdapterV
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        Log.d("item", (String) parent.getItemAtPosition(position));
+      //  Log.d("item", (String) parent.getItemAtPosition(position));
 
-       categoryChoosen=(String) parent.getItemAtPosition(position);
+        categoryChoosen = (String) parent.getItemAtPosition(position);
         adapter.notifyDataSetChanged();
 
-        Log.d("catsel",categoryChoosen);
+      //  Log.d("catsel", categoryChoosen);
 
 
     }

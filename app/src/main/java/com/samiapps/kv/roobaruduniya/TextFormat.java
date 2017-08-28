@@ -39,8 +39,7 @@ public class TextFormat {
         this.end = end;
     }
 
-    TextFormat()
-    {
+    TextFormat() {
 
     }
 }

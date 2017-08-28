@@ -55,7 +55,7 @@ public class FavFragment extends Fragment {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       // Log.d(TAG,"favonCreate");
+        // Log.d(TAG,"favonCreate");
         // for retaining fragment;like on screen rotation want same screen to be displayed
         setRetainInstance(true);
 
@@ -66,20 +66,18 @@ public class FavFragment extends Fragment {
         mReference = firebaseDbase.getReference().child("messages");
         kList = new ArrayList<>();
         favRef = new FavDb(getContext());
-       db = favRef.getReadableDatabase();
+        db = favRef.getReadableDatabase();
 
 
     }
-    public void onActivityCreated(Bundle savedInstanceState)
-    {
+
+    public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
         getActivity().setTitle(activityTitles[navItemIndex]);
-        if(savedInstanceState!=null)
-        {
+        if (savedInstanceState != null) {
 
-        }
-        else {
+        } else {
             c = favRef.getKey(db);
             computeCursor();
         }
@@ -107,7 +105,7 @@ public class FavFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 RoobaruDuniya rbd = dataSnapshot.getValue(RoobaruDuniya.class);
-             //   Log.d("titleck", rbd.getTitle());
+                //   Log.d("titleck", rbd.getTitle());
 
                 rubaru.add(rbd);
                 imageAdapter.notifyDataSetChanged();
@@ -129,7 +127,7 @@ public class FavFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.headlinelayout, container, false);
-      //  Log.d(TAG,"favonCreateView");
+        //  Log.d(TAG,"favonCreateView");
         mRecycleView = (RecyclerView) rootView.findViewById(R.id.editor_recycleview);
         imageAdapter = new ImgAdapter(rubaru, getContext());
         mRecycleView.setLayoutManager(new GridLayoutManager(getContext(), 2));
@@ -137,19 +135,18 @@ public class FavFragment extends Fragment {
         mRecycleView.setAdapter(imageAdapter);
 
 
-
         imageAdapter.setOnItemClickListener(new ImgAdapter.ClickListener() {
             @Override
             public void onItemClick(int position, View v) {
 
                 RoobaruDuniya item = rubaru.get(position);
-                String key=kList.get(position);
+                String key = kList.get(position);
                 Intent intent = new Intent(getContext(), ArticleDetail.class);
                 intent.putExtra("position", position);
-                intent.putExtra("keySelected",key);
-              Bundle b=new Bundle();
-             b.putSerializable(ArticleDetail.TAG,item);
-            intent.putExtras(b);
+                intent.putExtra("keySelected", key);
+                Bundle b = new Bundle();
+                b.putSerializable(ArticleDetail.TAG, item);
+                intent.putExtras(b);
 
 
                 //intent.putExtra("article",rd);
@@ -163,36 +160,36 @@ public class FavFragment extends Fragment {
     }
 
 
-
     @Override
     public void onStop() {
         super.onStop();
 
-       // Log.d(TAG,"favstop");
-       // rubaru.clear();
+        // Log.d(TAG,"favstop");
+        // rubaru.clear();
 
     }
+
     @Override
     public void onPause() {
         super.onPause();
-       // Log.d(TAG,"favpause");
+        // Log.d(TAG,"favpause");
         // rubaru.clear();
 
     }
-    public void onResume()
-    {
+
+    public void onResume() {
         super.onResume();
 
-      //  Log.d(TAG,"favresume");
+        //  Log.d(TAG,"favresume");
         // rubaru.clear();
 
 
     }
-    public void onDestroy()
-    {
+
+    public void onDestroy() {
         super.onDestroy();
 
-       // Log.d(TAG,"favdestroy");
+        // Log.d(TAG,"favdestroy");
         // rubaru.clear();
 
 

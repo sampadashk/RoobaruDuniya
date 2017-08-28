@@ -61,7 +61,7 @@ public class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory
         fillInIntent.putExtras(extras);
         // Make it possible to distinguish the individual on-click
         // action of a given item
-       view.setOnClickFillInIntent(android.R.id.text1, fillInIntent);
+        view.setOnClickFillInIntent(android.R.id.text1, fillInIntent);
         return view;
     }
 
@@ -88,8 +88,8 @@ public class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory
     private void initData() {
         mCollection.clear();
 
-        for (int i =0; i <14; i++) {
-           String s= mContext.getResources().getStringArray(R.array.catgs)[i];
+        for (int i = 0; i < 14; i++) {
+            String s = mContext.getResources().getStringArray(R.array.catgs)[i];
             mCollection.add(s);
         }
     }

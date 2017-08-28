@@ -39,7 +39,7 @@ public class SentFragment extends Fragment {
 
     private ImgAdapter imageAdapter;
     ArrayList<RoobaruDuniya> rubaru = new ArrayList<RoobaruDuniya>();
-    ArrayList<String> keyList ;
+    ArrayList<String> keyList;
     String userStatus;
 
 
@@ -66,18 +66,15 @@ public class SentFragment extends Fragment {
         dbaseReference = firebaseDtabase.getReference().child("user").child(uid).child("articleStatus");
         // dbaseReference = firebaseDtabase.getReference().child("user").child(uid);
         msgReference = firebaseDtabase.getReference().child("messages");
-        pendingRef=firebaseDtabase.getReference().child("pending");
-        keyList=new ArrayList<>();
-        userStatus=TrialActivity.userStatus;
+        pendingRef = firebaseDtabase.getReference().child("pending");
+        keyList = new ArrayList<>();
+        userStatus = TrialActivity.userStatus;
 
 
-
-      //  Log.d("checkt", dbaseReference.toString());
-      //  Log.d("msgkt", msgReference.toString());
-       // Log.d("actchk","1");
-       // Log.d("userStatus",TrialActivity.userStatus);
-
-
+        //  Log.d("checkt", dbaseReference.toString());
+        //  Log.d("msgkt", msgReference.toString());
+        // Log.d("actchk","1");
+        // Log.d("userStatus",TrialActivity.userStatus);
 
 
         //setHasOptionsMenu(true);
@@ -93,11 +90,11 @@ public class SentFragment extends Fragment {
         //  noDraftText=(TextView) rootView.findViewById(R.id.nodraftText);
         mRecycleView.setLayoutManager(new GridLayoutManager(getContext(), 2));
         mRecycleView.setItemAnimator(new DefaultItemAnimator());
-      //  Log.d("actchk","2");
+        //  Log.d("actchk","2");
 
         mRecycleView.setAdapter(imageAdapter);
         //FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG);
-        if(userStatus.equals("Blogger")) {
+        if (userStatus.equals("Blogger")) {
 
             readmsgId();
             imageAdapter.setOnItemClickListener(new ImgAdapter.ClickListener() {
@@ -106,12 +103,12 @@ public class SentFragment extends Fragment {
 
                     RoobaruDuniya item = rubaru.get(position);
                     Intent intent = new Intent(getContext(), PublishDetail.class);
-                    String key=keyList.get(position);
-                    intent.putExtra("keySelected",key);
+                    String key = keyList.get(position);
+                    intent.putExtra("keySelected", key);
                     intent.putExtra("position", position);
-                  Bundle b=new Bundle();
-                    b.putSerializable(PublishDetail.TAG,item);
-                   intent.putExtras(b);
+                    Bundle b = new Bundle();
+                    b.putSerializable(PublishDetail.TAG, item);
+                    intent.putExtras(b);
 
 
                     //intent.putExtra("article",rd);
@@ -120,9 +117,7 @@ public class SentFragment extends Fragment {
                 }
             });
 
-        }
-        else
-        {
+        } else {
 
             readmsgEditor();
             imageAdapter.setOnItemClickListener(new ImgAdapter.ClickListener() {
@@ -130,26 +125,19 @@ public class SentFragment extends Fragment {
                 public void onItemClick(int position, View v) {
 
                     RoobaruDuniya item = rubaru.get(position);
-                    String key=keyList.get(position);
+                    String key = keyList.get(position);
                     Intent intent = new Intent(getContext(), EditorArticleActivity.class);
                     intent.putExtra("position", position);
-                    intent.putExtra("Keypos",key);
-                    Bundle b=new Bundle();
-                  b.putSerializable(SentFragment.TAG,item);
-                   intent.putExtras(b);
-
-
+                    intent.putExtra("Keypos", key);
+                    Bundle b = new Bundle();
+                    b.putSerializable(SentFragment.TAG, item);
+                    intent.putExtras(b);
 
 
                     startActivity(intent);
                 }
             });
         }
-
-
-
-
-
 
 
         return rootView;
@@ -161,14 +149,12 @@ public class SentFragment extends Fragment {
 
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    for(DataSnapshot dt:dataSnapshot.getChildren())
-                    {
-                        String key=dt.getKey();
-                       // Log.d("editmsgkey",key);
-                       // Log.d("checkcheckedval",""+dt.child("checked").getValue());
+                    for (DataSnapshot dt : dataSnapshot.getChildren()) {
+                        String key = dt.getKey();
+                        // Log.d("editmsgkey",key);
+                        // Log.d("checkcheckedval",""+dt.child("checked").getValue());
 
-                        if(dt.child("checked").getValue().equals(false))
-                        {
+                        if (dt.child("checked").getValue().equals(false)) {
                             displayUnchecked(key);
                         }
 
@@ -210,7 +196,7 @@ public class SentFragment extends Fragment {
 
 
     private void checkMessages(String key) {
-      //  Log.d("actchk","4");
+        //  Log.d("actchk","4");
         keyList.add(key);
 
 
@@ -219,7 +205,7 @@ public class SentFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 RoobaruDuniya rbd = dataSnapshot.getValue(RoobaruDuniya.class);
 
-            //    Log.d("titleck", rbd.getTitle());
+                //    Log.d("titleck", rbd.getTitle());
                 rubaru.add(rbd);
                 imageAdapter.notifyDataSetChanged();
 
@@ -234,22 +220,21 @@ public class SentFragment extends Fragment {
 
     }
 
-    private void readmsgId()
-    {
+    private void readmsgId() {
 
-       // Log.d("actchk","3");
+        // Log.d("actchk","3");
 
         dbaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.hasChildren()) {
-                   // Log.d("actchk", "dbchk");
+                    // Log.d("actchk", "dbchk");
                     for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                       // Log.d("valck",ds.getValue()+"");
+                        // Log.d("valck",ds.getValue()+"");
                         if (ds.getValue().equals("sent")) {
 
                             //msgList.add(ds.getKey());
-                          //  Log.d("keyck", ds.getKey());
+                            //  Log.d("keyck", ds.getKey());
                             checkMessages(ds.getKey());
 
 
@@ -266,47 +251,43 @@ public class SentFragment extends Fragment {
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        } );
-
-
-
-
+        });
 
 
         // checkMessages();
 
 
     }
-    public void onStart()
-    {
+
+    public void onStart() {
         super.onStart();
-     //   Log.d("actchk","5");
+        //   Log.d("actchk","5");
         //readmsgId();
 
 
     }
-    public void onResume()
-    {
+
+    public void onResume() {
         super.onResume();
 
-      //  Log.d("actchk","6");
+        //  Log.d("actchk","6");
 
     }
 
     public void onPause() {
 
-       // Log.d("actchk","7");
+        // Log.d("actchk","7");
         super.onPause();
         rubaru.clear();
 
 
+    }
 
-    }
-    public void onStop()
-    {
+    public void onStop() {
         super.onStop();
-       // Log.d("actchk","8");
+        // Log.d("actchk","8");
     }
+
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 

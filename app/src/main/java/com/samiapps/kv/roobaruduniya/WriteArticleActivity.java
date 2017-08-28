@@ -18,7 +18,6 @@ import android.text.Spannable;
 import android.text.TextWatcher;
 import android.text.style.BulletSpan;
 import android.text.style.StyleSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -70,9 +69,6 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
     DatabaseReference category;
 
 
-
-
-
     DatabaseReference dbRefUser;
     DatabaseReference dbEditor;
     DatabaseReference dbPendingArticle;
@@ -103,8 +99,6 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
     String categoryChoosen;
 
 
-
-
     String userPos;
     String key;
     String userId;
@@ -127,52 +121,47 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
         //TODO PHOTO LOAD ASYNC
         setContentView(R.layout.write_article);
 
-        sv=(ScrollView) findViewById(R.id.scroll_v);
-        llout=(LinearLayout) findViewById(R.id.linearlout);
-        italicButton=(Button)findViewById(R.id.italic_button);
-        boldButton=(Button)findViewById(R.id.bold_button);
-        bulletButton=(ImageButton) findViewById(R.id.add_bullet);
-        spinner=(Spinner) findViewById(R.id.spinner1);
-
-
-
+        sv = (ScrollView) findViewById(R.id.scroll_v);
+        llout = (LinearLayout) findViewById(R.id.linearlout);
+        italicButton = (Button) findViewById(R.id.italic_button);
+        boldButton = (Button) findViewById(R.id.bold_button);
+        bulletButton = (ImageButton) findViewById(R.id.add_bullet);
+        spinner = (Spinner) findViewById(R.id.spinner1);
 
 
         firebaseAuth = FirebaseAuth.getInstance();
         user = firebaseAuth.getCurrentUser();
         userEmail = user.getEmail();
-        formatList=new ArrayList<>();
+        formatList = new ArrayList<>();
         userId = user.getUid();
-        uStatus=TrialActivity.userStatus;
-        Log.d("TrialOnStatus",uStatus);
-        firebaseStorage=FirebaseStorage.getInstance();
-        defaultPhoto=firebaseStorage.getReference().child("default");
+        uStatus = TrialActivity.userStatus;
+       // Log.d("TrialOnStatus", uStatus);
+        firebaseStorage = FirebaseStorage.getInstance();
+        defaultPhoto = firebaseStorage.getReference().child("default");
         //userPos = "Blogger";
-        userPos=TrialActivity.userStatus;
-        progressBar=(ProgressBar)findViewById(R.id.pbar);
+        userPos = TrialActivity.userStatus;
+        progressBar = (ProgressBar) findViewById(R.id.pbar);
 
         try {
             userProfile = user.getPhotoUrl().toString();
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
-      if(userProfile==null)
-        {
-            String add="firebasestorage.googleapis.com/v0/b/roobaru-duniya-86f7d.appspot.com/o/default-profilepic%2Fdefaultprof.jpg?alt=media&token=aeca7a55-05e4-4c02-938f-061624f5c8b4";
-            userProfile= Uri.parse("https://" +add).toString();
+        if (userProfile == null) {
+            String add = "firebasestorage.googleapis.com/v0/b/roobaru-duniya-86f7d.appspot.com/o/default-profilepic%2Fdefaultprof.jpg?alt=media&token=aeca7a55-05e4-4c02-938f-061624f5c8b4";
+            userProfile = Uri.parse("https://" + add).toString();
         }
-
 
 
         db = FirebaseDatabase.getInstance();
         dbRefMsg = db.getReference("messages");
-        category=db.getReference("categories");
+        category = db.getReference("categories");
         dbEditor = db.getReference("editor");
         dbRefUser = db.getReference("user");
         dbPendingArticle = db.getReference("pending");
-        publishedRef=db.getReference("published");
-        contentStyleRef=db.getReference("contentStyle");
-        dbtitlepublished=db.getReference("publishedTitle");
+        publishedRef = db.getReference("published");
+        contentStyleRef = db.getReference("contentStyle");
+        dbtitlepublished = db.getReference("publishedTitle");
         firebaseStorage = FirebaseStorage.getInstance();
         storageReference = firebaseStorage.getReference().child("article_photo");
         //  FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG);
@@ -182,9 +171,9 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
         try {
             pos = intent.getIntExtra("position", -1);
             key = intent.getStringExtra("Keypos");
-           // Log.d("keypos", key);
+            // Log.d("keypos", key);
 
-          //  Log.d("checkpos", "" + pos);
+            //  Log.d("checkpos", "" + pos);
             rbd = (RoobaruDuniya) intent.getSerializableExtra(DraftFragment.TAG);
             title.setText(rbd.getTitle());
             content.setText(rbd.getContent());
@@ -215,7 +204,6 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
         */
 
 
-
         photoButton = (ImageButton) findViewById(R.id.photoPickerButton);
         writerDetail = (Button) findViewById(R.id.writer_detail);
         photoButton.setEnabled(false);
@@ -225,16 +213,14 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
             public void onClick(View v) {
 
 
-
-                    Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                    intent.setType("image/jpeg");
-                    intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-                    startActivityForResult(Intent.createChooser(intent, "Complete action using"), RC_PHOTO_PICKER);
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("image/jpeg");
+                intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+                startActivityForResult(Intent.createChooser(intent, "Complete action using"), RC_PHOTO_PICKER);
 
 
             }
         });
-
 
 
     }
@@ -267,29 +253,25 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
                         // sign in the user ...
 
                         wName = writerName.getText().toString();
-                        if(downloadProfileUrl!=null)
-                        {
-                          //  Log.d("checkdownload",downloadProfileUrl.toString());
+                        if (downloadProfileUrl != null) {
+                            //  Log.d("checkdownload",downloadProfileUrl.toString());
                         }
                         if (rbd != null) {
                             rbd.setUser(wName);
-                            if(downloadProfileUrl!=null)
-                            {
+                            if (downloadProfileUrl != null) {
                                 rbd.setUserProfilePhoto(downloadProfileUrl.toString());
                             }
 
                             //TODO: SET user profile photo
                         } else if (rbd == null) {
                             rbd = new RoobaruDuniya(title.getText().toString(), content.getText().toString(), null, wName, userId, null, 0, 0);
-                            if(downloadProfileUrl!=null)
-                            {
+                            if (downloadProfileUrl != null) {
                                 rbd.setUserProfilePhoto(downloadProfileUrl.toString());
                             }
                         }
-                        if(downloadProfileUrl==null)
-                        {
-                            String add="firebasestorage.googleapis.com/v0/b/roobaru-duniya-86f7d.appspot.com/o/default-profilepic%2Fdefaultprof.jpg?alt=media&token=aeca7a55-05e4-4c02-938f-061624f5c8b4";
-                            Uri defaultuserpicUrl= Uri.parse("https://" +add);
+                        if (downloadProfileUrl == null) {
+                            String add = "firebasestorage.googleapis.com/v0/b/roobaru-duniya-86f7d.appspot.com/o/default-profilepic%2Fdefaultprof.jpg?alt=media&token=aeca7a55-05e4-4c02-938f-061624f5c8b4";
+                            Uri defaultuserpicUrl = Uri.parse("https://" + add);
                             rbd.setUserProfilePhoto(defaultuserpicUrl.toString());
                         }
 
@@ -305,7 +287,7 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
     }
 
     public void onStart() {
-        Log.d("TrialOnStat",uStatus);
+     //   Log.d("TrialOnStat", uStatus);
 
         try {
             if (uStatus.equals("editor")) {
@@ -327,13 +309,11 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
                     }
                 });
 
-               // Log.d("writername", wName);
+                // Log.d("writername", wName);
             }
-        }catch (NullPointerException e) {
-                e.printStackTrace();
-            }
-
-
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
 
 
         title.addTextChangedListener(new TextWatcher() {
@@ -367,9 +347,9 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
         content.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               content.requestFocus();
+                content.requestFocus();
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
             }
         });
 
@@ -409,7 +389,7 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
                 Spannable str = content.getText();
                 int start = content.getSelectionStart();
                 int end = content.getSelectionEnd();
-                boolean exists=false;
+                boolean exists = false;
                 if (start > end) {
                     int temp = end;
                     end = start;
@@ -447,7 +427,7 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
                 Spannable str = content.getText();
                 int start = content.getSelectionStart();
                 int end = content.getSelectionEnd();
-                boolean iExists=false;
+                boolean iExists = false;
                 if (start > end) {
                     int temp = end;
                     end = start;
@@ -491,7 +471,7 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
                 Spannable str = content.getText();
                 int start = content.getSelectionStart();
                 int end = content.getSelectionEnd();
-                boolean bExists=false;
+                boolean bExists = false;
                 if (start > end) {
                     int temp = end;
                     end = start;
@@ -553,8 +533,6 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
         */
 
 
-
-
         super.onStart();
     }
 
@@ -564,7 +542,7 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
         draftButton = (MenuItem) menu.findItem(R.id.draft);
         saveButton = (MenuItem) menu.findItem(R.id.savecl);
         publishButton = (MenuItem) menu.findItem(R.id.publish);
-        deleteButton=(MenuItem)menu.findItem(R.id.delete_draft);
+        deleteButton = (MenuItem) menu.findItem(R.id.delete_draft);
         return true;
 
     }
@@ -598,11 +576,10 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
                     */
 
 
-                        dbRefUser.child(userId).child("articleStatus").child(key).setValue("draft");
+                    dbRefUser.child(userId).child("articleStatus").child(key).setValue("draft");
 
 
-
-                    Toast.makeText(this, "Draft saved", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, R.string.draft_saved, Toast.LENGTH_LONG).show();
                     deleteButton.setEnabled(true);
                     draftButton.setEnabled(false);
                     saveButton.setEnabled(true);
@@ -616,53 +593,47 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
                 break;
             }
             case R.id.publish: {
-                if(content.length()<200)
-                {
-                    Snackbar.make(llout,"Please write altleast 200 words to publish",Snackbar.LENGTH_LONG).show();
+                if (content.length() < 200) {
+                    Snackbar.make(llout, R.string.word_limit_msg, Snackbar.LENGTH_LONG).show();
                     break;
                 }
-                if(title.length()<2)
-                {
-                   // Log.d("chktitle","we r here");
-                    Snackbar.make(llout,"Please give your article a title",Snackbar.LENGTH_SHORT).show();
+                if (title.length() < 2) {
+                    // Log.d("chktitle","we r here");
+                    Snackbar.make(llout, R.string.article_title_msg, Snackbar.LENGTH_SHORT).show();
                     break;
                 }
-
-
 
 
                 draftButton.setEnabled(false);
 
 
-         //       try {
+                //       try {
 
 
-                    if (rbd == null) {
-                        rbd = new RoobaruDuniya(title.getText().toString(), content.getText().toString(), null, user.getDisplayName().toString(), userId, userProfile, 0, 1);
-                        key = dbRefMsg.push().getKey();
-                        dbRefMsg.child(key).setValue(rbd);
+                if (rbd == null) {
+                    rbd = new RoobaruDuniya(title.getText().toString(), content.getText().toString(), null, user.getDisplayName().toString(), userId, userProfile, 0, 1);
+                    key = dbRefMsg.push().getKey();
+                    dbRefMsg.child(key).setValue(rbd);
 
-                    }
-                    //when photo is selected
+                }
+                //when photo is selected
                 else if (rbd != null) {
-                        rbd.setDraft(0);
-                        rbd.setSent(1);
-                      //  Log.d("checkphoto", rbd.getPhoto());
-                        if (key == null) {
-                            key = dbRefMsg.push().getKey();
-
-                        }
-
-                        dbRefMsg.child(key).setValue(rbd);
-
+                    rbd.setDraft(0);
+                    rbd.setSent(1);
+                    //  Log.d("checkphoto", rbd.getPhoto());
+                    if (key == null) {
+                        key = dbRefMsg.push().getKey();
 
                     }
-                    if(formatList.size()>0)
-                    {
-                        for(TextFormat ft:formatList)
-                        {
-                            String str=ft.getStart()+" "+ft.getEnd()+" "+ft.getStyle();
-                            Log.d("chk",str);
+
+                    dbRefMsg.child(key).setValue(rbd);
+
+
+                }
+                if (formatList.size() > 0) {
+                    for (TextFormat ft : formatList) {
+                        String str = ft.getStart() + " " + ft.getEnd() + " " + ft.getStyle();
+                      //  Log.d("chk", str);
                            /* String st= String.valueOf(ft.getStart());
                             String lt= String.valueOf(ft.getEnd());
                             Map<String,String> mp=new HashMap<>();
@@ -671,24 +642,22 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
                             mp.put(lt,"end");
                             */
 
-                            contentStyleRef.child(key).push().setValue(ft);
+                        contentStyleRef.child(key).push().setValue(ft);
 
-
-                        }
 
                     }
 
+                }
 
 
-                    if (userPos.equals("editor")) {
+                if (userPos.equals("editor")) {
 
-                        //TODO: publish editor
-                        //select photo from storage and put in rbd object and firebase database
-                        if(rbd.getPhoto()==null)
-                        {
-                            String add="https://firebasestorage.googleapis.com/v0/b/roobaru-duniya-86f7d.appspot.com/o/default%2F3.jpg?alt=media&token=c223a998-7f03-483e-af98-12e0f8c3aa43";
-                            rbd.setPhoto(add);
-                            dbRefMsg.child(key).child("photo").setValue(rbd.getPhoto());
+                    //TODO: publish editor
+                    //select photo from storage and put in rbd object and firebase database
+                    if (rbd.getPhoto() == null) {
+                        String add = "https://firebasestorage.googleapis.com/v0/b/roobaru-duniya-86f7d.appspot.com/o/default%2F3.jpg?alt=media&token=c223a998-7f03-483e-af98-12e0f8c3aa43";
+                        rbd.setPhoto(add);
+                        dbRefMsg.child(key).child("photo").setValue(rbd.getPhoto());
 
 
 
@@ -711,44 +680,36 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
                     */
 
 
-
-                        }
-                        publishEditor();
-                        addCategoryDb();
-                    } else {
-
-
-
-
-
-                       // Log.d("chkuse", u.getarticleStatus());
-
-                          //  Log.d("pubbool", "" + b2);
-                          //  Log.d("pubkey", key);
-
-                            dbRefUser.child(userId).child("articleStatus").child(key).setValue("sent");
-
-
-
-                        //catch(Exception e){
-                        //   e.printStackTrace();
-                        //  }
-                        PendingClass pending = new PendingClass(false, false, null);
-                      //  Log.d("pendingKey", key);
-
-                        dbPendingArticle.child(key).setValue(pending);
-                        Toast.makeText(this, "Article sent!will be published once it gets approved by editor", Toast.LENGTH_LONG).show();
                     }
+                    publishEditor();
+                    addCategoryDb();
+                } else {
 
 
+                    // Log.d("chkuse", u.getarticleStatus());
+
+                    //  Log.d("pubbool", "" + b2);
+                    //  Log.d("pubkey", key);
+
+                    dbRefUser.child(userId).child("articleStatus").child(key).setValue("sent");
+
+
+                    //catch(Exception e){
+                    //   e.printStackTrace();
+                    //  }
+                    PendingClass pending = new PendingClass(false, false, null);
+                    //  Log.d("pendingKey", key);
+
+                    dbPendingArticle.child(key).setValue(pending);
+                    Toast.makeText(this, R.string.send_approval, Toast.LENGTH_LONG).show();
+                }
 
 
                 saveNclose();
                 break;
 
             }
-            case R.id.delete_draft:
-            {
+            case R.id.delete_draft: {
                 dbRefMsg.child(key).removeValue();
                 dbRefUser.child(userId).child("articleStatus").child(key).removeValue();
                 saveNclose();
@@ -763,16 +724,14 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
     private void publishEditor() {
 
 
-
-
-                  //  Log.d("chkuse", u.getarticleStatus());
+        //  Log.d("chkuse", u.getarticleStatus());
 
         dbRefUser.child(userId).child("articleStatus").child(key).setValue("published");
 
         long date = System.currentTimeMillis();
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         String dateString = sdf.format(date);
-       // Log.d("checkDate",dateString);
+        // Log.d("checkDate",dateString);
         publishedRef.child(key).child("dateCreated").setValue(dateString);
         dbtitlepublished.child(key).setValue(rbd.getTitle());
         new SendEmail().execute(rbd);
@@ -782,8 +741,8 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
         draftPressed = 0;
         key = null;
         super.onBackPressed();
-      //  Intent inti = new Intent(this, TrialActivity.class);
-       // startActivity(inti);
+        //  Intent inti = new Intent(this, TrialActivity.class);
+        // startActivity(inti);
 
     }
 
@@ -796,7 +755,6 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
     }
 
 
-
     @Override
     public void onBackPressed() {
         saveNclose();
@@ -807,55 +765,47 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
 
         if (requestcode == RC_PHOTO_PICKER && resultcode == RESULT_OK) {
             final Uri SelectedImageUri = data.getData();
-            Toast.makeText(this,"Please wait!Photo uploading to server",Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.wait_photo, Toast.LENGTH_LONG).show();
             progressBar.setEnabled(true);
             progressBar.setVisibility(View.VISIBLE);
 
-                StorageReference photoref = storageReference.child(SelectedImageUri.getLastPathSegment());
-                photoref.putFile(SelectedImageUri).addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            StorageReference photoref = storageReference.child(SelectedImageUri.getLastPathSegment());
+            photoref.putFile(SelectedImageUri).addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
 
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
 
-                        try {
-                            if (rbd != null) {
-                                rbd.setPhoto(downloadUrl.toString());
+                    try {
+                        if (rbd != null) {
+                            rbd.setPhoto(downloadUrl.toString());
 
-                            } else if (rbd == null) {
-                                rbd = new RoobaruDuniya(title.getText().toString(), content.getText().toString(), downloadUrl.toString(), user.getDisplayName().toString(), userId, userProfile, 0, 0);
+                        } else if (rbd == null) {
+                            rbd = new RoobaruDuniya(title.getText().toString(), content.getText().toString(), downloadUrl.toString(), user.getDisplayName().toString(), userId, userProfile, 0, 0);
 
-                            }
-                        //    Log.d("chkphotoup",rbd.getPhoto());
-                            draftButton.setEnabled(true);
-                        } catch (NullPointerException e) {
                         }
-
-                          //  publishButton.setEnabled(true);
-
+                        //    Log.d("chkphotoup",rbd.getPhoto());
+                        draftButton.setEnabled(true);
+                    } catch (NullPointerException e) {
                     }
-                });
 
-                // Log.d("exception", "" + e);
+                    //  publishButton.setEnabled(true);
 
+                }
+            });
 
-                //TODO use progressbar
-
-                    progressBar.setVisibility(View.GONE);
-
+            // Log.d("exception", "" + e);
 
 
+            //TODO use progressbar
 
-                    Toast.makeText(this, "Photo uploaded", Toast.LENGTH_LONG).show();
-
-
-
-
-            }
+            progressBar.setVisibility(View.GONE);
 
 
+            Toast.makeText(this, R.string.photo_uploaded, Toast.LENGTH_LONG).show();
 
-         else if (requestcode == RC_PROFILE_PICKER && resultcode == RESULT_OK) {
+
+        } else if (requestcode == RC_PROFILE_PICKER && resultcode == RESULT_OK) {
             final Uri SelectedProfileUri = data.getData();
             StorageReference picref = storageReference.child(SelectedProfileUri.getLastPathSegment());
             picref.putFile(SelectedProfileUri).addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -869,31 +819,28 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
             });
 
 
-
-
-
-
-            Toast.makeText(this, "Photo uploaded", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.photo_uploaded, Toast.LENGTH_LONG).show();
         }
     }
+
     private void addCategoryDb() {
 
         // it+=1;
-        HomeDisplay hm=new HomeDisplay(rbd.getTitle(),rbd.getPhoto());
+        HomeDisplay hm = new HomeDisplay(rbd.getTitle(), rbd.getPhoto());
 
         category.child(categoryChoosen).child(key).setValue(hm);
-      //  long times=-1 * new Date().getTime();
-      //  category.child(categoryChoosen).child(key).child("timestamp").setValue(times);
+        //  long times=-1 * new Date().getTime();
+        //  category.child(categoryChoosen).child(key).child("timestamp").setValue(times);
     }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        Log.d("item", (String) parent.getItemAtPosition(position));
+       // Log.d("item", (String) parent.getItemAtPosition(position));
 
-        categoryChoosen=(String) parent.getItemAtPosition(position);
+        categoryChoosen = (String) parent.getItemAtPosition(position);
         adapter.notifyDataSetChanged();
 
-        Log.d("catselected",categoryChoosen);
+       // Log.d("catselected", categoryChoosen);
 
 
     }
@@ -904,41 +851,38 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
 
     }
 
-    class AsyncUpload extends AsyncTask<Object, Object, Void>
-    {
+    class AsyncUpload extends AsyncTask<Object, Object, Void> {
 
         @Override
         protected Void doInBackground(Object... params) {
-             uploaddefaultImage();
+            uploaddefaultImage();
             return null;
         }
 
         private void uploaddefaultImage() {
             Random rand = new Random();
             int value = rand.nextInt(4);
-            String st=value+".jpg";
-           // Log.d("image",st);
-            defaultPhoto.child(st).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>()
-            {
+            String st = value + ".jpg";
+            // Log.d("image",st);
+            defaultPhoto.child(st).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
 
                 @Override
                 public void onSuccess(Uri uri) {
-                   // Log.d("imageuri",uri.toString());
+                    // Log.d("imageuri",uri.toString());
                     rbd.setPhoto(uri.toString());
                     dbRefMsg.child(key).child("photo").setValue(uri.toString());
                 }
             });
         }
+
         @Override
-        protected void onPostExecute(Void res)
-        {
+        protected void onPostExecute(Void res) {
             super.onPostExecute(res);
-            Toast.makeText(WriteArticleActivity.this,"Please wait!",Toast.LENGTH_LONG).show();
+            Toast.makeText(WriteArticleActivity.this, R.string.wait_msg, Toast.LENGTH_LONG).show();
         }
 
 
     }
-
 
 
 }
