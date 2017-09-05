@@ -38,20 +38,25 @@ public class RoobaruWidgetProvider extends AppWidgetProvider {
         // There may be multiple widgets active, so update all of them
         for (int widgetId : appWidgetIds) {
             RemoteViews mView = initViews(context, appWidgetManager, widgetId);
-            // Adding collection list item handler
-            final Intent onItemClick = new Intent(context, CategoryActivity.class);
-            // onItemClick.setAction(ACTION_TOAST);
 
-            onItemClick.setData(Uri.parse(onItemClick
-                    .toUri(Intent.URI_INTENT_SCHEME)));
 
-            final PendingIntent onClickPendingIntent = PendingIntent
-                    .getActivity(context, 0, onItemClick,
-                            PendingIntent.FLAG_UPDATE_CURRENT);
-            mView.setPendingIntentTemplate(R.id.widget_list,
-                    onClickPendingIntent);
-            appWidgetManager.updateAppWidget(widgetId, mView);
-        }
+
+                // Adding collection list item handler
+                final Intent onItemClick = new Intent(context, CategoryActivity.class);
+                // onItemClick.setAction(ACTION_TOAST);
+
+                onItemClick.setData(Uri.parse(onItemClick
+                        .toUri(Intent.URI_INTENT_SCHEME)));
+
+                final PendingIntent onClickPendingIntent = PendingIntent
+                        .getActivity(context, 0, onItemClick,
+                                PendingIntent.FLAG_UPDATE_CURRENT);
+                mView.setPendingIntentTemplate(R.id.widget_list,
+                        onClickPendingIntent);
+                appWidgetManager.updateAppWidget(widgetId, mView);
+            }
+
+
         super.onUpdate(context, appWidgetManager, appWidgetIds);
     }
 

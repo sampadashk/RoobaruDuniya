@@ -7,7 +7,15 @@ package com.samiapps.kv.roobaruduniya;
 public class HomeDisplay {
     String title;
     String photo;
+    long timeval;
 
+    public long getTimeval() {
+        return timeval;
+    }
+
+    public void setTimeval(long timeval) {
+        this.timeval = timeval;
+    }
 
     public HomeDisplay() {
     }
@@ -28,8 +36,9 @@ public class HomeDisplay {
         this.photo = photo;
     }
 
-    public HomeDisplay(String title, String photo) {
+    public HomeDisplay(String title, String photo,long timeval) {
         this.title = title;
         this.photo = photo;
+        this.timeval=timeval;
     }
 }

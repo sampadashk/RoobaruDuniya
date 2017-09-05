@@ -474,13 +474,21 @@ public class ArticleDetail extends AppCompatActivity {
     }
 
     private void LoadUIFromkey(String keySel) {
+
        // Log.d("kratika", keySel);
+
         msgListener = msgReference.child(keySel).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                artsel = dataSnapshot.getValue(RoobaruDuniya.class);
-                //updating UI when you have article
-                loadUI();
+                if(dataSnapshot.exists()) {
+                    artsel = dataSnapshot.getValue(RoobaruDuniya.class);
+                    //updating UI when you have article
+                    loadUI();
+                }
+                else
+                {
+                    Toast.makeText(ArticleDetail.this,"Article doesnt exist anymore!",Toast.LENGTH_LONG).show();
+                }
                 //  Log.d("artchktit", artsel.getTitle());
             }
 
@@ -725,7 +733,7 @@ public class ArticleDetail extends AppCompatActivity {
                         nLikes = Integer.parseInt(n_Likes);
 
 
-                        num_Of_likes.setText(n_Likes + R.string.like);
+                        num_Of_likes.setText(n_Likes + "like");
                     }
 
 

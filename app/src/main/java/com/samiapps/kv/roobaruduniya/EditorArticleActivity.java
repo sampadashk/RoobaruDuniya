@@ -1,29 +1,42 @@
 package com.samiapps.kv.roobaruduniya;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
 import android.text.TextWatcher;
+import android.text.style.BulletSpan;
+import android.text.style.StyleSpan;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.Random;
 
 /**
@@ -40,7 +53,10 @@ public class EditorArticleActivity extends AppCompatActivity implements AdapterV
     DatabaseReference dbPendingArticle;
     DatabaseReference publishedRef;
     DatabaseReference category;
+    DatabaseReference styleReference;
     private DatabaseReference dbtitlepublished;
+
+    private  String contentString;
     ImageButton photoButton;
     int pos;
     String key;
@@ -49,6 +65,11 @@ public class EditorArticleActivity extends AppCompatActivity implements AdapterV
     MenuItem approveButton;
     MenuItem saveEditorButton;
     MenuItem rejectButton;
+    Button italicButton;
+    Button boldButton;
+    ImageButton bulletButton;
+    ArrayList<TextFormat> formatList;
+
     private FirebaseStorage firebaseStorage;
     private StorageReference storageReference;
     private StorageReference defaultPhoto;
@@ -73,10 +94,15 @@ public class EditorArticleActivity extends AppCompatActivity implements AdapterV
         dbPendingArticle = db.getReference("pending");
         dbtitlepublished = db.getReference("publishedTitle");
         publishedRef = db.getReference("published");
+        styleReference = db.getReference("contentStyle");
         firebaseStorage = FirebaseStorage.getInstance();
         storageReference = firebaseStorage.getReference().child("article_photo");
         category = db.getReference("categories");
         defaultPhoto = firebaseStorage.getReference().child("default");
+        italicButton = (Button) findViewById(R.id.italic_button);
+        boldButton = (Button) findViewById(R.id.bold_button);
+        bulletButton = (ImageButton) findViewById(R.id.add_bullet);
+        formatList = new ArrayList<>();
         categorySpinner = (Spinner) findViewById(R.id.spinner1);
         categorySpinner.setVisibility(View.VISIBLE);
         adapter = ArrayAdapter.createFromResource(this,
@@ -97,7 +123,8 @@ public class EditorArticleActivity extends AppCompatActivity implements AdapterV
             rbd = (RoobaruDuniya) intent.getSerializableExtra(SentFragment.TAG);
             writerId = rbd.getuserId();
             title.setText(rbd.getTitle());
-            content.setText(rbd.getContent());
+            loadContent();
+            //content.setText(rbd.getContent());
             //draftPressed+=1;
         } catch (NullPointerException e) {
             e.printStackTrace();
@@ -115,6 +142,62 @@ public class EditorArticleActivity extends AppCompatActivity implements AdapterV
             }
         });
 
+
+    }
+
+    private void loadContent() {
+
+        final SpannableStringBuilder str = new SpannableStringBuilder(rbd.getContent());
+        styleReference.child(key).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                contentString = rbd.getContent();
+                if (dataSnapshot.exists()) {
+                    //  Log.d("ckval", "hasvalue");
+                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                        //  Log.d("ckke", ds.getKey());
+
+                        TextFormat tf = ds.getValue(TextFormat.class);
+
+                        //   Log.d("chktd", tf.getStyle());
+//
+                        // SpannableStringBuilder str = new SpannableStringBuilder(contentString);
+
+
+                        if (tf.getStyle().equals("bold")) {
+
+                            str.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD), tf.getStart(), tf.getEnd(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            //  Log.d("ckbold", "" + str);
+
+
+                        }
+                        if (tf.getStyle().equals("italic")) {
+
+                            str.setSpan(new android.text.style.StyleSpan(Typeface.ITALIC), tf.getStart(), tf.getEnd(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            //    Log.d("ckbold", "" + str);
+
+
+                        }
+                        if (tf.getStyle().equals("bullet")) {
+                            str.setSpan(new BulletSpan(10), tf.getStart(), tf.getEnd(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        }
+                        //  tvcontent.setText(str);
+
+
+                    }
+                    content.setText(str);
+                } else {
+                    content.setText(rbd.getContent());
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+
+
+        });
 
     }
 
@@ -159,6 +242,15 @@ public class EditorArticleActivity extends AppCompatActivity implements AdapterV
 
             }
         });
+        //added to enable keyboard whenever content is edited
+        content.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                content.requestFocus();
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+            }
+        });
 
         content.addTextChangedListener(new TextWatcher() {
             @Override
@@ -192,6 +284,129 @@ public class EditorArticleActivity extends AppCompatActivity implements AdapterV
 
             }
         });
+        bulletButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Spannable str = content.getText();
+                int start = content.getSelectionStart();
+                int end = content.getSelectionEnd();
+                boolean exists = false;
+                if (start > end) {
+                    int temp = end;
+                    end = start;
+                    start = temp;
+                }
+                TextFormat format = new TextFormat("bullet", content.getSelectionStart(), content.getSelectionEnd());
+
+
+                BulletSpan[] quoteSpan = str.getSpans(start, end, BulletSpan.class);
+
+                // If the selected text-part already has UNDERLINE style on it, then we need to disable it
+                for (int i = 0; i < quoteSpan.length; i++) {
+                    str.removeSpan(quoteSpan[i]);
+                    formatList.remove(format);
+                    exists = true;
+                    break;
+                }
+
+                // Else we set UNDERLINE style on it
+                if (!exists) {
+                    str.setSpan(new BulletSpan(10), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    formatList.add(format);
+                }
+                content.setSelection(start, end);
+
+            }
+
+        });
+
+
+        italicButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Spannable str = content.getText();
+                int start = content.getSelectionStart();
+                int end = content.getSelectionEnd();
+                boolean iExists = false;
+                if (start > end) {
+                    int temp = end;
+                    end = start;
+                    start = temp;
+
+                }
+                TextFormat format = new TextFormat("italic", content.getSelectionStart(), content.getSelectionEnd());
+
+
+                StyleSpan[] styleSpans = str.getSpans(start, end, StyleSpan.class);
+
+                // If the selected text-part already has BOLD style on it, then
+                // we need to disable it
+                for (int i = 0; i < styleSpans.length; i++) {
+                    if (styleSpans[i].getStyle() == Typeface.ITALIC) {
+                        str.removeSpan(styleSpans[i]);
+                        iExists = true;
+
+                        formatList.remove(format);
+                        break;
+                    }
+                }
+
+
+                // Else we set BOLD style on it
+                if (!iExists) {
+                    str.setSpan(new StyleSpan(Typeface.ITALIC), start, end,
+                            Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+                    formatList.add(format);
+                }
+
+                content.setSelection(start, end);
+            }
+        });
+        boldButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+
+                Spannable str = content.getText();
+                int start = content.getSelectionStart();
+                int end = content.getSelectionEnd();
+                boolean bExists = false;
+                if (start > end) {
+                    int temp = end;
+                    end = start;
+                    start = temp;
+                }
+                TextFormat format = new TextFormat("bold", content.getSelectionStart(), content.getSelectionEnd());
+
+
+                StyleSpan[] styleSpans = str.getSpans(start, end, StyleSpan.class);
+
+                // If the selected text-part already has BOLD style on it, then
+                // we need to disable it
+                for (int i = 0; i < styleSpans.length; i++) {
+                    if (styleSpans[i].getStyle() == android.graphics.Typeface.BOLD) {
+                        str.removeSpan(styleSpans[i]);
+                        bExists = true;
+
+                        formatList.remove(format);
+                        break;
+                    }
+                }
+
+
+                // Else we set BOLD style on it
+                if (!bExists) {
+                    str.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), start, end,
+                            Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+                    formatList.add(format);
+                }
+
+                content.setSelection(start, end);
+            }
+        });
+
 
 
         super.onStart();
@@ -233,6 +448,24 @@ public class EditorArticleActivity extends AppCompatActivity implements AdapterV
 
                 PendingClass pc = new PendingClass(true, true, TrialActivity.mUsername);
                 dbPendingArticle.child(key).setValue(pc);
+                if (formatList.size() > 0) {
+                    for (TextFormat ft : formatList) {
+                        String str = ft.getStart() + " " + ft.getEnd() + " " + ft.getStyle();
+                        //  Log.d("chk", str);
+                           /* String st= String.valueOf(ft.getStart());
+                            String lt= String.valueOf(ft.getEnd());
+                            Map<String,String> mp=new HashMap<>();
+                            mp.put(ft.getStyle(),"style");
+                            mp.put(st,"start");
+                            mp.put(lt,"end");
+                            */
+
+                        styleReference.child(key).push().setValue(ft);
+
+
+                    }
+
+                }
               /*  AlertDialog.Builder b = new AlertDialog.Builder(this);
                 b.setTitle("Choose Category");
                 String[] types = getResources().getStringArray(R.array.catgs);
@@ -301,7 +534,8 @@ public class EditorArticleActivity extends AppCompatActivity implements AdapterV
     private void addCategoryDb() {
      //   Log.d("catc", categoryChoosen);
       //  Log.d("ckk", key);
-        HomeDisplay hm = new HomeDisplay(rbd.getTitle(), rbd.getPhoto());
+        long tm=-1 * new Date().getTime();
+        HomeDisplay hm = new HomeDisplay(rbd.getTitle(), rbd.getPhoto(),tm);
 
         // it+=1;
         category.child(categoryChoosen).child(key).setValue(hm);

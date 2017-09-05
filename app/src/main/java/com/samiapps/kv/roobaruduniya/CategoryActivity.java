@@ -2,15 +2,17 @@ package com.samiapps.kv.roobaruduniya;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -59,45 +61,63 @@ public class CategoryActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.headlinelayout);
-
-        uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-        firebaseDtabase = FirebaseDatabase.getInstance();
-        dbaseReference = firebaseDtabase.getReference().child("messages");
-        publishedRef = firebaseDtabase.getReference("published");
-        mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
-        mRecycleView = (RecyclerView) findViewById(R.id.editor_recycleview);
-        categoryRef = firebaseDtabase.getReference("categories");
-
-        imageAdapter = new ImgAdapter(rubaru, this);
-        //StaggeredGridLayoutManager sglm = new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
-        //sglm.setReverseLayout(true);
-        // GridLayoutManager gridLayoutManager=new GridLayoutManager(this,2);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(CategoryActivity.this);
-        linearLayoutManager.setReverseLayout(true);
-
-        linearLayoutManager.setStackFromEnd(true);
-
-        //to display in reverse order;setreverselayout(true)
-
-
-        mRecycleView.setLayoutManager(linearLayoutManager);
-
-
-        error = (TextView) findViewById(R.id.error);
-        mRecycleView.setItemAnimator(new DefaultItemAnimator());
-        homeLayout = (LinearLayout) findViewById(R.id.main_container);
-
-
-        mRecycleView.setAdapter(imageAdapter);
-        Intent intent = getIntent();
-        if (intent.getStringExtra("articlecat") != null) {
-            category = intent.getStringExtra("articlecat");
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("Please Log In!")
+                    .setCancelable(false)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            Intent intent=new Intent(CategoryActivity.this,TrialActivity.class);
+                            startActivity(intent);
+                            //do things
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
+            //Toast.makeText(CategoryActivity.this,"Please Log in",Toast.LENGTH_LONG).show();
         } else {
-            category = intent.getStringExtra(RoobaruWidgetProvider.EXTRA_STRING);
-        }
-       // Log.d("categorycheck", category);
-        setTitle(category);
+
+            uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+
+            firebaseDtabase = FirebaseDatabase.getInstance();
+            dbaseReference = firebaseDtabase.getReference().child("messages");
+            publishedRef = firebaseDtabase.getReference("published");
+            mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
+            mRecycleView = (RecyclerView) findViewById(R.id.editor_recycleview);
+            categoryRef = firebaseDtabase.getReference("categories");
+
+            imageAdapter = new ImgAdapter(rubaru, this);
+            //StaggeredGridLayoutManager sglm = new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
+            //sglm.setReverseLayout(true);
+            GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
+            // LinearLayoutManager linearLayoutManager = new LinearLayoutManager(CategoryActivity.this);
+            // linearLayoutManager.setReverseLayout(true);
+
+            // linearLayoutManager.setStackFromEnd(true);
+
+            //to display in reverse order;setreverselayout(true)
+
+
+            mRecycleView.setLayoutManager(gridLayoutManager);
+            mRecycleView.setItemAnimator(new DefaultItemAnimator());
+
+            mRecycleView.setAdapter(imageAdapter);
+
+
+            error = (TextView) findViewById(R.id.error);
+
+            homeLayout = (LinearLayout) findViewById(R.id.main_container);
+
+
+            Intent intent = getIntent();
+            if (intent.getStringExtra("articlecat") != null) {
+                category = intent.getStringExtra("articlecat");
+            } else {
+                category = intent.getStringExtra(RoobaruWidgetProvider.EXTRA_STRING);
+            }
+            // Log.d("categorycheck", category);
+            setTitle(category);
      /*   categoryRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -123,36 +143,37 @@ public class CategoryActivity extends AppCompatActivity {
         });
         */
 
-        getArticleByCategory();
-        imageAdapter.setOnItemClickListener(new ImgAdapter.ClickListener() {
-            @Override
-            public void onItemClick(int position, View v) {
+            getArticleByCategory();
+            imageAdapter.setOnItemClickListener(new ImgAdapter.ClickListener() {
+                @Override
+                public void onItemClick(int position, View v) {
 
-                RoobaruDuniya item = rubaru.get(position);
-                String key = keys.get(position);
-                Intent intent = new Intent(CategoryActivity.this, ArticleDetail.class);
-                intent.putExtra("position", position);
-                intent.putExtra("keySelected", key);
-                Bundle b = new Bundle();
-                b.putSerializable(ArticleDetail.TAG, item);
-                intent.putExtras(b);
-                startActivity(intent);
-            }
-        });
+                    RoobaruDuniya item = rubaru.get(position);
+                    String key = keys.get(position);
+                    Intent intent = new Intent(CategoryActivity.this, ArticleDetail.class);
+                    intent.putExtra("position", position);
+                    intent.putExtra("keySelected", key);
+                    Bundle b = new Bundle();
+                    b.putSerializable(ArticleDetail.TAG, item);
+                    intent.putExtras(b);
+                    startActivity(intent);
+                }
+            });
 
 
-        // mLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
-        // mRecycleView.setHasFixedSize(true);
-        mLoadingIndicator.setVisibility(View.VISIBLE);
+            // mLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+            // mRecycleView.setHasFixedSize(true);
+            mLoadingIndicator.setVisibility(View.VISIBLE);
 
-        registerReceiver(MyReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+            registerReceiver(MyReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+        }
     }
 
     private void getArticleByCategory() {
         // Query q= categoryRef.child(category).orderByChild("timestamp").limitToFirst(15);
 
 
-        categoryRef.child(category).orderByKey().limitToLast(20).addListenerForSingleValueEvent(new ValueEventListener() {
+        categoryRef.child(category).orderByChild("timeval").limitToLast(20).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.hasChildren()) {

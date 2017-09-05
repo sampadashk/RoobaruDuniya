@@ -98,6 +98,7 @@ public class TrialActivity extends AppCompatActivity
     MenuItem sentart;
     ActionBarDrawerToggle toggle;
     private BroadcastReceiver mReceiver;
+
     private JSONObject json_object;
 
 
@@ -110,6 +111,7 @@ public class TrialActivity extends AppCompatActivity
 
 
         //postponeEnterTransition();
+
         mUsername = ANONYMOUS;
         userStatus = "Blogger";
         shouldLoadHomeFragOnBackPress = true;
@@ -141,7 +143,7 @@ public class TrialActivity extends AppCompatActivity
                                     .createSignInIntentBuilder()
                                     .setIsSmartLockEnabled(false).setAvailableProviders(Arrays.asList(new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
 
-                                    new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build(), new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build())).setLogo(R.drawable.roobaru_logo)
+                                    new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build(), new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build())).setLogo(R.drawable.collagecopy)
                                     .build(), RC_SIGN_IN);
                 }
 
@@ -265,6 +267,8 @@ public class TrialActivity extends AppCompatActivity
 
             }
         });
+
+
         checkUserDb();
 
         //  Log.d("checkedit",""+isEditor);
@@ -496,6 +500,11 @@ public class TrialActivity extends AppCompatActivity
             startActivity(intent);
 
         }
+        else if(id==R.id.nav_privacy_policy)
+        {
+            Intent intent=new Intent(TrialActivity.this,PrivacyPolicy.class);
+            startActivity(intent);
+        }
         //TODO TEST 2
 
         // DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -628,6 +637,8 @@ public class TrialActivity extends AppCompatActivity
             uname = username;
             photoUri = photo;
             uemail = email;
+
+
             mHandler = new Handler();
 
             //Log.d("cname", uname);
@@ -651,6 +662,7 @@ public class TrialActivity extends AppCompatActivity
         checkEditor();
         // checkUserDb();
 
+
         loadNavHeader();
         if (savedInstanceState == null) {
             //   navItemIndex = 0;
@@ -666,6 +678,7 @@ public class TrialActivity extends AppCompatActivity
     }
 
     private void checkUserDb() {
+
 
 
         userDtabase.addListenerForSingleValueEvent(new ValueEventListener() {

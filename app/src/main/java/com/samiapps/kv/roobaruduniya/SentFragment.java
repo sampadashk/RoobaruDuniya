@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 
 import static com.samiapps.kv.roobaruduniya.TrialActivity.activityTitles;
 import static com.samiapps.kv.roobaruduniya.TrialActivity.navItemIndex;
+import static com.samiapps.kv.roobaruduniya.TrialActivity.userStatus;
 
 /**
  * Created by KV on 21/6/17.
@@ -40,7 +42,7 @@ public class SentFragment extends Fragment {
     private ImgAdapter imageAdapter;
     ArrayList<RoobaruDuniya> rubaru = new ArrayList<RoobaruDuniya>();
     ArrayList<String> keyList;
-    String userStatus;
+    String uStatus;
 
 
     private RecyclerView mRecycleView;
@@ -60,6 +62,7 @@ public class SentFragment extends Fragment {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
 
         uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         firebaseDtabase = FirebaseDatabase.getInstance();
@@ -68,7 +71,7 @@ public class SentFragment extends Fragment {
         msgReference = firebaseDtabase.getReference().child("messages");
         pendingRef = firebaseDtabase.getReference().child("pending");
         keyList = new ArrayList<>();
-        userStatus = TrialActivity.userStatus;
+        uStatus = TrialActivity.userStatus;
 
 
         //  Log.d("checkt", dbaseReference.toString());
@@ -94,50 +97,56 @@ public class SentFragment extends Fragment {
 
         mRecycleView.setAdapter(imageAdapter);
         //FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG);
-        if (userStatus.equals("Blogger")) {
+      try {
+          if (uStatus.equals("Blogger")) {
 
-            readmsgId();
-            imageAdapter.setOnItemClickListener(new ImgAdapter.ClickListener() {
-                @Override
-                public void onItemClick(int position, View v) {
+              readmsgId();
+              imageAdapter.setOnItemClickListener(new ImgAdapter.ClickListener() {
+                  @Override
+                  public void onItemClick(int position, View v) {
 
-                    RoobaruDuniya item = rubaru.get(position);
-                    Intent intent = new Intent(getContext(), PublishDetail.class);
-                    String key = keyList.get(position);
-                    intent.putExtra("keySelected", key);
-                    intent.putExtra("position", position);
-                    Bundle b = new Bundle();
-                    b.putSerializable(PublishDetail.TAG, item);
-                    intent.putExtras(b);
-
-
-                    //intent.putExtra("article",rd);
-
-                    startActivity(intent);
-                }
-            });
-
-        } else {
-
-            readmsgEditor();
-            imageAdapter.setOnItemClickListener(new ImgAdapter.ClickListener() {
-                @Override
-                public void onItemClick(int position, View v) {
-
-                    RoobaruDuniya item = rubaru.get(position);
-                    String key = keyList.get(position);
-                    Intent intent = new Intent(getContext(), EditorArticleActivity.class);
-                    intent.putExtra("position", position);
-                    intent.putExtra("Keypos", key);
-                    Bundle b = new Bundle();
-                    b.putSerializable(SentFragment.TAG, item);
-                    intent.putExtras(b);
+                      RoobaruDuniya item = rubaru.get(position);
+                      Intent intent = new Intent(getContext(), PublishDetail.class);
+                      String key = keyList.get(position);
+                      intent.putExtra("keySelected", key);
+                      intent.putExtra("position", position);
+                      Bundle b = new Bundle();
+                      b.putSerializable(PublishDetail.TAG, item);
+                      intent.putExtras(b);
 
 
-                    startActivity(intent);
-                }
-            });
-        }
+                      //intent.putExtra("article",rd);
+
+                      startActivity(intent);
+                  }
+              });
+
+          } else {
+
+              readmsgEditor();
+              imageAdapter.setOnItemClickListener(new ImgAdapter.ClickListener() {
+                  @Override
+                  public void onItemClick(int position, View v) {
+
+                      RoobaruDuniya item = rubaru.get(position);
+                      String key = keyList.get(position);
+                      Intent intent = new Intent(getContext(), EditorArticleActivity.class);
+                      intent.putExtra("position", position);
+                      intent.putExtra("Keypos", key);
+                      Bundle b = new Bundle();
+                      b.putSerializable(SentFragment.TAG, item);
+                      intent.putExtras(b);
+
+
+                      startActivity(intent);
+                  }
+              });
+          }
+      }
+        catch(NullPointerException e)
+          {
+              e.printStackTrace();
+          }
 
 
         return rootView;
@@ -266,26 +275,39 @@ public class SentFragment extends Fragment {
 
 
     }
+    public void onDestroy() {
+        super.onDestroy();
+        rubaru.clear();
+
+        Log.d("sentactchkd","destroy");
+
+    }
 
     public void onResume() {
         super.onResume();
+        if(uStatus==null)
+        {
+            uStatus=TrialActivity.userStatus;
+            Log.d("ckst",userStatus);
+        }
+        Log.d("ckust",userStatus);
 
-        //  Log.d("actchk","6");
+          Log.d("sentactchkr","resume");
 
     }
 
     public void onPause() {
 
-        // Log.d("actchk","7");
+         Log.d("sentactchkp","pause");
         super.onPause();
-        rubaru.clear();
+
 
 
     }
 
     public void onStop() {
         super.onStop();
-        // Log.d("actchk","8");
+        Log.d("sentactchks","stop");
     }
 
     public void onActivityCreated(Bundle savedInstanceState) {

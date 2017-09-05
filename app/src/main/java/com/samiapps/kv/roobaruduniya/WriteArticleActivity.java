@@ -18,6 +18,7 @@ import android.text.Spannable;
 import android.text.TextWatcher;
 import android.text.style.BulletSpan;
 import android.text.style.StyleSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -46,6 +47,7 @@ import com.google.firebase.storage.UploadTask;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -120,6 +122,17 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
         //TODO Screen rotation
         //TODO PHOTO LOAD ASYNC
         setContentView(R.layout.write_article);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.manual)
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                        //do things
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
 
         sv = (ScrollView) findViewById(R.id.scroll_v);
         llout = (LinearLayout) findViewById(R.id.linearlout);
@@ -134,8 +147,9 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
         userEmail = user.getEmail();
         formatList = new ArrayList<>();
         userId = user.getUid();
-        uStatus = TrialActivity.userStatus;
-       // Log.d("TrialOnStatus", uStatus);
+      uStatus = TrialActivity.userStatus;
+
+       Log.d("TrialOnStatus", uStatus);
         firebaseStorage = FirebaseStorage.getInstance();
         defaultPhoto = firebaseStorage.getReference().child("default");
         //userPos = "Blogger";
@@ -826,7 +840,11 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
     private void addCategoryDb() {
 
         // it+=1;
-        HomeDisplay hm = new HomeDisplay(rbd.getTitle(), rbd.getPhoto());
+        long tm=-1 * new Date().getTime();
+
+
+        HomeDisplay hm = new HomeDisplay(rbd.getTitle(), rbd.getPhoto(),tm);
+
 
         category.child(categoryChoosen).child(key).setValue(hm);
         //  long times=-1 * new Date().getTime();

@@ -55,6 +55,7 @@ public class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory
 
         // Next, set a fill-intent, which will be used to fill in the pending intent template
         // that is set on the collection view in StackWidgetProvider.
+
         Bundle extras = new Bundle();
         extras.putString(RoobaruWidgetProvider.EXTRA_STRING, mCollection.get(position));
         Intent fillInIntent = new Intent();
