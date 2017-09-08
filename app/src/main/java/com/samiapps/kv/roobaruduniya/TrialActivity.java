@@ -129,7 +129,7 @@ public class TrialActivity extends AppCompatActivity
                 if (user != null) {
 
 
-                  //  Log.d(TAG, "Signed in 3");
+                    //  Log.d(TAG, "Signed in 3");
 
 
                     onSignedInInitialize(user.getDisplayName(), user.getEmail(), user.getPhotoUrl(), savedInstanceState);
@@ -350,7 +350,7 @@ public class TrialActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 try {
-                   //Log.d("ckjs", json_object.get("userid").toString());
+                    //Log.d("ckjs", json_object.get("userid").toString());
 
 
                     setNotifCount(0);
@@ -405,11 +405,8 @@ public class TrialActivity extends AppCompatActivity
                 SearchView searchView =
                         (SearchView) item.getActionView();
                 Log.d("checksearc",searchView.getQuery().toString());
-
-
                 searchView.setSearchableInfo(
                     searchManager.getSearchableInfo(getComponentName()));
-
                 searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                     @Override
                     public boolean onQueryTextSubmit(String query) {
@@ -418,14 +415,10 @@ public class TrialActivity extends AppCompatActivity
                         intent.setAction(Intent.ACTION_SEARCH);
                         intent.putExtra(SearchManager.QUERY,query);
                         startActivity(intent);
-
-
                         return true;
                     }
-
                     @Override
                     public boolean onQueryTextChange(String newText) {
-
                         return false;
                     }
                 });

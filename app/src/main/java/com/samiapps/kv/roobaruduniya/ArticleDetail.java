@@ -280,7 +280,8 @@ public class ArticleDetail extends AppCompatActivity {
         sharedButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String msg = "Hey check this Article " + artsel.getTitle() + " by " + artsel.getUser() + " in Roobaru Duniya " + generateDynamicLinks(keySel);
+               // String msg = "पढ़िए नया लेख " + artsel.getTitle() + " by " + artsel.getUser() + " in Roobaru Duniya " + generateDynamicLinks(keySel);
+                String msg="\""+artsel.getTitle()+"\""+" - रूबरू दुनिया में पढ़िए "+artsel.getUser()+" द्वारा लिखित नया लेख \n" + generateDynamicLinks(keySel);
                 Intent shareintent = new Intent(Intent.ACTION_SEND);
                 shareintent.setType("text/plain");
 
@@ -1020,6 +1021,7 @@ public class ArticleDetail extends AppCompatActivity {
        // Log.d("detaildestroy", "destory");
 
         commentList.clear();
+
         if (commentListener != null) {
             publishedRef.child(keySel).child("comments")
                     .removeEventListener(commentListener);

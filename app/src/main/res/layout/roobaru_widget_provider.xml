@@ -24,7 +24,7 @@
                 android:layout_height="32dp"
                 android:contentDescription="@string/widget_launcher"
                 android:layout_gravity="center_vertical"
-                android:src="@drawable/roobaru_logo" />
+                android:src="@mipmap/ic_launcher" />
 
             <TextView
                 android:layout_width="wrap_content"

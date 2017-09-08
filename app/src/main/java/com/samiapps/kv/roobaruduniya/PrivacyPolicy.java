@@ -13,8 +13,9 @@ public class PrivacyPolicy extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.about_us);
-        tv=(TextView)findViewById(R.id.about_us);
+        setContentView(R.layout.privacy_policy);
+        setTitle(R.string.privacy_policy);
+        tv=(TextView)findViewById(R.id.privacy);
         tv.setText(R.string.privacy);
     }
 }

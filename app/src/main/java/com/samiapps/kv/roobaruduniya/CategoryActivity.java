@@ -60,6 +60,7 @@ public class CategoryActivity extends AppCompatActivity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+      //  Log.d("categorylog","oncreate");
         setContentView(R.layout.headlinelayout);
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -118,6 +119,7 @@ public class CategoryActivity extends AppCompatActivity {
             }
             // Log.d("categorycheck", category);
             setTitle(category);
+            getArticleByCategory();
      /*   categoryRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -143,7 +145,7 @@ public class CategoryActivity extends AppCompatActivity {
         });
         */
 
-            getArticleByCategory();
+
             imageAdapter.setOnItemClickListener(new ImgAdapter.ClickListener() {
                 @Override
                 public void onItemClick(int position, View v) {
@@ -167,6 +169,22 @@ public class CategoryActivity extends AppCompatActivity {
 
             registerReceiver(MyReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         }
+    }
+    public void onResume()
+    {
+        super.onResume();
+       // Log.d("categorylog","onResume");
+
+    }
+    public void onStop()
+    {
+        super.onStop();
+       // Log.d("categorylog","onStop");
+    }
+    public void onPause()
+    {
+        super.onPause();
+       // Log.d("categorylog","onPause");
     }
 
     private void getArticleByCategory() {
@@ -312,12 +330,15 @@ public class CategoryActivity extends AppCompatActivity {
 
     @Override
     public void onDestroy() {
+       // Log.d("categorylog","ondestroy");
         if (MyReceiver != null) {
 
             unregisterReceiver(MyReceiver);
             MyReceiver = null;
         }
-        rubaru.clear();
+       rubaru.clear();
+        imageAdapter.notifyDataSetChanged();
+
 
         super.onDestroy();
     }

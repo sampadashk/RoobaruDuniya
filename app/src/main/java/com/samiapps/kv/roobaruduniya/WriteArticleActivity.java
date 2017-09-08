@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -30,7 +31,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -69,6 +70,7 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
     DatabaseReference dbtitlepublished;
     int it;
     DatabaseReference category;
+    RelativeLayout rlbutton;
 
 
     DatabaseReference dbRefUser;
@@ -109,7 +111,10 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
     int pos;
 
     RoobaruDuniya artsel;
-    ProgressBar progressBar;
+
+
+    public static final String PREFS_NAME = "AOP_PREFS";
+    public static final String PREFS_KEY = "AOP_PREFS_String";
 
     private static final int RC_PHOTO_PICKER = 2;
     private ValueEventListener eventListener;
@@ -122,17 +127,40 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
         //TODO Screen rotation
         //TODO PHOTO LOAD ASYNC
         setContentView(R.layout.write_article);
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(R.string.manual)
-                .setCancelable(false)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
+        SharedPreferences settings;
+        boolean res;
+        settings = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE); //1
+        rlbutton=(RelativeLayout) findViewById(R.id.fontstylebutton);
+        res = settings.getBoolean(PREFS_KEY, false); //2
+        if(res==false) {
 
-                        //do things
-                    }
-                });
-        AlertDialog alert = builder.create();
-        alert.show();
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage(R.string.manual)
+                    .setNegativeButton("Don't show me again", new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            SharedPreferences settings;
+                            SharedPreferences.Editor editor;
+                            settings = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE); //1
+                            editor = settings.edit(); //2
+
+                            editor.putBoolean(PREFS_KEY, true); //3
+                            editor.commit();
+
+                        }
+                    })
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+
+                            //do things
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
+
 
         sv = (ScrollView) findViewById(R.id.scroll_v);
         llout = (LinearLayout) findViewById(R.id.linearlout);
@@ -154,7 +182,7 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
         defaultPhoto = firebaseStorage.getReference().child("default");
         //userPos = "Blogger";
         userPos = TrialActivity.userStatus;
-        progressBar = (ProgressBar) findViewById(R.id.pbar);
+
 
         try {
             userProfile = user.getPhotoUrl().toString();
@@ -301,7 +329,7 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
     }
 
     public void onStart() {
-     //   Log.d("TrialOnStat", uStatus);
+        //   Log.d("TrialOnStat", uStatus);
 
         try {
             if (uStatus.equals("editor")) {
@@ -358,14 +386,18 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
 
             }
         });
-        content.setOnClickListener(new View.OnClickListener() {
+
+     content.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 content.requestFocus();
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                rlbutton.setVisibility(View.VISIBLE);
+
             }
         });
+
 
         content.addTextChangedListener(new TextWatcher() {
             @Override
@@ -780,8 +812,6 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
         if (requestcode == RC_PHOTO_PICKER && resultcode == RESULT_OK) {
             final Uri SelectedImageUri = data.getData();
             Toast.makeText(this, R.string.wait_photo, Toast.LENGTH_LONG).show();
-            progressBar.setEnabled(true);
-            progressBar.setVisibility(View.VISIBLE);
 
             StorageReference photoref = storageReference.child(SelectedImageUri.getLastPathSegment());
             photoref.putFile(SelectedImageUri).addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -813,7 +843,7 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
 
             //TODO use progressbar
 
-            progressBar.setVisibility(View.GONE);
+
 
 
             Toast.makeText(this, R.string.photo_uploaded, Toast.LENGTH_LONG).show();

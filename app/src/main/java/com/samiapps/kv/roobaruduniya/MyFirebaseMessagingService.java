@@ -66,7 +66,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.roobaru_logo)
+                        .setSmallIcon(R.mipmap.ic_launcher)
                         .setContentTitle(notification_title)
                         .setContentText(notification_body)
                         .setAutoCancel(true);
@@ -122,8 +122,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         intent.putExtra("badge_count_class_name", launcherClassName);
         intent.putExtra("badge_count_msg", msg);
         intent.putExtra("badge_jsondata", ob.toString());
+
       //  Log.d("ckjso", ob.toString());
         applicationContext.sendBroadcast(intent);
+
     }
 
     public static String getLauncherClassName(Context context) {

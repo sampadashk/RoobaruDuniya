@@ -51,7 +51,7 @@
                 <LinearLayout
                     android:id="@+id/meta_bar"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/expanded_toolbar_height"
+                    android:layout_height="wrap_content"
                     android:background="#333"
                     android:layout_gravity="bottom"
                     android:orientation="horizontal"
@@ -71,7 +71,7 @@
                         android:textColor="#fff"
                         android:textStyle="bold"
 
-                        android:maxLines="1" />
+                        android:maxLines="2" />
                 </LinearLayout>
             </FrameLayout>
 
