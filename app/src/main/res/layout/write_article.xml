@@ -35,23 +35,10 @@
             android:layout_height="2dp"
             android:background="@android:color/holo_blue_dark" />
 
-
-
-
-
-
-
-
-
-
-        <RelativeLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:showDividers="middle"
-            android:visibility="visible"
-            android:id="@+id/fontstylebutton"
-            android:fitsSystemWindows="true">
+            android:layout_height="wrap_content">
+
             <EditText
 
                 android:id="@+id/post_content"
@@ -73,14 +60,29 @@
 
 
                 android:padding="16dp"
+
                 android:textAppearance="@style/TextAppearance.Light"
                 android:textColorHint="@color/text_secondary"
-                android:textIsSelectable="true"
 
 
-                />
+                android:textIsSelectable="true" />
+
+        </ScrollView>
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/pbar"
+            android:visibility="gone" />
 
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:showDividers="middle"
+            android:visibility="visible"
+            android:fitsSystemWindows="true">
 
             <ImageButton
                 android:id="@+id/photoPickerButton"
@@ -155,3 +157,4 @@
     </LinearLayout>
 
 </ScrollView>
+

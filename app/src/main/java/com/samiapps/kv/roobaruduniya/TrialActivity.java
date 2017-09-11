@@ -198,6 +198,8 @@ public class TrialActivity extends AppCompatActivity
         txtStatus = (TextView) navHeader.findViewById(R.id.user_status);
 
         imgProfile = (ImageView) navHeader.findViewById(R.id.img_profile);
+
+
         //registering broadcast receiver
         IntentFilter intentFilter = new IntentFilter(
                 "android.intent.action.BADGE_COUNT_UPDATE");

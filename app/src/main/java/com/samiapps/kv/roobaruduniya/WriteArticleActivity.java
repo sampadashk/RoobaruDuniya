@@ -31,8 +31,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -70,7 +68,8 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
     DatabaseReference dbtitlepublished;
     int it;
     DatabaseReference category;
-    RelativeLayout rlbutton;
+
+
 
 
     DatabaseReference dbRefUser;
@@ -97,7 +96,7 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
     String userProfile;
     Uri downloadProfileUrl;
     private StorageReference defaultPhoto;
-    ScrollView sv;
+
     LinearLayout llout;
     Button italicButton;
     String categoryChoosen;
@@ -130,7 +129,7 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
         SharedPreferences settings;
         boolean res;
         settings = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE); //1
-        rlbutton=(RelativeLayout) findViewById(R.id.fontstylebutton);
+
         res = settings.getBoolean(PREFS_KEY, false); //2
         if(res==false) {
 
@@ -162,12 +161,13 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
         }
 
 
-        sv = (ScrollView) findViewById(R.id.scroll_v);
+
         llout = (LinearLayout) findViewById(R.id.linearlout);
         italicButton = (Button) findViewById(R.id.italic_button);
         boldButton = (Button) findViewById(R.id.bold_button);
         bulletButton = (ImageButton) findViewById(R.id.add_bullet);
         spinner = (Spinner) findViewById(R.id.spinner1);
+
 
 
         firebaseAuth = FirebaseAuth.getInstance();
@@ -369,10 +369,17 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
                 if ((st.toString().trim().length()) > 0)
 
                 {
-                    if (rbd != null) {
-                        rbd.setTitle(st.toString());
-                        draftButton.setEnabled(true);
+                    if(st.toString().trim().length()>30)
+                    {
+                        Toast.makeText(WriteArticleActivity.this,"title length cannot be more than 30",Toast.LENGTH_LONG).show();
 
+                    }
+                    else {
+                        if (rbd != null) {
+                            rbd.setTitle(st.toString());
+                            draftButton.setEnabled(true);
+
+                        }
                     }
 
 
@@ -393,7 +400,7 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
                 content.requestFocus();
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-                rlbutton.setVisibility(View.VISIBLE);
+
 
             }
         });
@@ -810,6 +817,7 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
     public void onActivityResult(int requestcode, int resultcode, Intent data) {
 
         if (requestcode == RC_PHOTO_PICKER && resultcode == RESULT_OK) {
+
             final Uri SelectedImageUri = data.getData();
             Toast.makeText(this, R.string.wait_photo, Toast.LENGTH_LONG).show();
 
@@ -842,6 +850,7 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
 
 
             //TODO use progressbar
+
 
 
 

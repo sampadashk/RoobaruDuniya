@@ -24,6 +24,7 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextWatcher;
 import android.text.style.BulletSpan;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -119,6 +120,7 @@ public class ArticleDetail extends AppCompatActivity {
         // this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         setContentView(R.layout.detail_layout);
+        Log.d("detailcd", "called");
 
 
         commentEditText = (EditText) findViewById(R.id.w_comment);
@@ -163,127 +165,149 @@ public class ArticleDetail extends AppCompatActivity {
 
 
         mAuth = FirebaseAuth.getInstance();
+        try {
+            if (mAuth.getCurrentUser() == null) {
+
+                Log.d("ckdetail", "here");
+                Intent inti = new Intent(this, TrialActivity.class);
+                inti.putExtra("firebasedl", "dynamiclink");
+                startActivity(inti);
+
+
+            }
+        } catch (NullPointerException e) {
+            Log.d("ckdetail", "here");
+            Intent inti = new Intent(this, TrialActivity.class);
+            inti.putExtra("firebasedl", "dynamiclink");
+            startActivity(inti);
+
+        }
+
+
 //      getSupportActionBar().setDisplayShowTitleEnabled(false);
         // getSupportActionBar().setLogo(R.drawable.roobaru_logo);
-        userPhoto = mAuth.getCurrentUser().getPhotoUrl();
-        userId = mAuth.getCurrentUser().getUid();
-        commentList = new ArrayList<>();
-        commentAdapter = new CommentAdapter(this, commentList);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
-        cmtrecyclerV.setLayoutManager(layoutManager);
-        cmtrecyclerV.setHasFixedSize(false);
+        if (mAuth.getCurrentUser() != null) {
 
-        cmtrecyclerV.setAdapter(commentAdapter);
+            userPhoto = mAuth.getCurrentUser().getPhotoUrl();
+            userId = mAuth.getCurrentUser().getUid();
 
-        db = FirebaseDatabase.getInstance();
+            commentList = new ArrayList<>();
+            commentAdapter = new CommentAdapter(this, commentList);
+            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+            cmtrecyclerV.setLayoutManager(layoutManager);
+            cmtrecyclerV.setHasFixedSize(false);
 
-        publishedRef = db.getReference("published");
-        notificationRef = db.getReference("notification");
-        styleRef = db.getReference("contentStyle");
-        notificationRef.keepSynced(true);
-        msgReference = db.getReference("messages");
-        userRef = db.getReference("user");
+            cmtrecyclerV.setAdapter(commentAdapter);
 
-        // msgReference.keepSynced(true);
-        commentAdapter.setOnItemClickListener(new CommentAdapter.ClickListener() {
+            db = FirebaseDatabase.getInstance();
 
-            @Override
-            public void onItemClick(final int position, View v) {
+            publishedRef = db.getReference("published");
+            notificationRef = db.getReference("notification");
+            styleRef = db.getReference("contentStyle");
+            notificationRef.keepSynced(true);
+            msgReference = db.getReference("messages");
+            userRef = db.getReference("user");
 
+            // msgReference.keepSynced(true);
+            commentAdapter.setOnItemClickListener(new CommentAdapter.ClickListener() {
 
-                Comment c = commentList.get(position);
-                //  Log.d("posdelf",""+position);
-                //only give delete right to the person who wrote the comment;Than only delete button will be visisble
-                if (c.commentorName.equals(TrialActivity.mUsername)) {
-
-                    final ImageButton deleteButton = (ImageButton) v.findViewById(R.id.delete_button);
-                    if (deleteButton.getVisibility() == View.VISIBLE) {
-                        deleteButton.setVisibility(View.INVISIBLE);
-                    } else {
-                        deleteButton.setVisibility(View.VISIBLE);
-                        deleteButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
+                @Override
+                public void onItemClick(final int position, View v) {
 
 
-                                Comment cmt = commentList.get(position);
+                    Comment c = commentList.get(position);
+                    //  Log.d("posdelf",""+position);
+                    //only give delete right to the person who wrote the comment;Than only delete button will be visisble
+                    if (c.commentorName.equals(TrialActivity.mUsername)) {
 
-                                commentList.remove(cmt);  // remove the item from list
-                                commentAdapter.notifyItemRemoved(position);
-                                publishedRef.child(keySel).child("comments").addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(DataSnapshot dataSnapshot) {
-                                        Iterator<DataSnapshot> iterator = dataSnapshot.getChildren().iterator();
+                        final ImageButton deleteButton = (ImageButton) v.findViewById(R.id.delete_button);
+                        if (deleteButton.getVisibility() == View.VISIBLE) {
+                            deleteButton.setVisibility(View.INVISIBLE);
+                        } else {
+                            deleteButton.setVisibility(View.VISIBLE);
+                            deleteButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
 
-                                        int i = 0;
-                                        // String[] sampleString = new String[length];
-                                        //TODO DELETE
-                                        //        Log.d("posdel", "" + position);
-                                        while (i < position) {
-                                            if (iterator.hasNext()) {
-                                                iterator.next();
-                                                i += 1;
+
+                                    Comment cmt = commentList.get(position);
+
+                                    commentList.remove(cmt);  // remove the item from list
+                                    commentAdapter.notifyItemRemoved(position);
+                                    publishedRef.child(keySel).child("comments").addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            Iterator<DataSnapshot> iterator = dataSnapshot.getChildren().iterator();
+
+                                            int i = 0;
+                                            // String[] sampleString = new String[length];
+                                            //TODO DELETE
+                                            //        Log.d("posdel", "" + position);
+                                            while (i < position) {
+                                                if (iterator.hasNext()) {
+                                                    iterator.next();
+                                                    i += 1;
+                                                }
+                                            }
+                                            try {
+                                                //get the key using iterator and than delete it
+
+                                                String key = iterator.next().getKey();
+                                                //           Log.d("keydel", key);
+                                                dataSnapshot.child(key).getRef().removeValue();
+
+                                                return;
+                                            } catch (NoSuchElementException e) {
+                                                e.printStackTrace();
+                                            } catch (Exception ee) {
+                                                ee.printStackTrace();
                                             }
                                         }
-                                        try {
-                                            //get the key using iterator and than delete it
 
-                                            String key = iterator.next().getKey();
-                                            //           Log.d("keydel", key);
-                                            dataSnapshot.child(key).getRef().removeValue();
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
 
-                                            return;
-                                        } catch (NoSuchElementException e) {
-                                            e.printStackTrace();
-                                        } catch (Exception ee) {
-                                            ee.printStackTrace();
                                         }
-                                    }
-
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) {
-
-                                    }
-                                });
+                                    });
 
 
-                                Toast.makeText(ArticleDetail.this, R.string.delete_comment, Toast.LENGTH_SHORT).show();
-                                deleteButton.setVisibility(View.INVISIBLE);
+                                    Toast.makeText(ArticleDetail.this, R.string.delete_comment, Toast.LENGTH_SHORT).show();
+                                    deleteButton.setVisibility(View.INVISIBLE);
 
-                            }
+                                }
 
-                        });
+                            });
+                        }
                     }
                 }
-            }
-        });
-        displayCont.setOnLongClickListener(new View.OnLongClickListener() {
+            });
+            displayCont.setOnLongClickListener(new View.OnLongClickListener() {
 
-            @Override
-            public boolean onLongClick(View v) {
-                showAlertTextSize();
-                return false;
-            }
-        });
-        homeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intentHome = new Intent(ArticleDetail.this, TrialActivity.class);
-                startActivity(intentHome);
-            }
-        });
-
-
-        // FirebaseAuth.getInstance().
+                @Override
+                public boolean onLongClick(View v) {
+                    showAlertTextSize();
+                    return false;
+                }
+            });
+            homeButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intentHome = new Intent(ArticleDetail.this, TrialActivity.class);
+                    startActivity(intentHome);
+                }
+            });
 
 
-        sharedButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               // String msg = "पढ़िए नया लेख " + artsel.getTitle() + " by " + artsel.getUser() + " in Roobaru Duniya " + generateDynamicLinks(keySel);
-                String msg="\""+artsel.getTitle()+"\""+" - रूबरू दुनिया में पढ़िए "+artsel.getUser()+" द्वारा लिखित नया लेख \n" + generateDynamicLinks(keySel);
-                Intent shareintent = new Intent(Intent.ACTION_SEND);
-                shareintent.setType("text/plain");
+            // FirebaseAuth.getInstance().
+
+
+            sharedButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // String msg = "पढ़िए नया लेख " + artsel.getTitle() + " by " + artsel.getUser() + " in Roobaru Duniya " + generateDynamicLinks(keySel);
+                    String msg = "\"" + artsel.getTitle() + "\"" + " - रूबरू दुनिया में पढ़िए " + artsel.getUser() + " द्वारा लिखित नया लेख \n" + generateDynamicLinks(keySel);
+                    Intent shareintent = new Intent(Intent.ACTION_SEND);
+                    shareintent.setType("text/plain");
 
                                   /*  try{
                                         byte [] encodeByte= Base64.decode(artsel.getPhoto(),Base64.DEFAULT);
@@ -304,16 +328,20 @@ public class ArticleDetail extends AppCompatActivity {
                                     */
 
 
-                shareintent.putExtra(Intent.EXTRA_SUBJECT, artsel.getTitle());
-                shareintent.putExtra(Intent.EXTRA_TEXT, msg);
-                startActivity(Intent.createChooser(shareintent, "Share using"));
+                    shareintent.putExtra(Intent.EXTRA_SUBJECT, artsel.getTitle());
+                    shareintent.putExtra(Intent.EXTRA_TEXT, msg);
+                    startActivity(Intent.createChooser(shareintent, "Share using"));
 
 
-            }
-        });
-
-
+                }
+            });
+        }
     }
+
+    
+
+
+
 
     private void showAlertTextSize() {
 
@@ -391,63 +419,65 @@ public class ArticleDetail extends AppCompatActivity {
         super.onStart();
 
 
-        //TODO ASYNC in msgreference
-        Intent intent = getIntent();
-        String action = intent.getAction();
-        Uri data = intent.getData();
-        if (data != null) {
-            //   Log.d("uri is",data.toString());
-            String path = data.getPath();
-            path = path.substring(0, path.length() - 1);
-            String idStr = path.substring(path.lastIndexOf('/') + 1);
 
-            keySel = idStr;
-            LoadUIFromkey(keySel);
+            //TODO ASYNC in msgreference
+        if(mAuth.getCurrentUser()!=null) {
+            Intent intent = getIntent();
+            String action = intent.getAction();
+            Uri data = intent.getData();
+            if (data != null) {
+                //   Log.d("uri is",data.toString());
+                String path = data.getPath();
+                path = path.substring(0, path.length() - 1);
+                String idStr = path.substring(path.lastIndexOf('/') + 1);
+
+                keySel = idStr;
+                LoadUIFromkey(keySel);
 
 
-        } else if (intent.getStringExtra("intentNotification") != null) {
-            NotificationJson obj = (NotificationJson) intent.getSerializableExtra("NotificationObject");
-            //  Log.d("intentchk", "notification");
-            keySel = obj.getMsg_id();
-            // Log.d("chkrecikey", keySel);
-            // Log.d("chkurl", "https://roobaru-duniya-86f7d.firebaseio.com/messages/" + keySel);
-            LoadUIFromkey(keySel);
+            } else if (intent.getStringExtra("intentNotification") != null) {
+                NotificationJson obj = (NotificationJson) intent.getSerializableExtra("NotificationObject");
+                //  Log.d("intentchk", "notification");
+                keySel = obj.getMsg_id();
+                // Log.d("chkrecikey", keySel);
+                // Log.d("chkurl", "https://roobaru-duniya-86f7d.firebaseio.com/messages/" + keySel);
+                LoadUIFromkey(keySel);
 
 
 //                Log.d("titleck", rbd.getTitle());
 
-        } else if (intent.getStringExtra("bkgnotification") != null) {
-            JSONObject obj = null;
-            try {
-                obj = new JSONObject(intent.getStringExtra("bkgnotification"));
-                keySel = obj.get("msgid").toString();
+            } else if (intent.getStringExtra("bkgnotification") != null) {
+                JSONObject obj = null;
+                try {
+                    obj = new JSONObject(intent.getStringExtra("bkgnotification"));
+                    keySel = obj.get("msgid").toString();
 
-                //  Log.d("chkrecikey", keySel);
+                    //  Log.d("chkrecikey", keySel);
 
+                    LoadUIFromkey(keySel);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } else if (intent.getStringExtra("searchString") != null) {
+                keySel = intent.getStringExtra("searchString");
+                //  Log.d("kkk",keySel);
+
+                if (keySel != null) {
+                    LoadUIFromkey(keySel);
+                }
+
+
+            } else {
+                pos = intent.getIntExtra("position", -1);
+                // Log.d("checkpos", "" + pos);
+
+
+                //artsel = (RoobaruDuniya) intent.getSerializableExtra(ArticleDetail.TAG);
+                // Log.d("ckart", artsel.getTitle());
+                keySel = intent.getStringExtra("keySelected");
+                //  Log.d("ck",keySel);
                 LoadUIFromkey(keySel);
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        } else if (intent.getStringExtra("searchString") != null) {
-            keySel = intent.getStringExtra("searchString");
-            //  Log.d("kkk",keySel);
-
-            if (keySel != null) {
-                LoadUIFromkey(keySel);
-            }
-
-
-        } else {
-            pos = intent.getIntExtra("position", -1);
-            // Log.d("checkpos", "" + pos);
-
-
-            //artsel = (RoobaruDuniya) intent.getSerializableExtra(ArticleDetail.TAG);
-            // Log.d("ckart", artsel.getTitle());
-            keySel = intent.getStringExtra("keySelected");
-            //  Log.d("ck",keySel);
-            LoadUIFromkey(keySel);
 
              /*   msgListener = msgReference.child(keySel).addValueEventListener(new ValueEventListener() {
                     @Override
@@ -466,13 +496,15 @@ public class ArticleDetail extends AppCompatActivity {
                 */
 
 
+            }
+        }
         }
 
 
         //Deleting comments;
 
 
-    }
+
 
     private void LoadUIFromkey(String keySel) {
 
@@ -667,88 +699,55 @@ public class ArticleDetail extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-       // Log.d("resume", "here");
-        /*
-        FirebaseDynamicLinks.getInstance()
-                .getDynamicLink(getIntent())
-                .addOnSuccessListener(this, new OnSuccessListener<PendingDynamicLinkData>() {
-                    @Override
-                    public void onSuccess(PendingDynamicLinkData pendingDynamicLinkData) {
-                        // Get deep link from result (may be null if no link is found)
-                        Uri deepLink = null;
-                        if (pendingDynamicLinkData != null) {
-                            deepLink = pendingDynamicLinkData.getLink();
-                            Log.d("checkdeep",deepLink.toString());
-                            String path = deepLink.getPath();
-                            path=path.substring(0, path.length() - 1);
-                            String idStr = path.substring(path.lastIndexOf('/') + 1);
+        // Log.d("resume", "here");
+        if (mAuth.getCurrentUser() != null) {
 
-                            keySel = idStr;
-                            Log.d("checkksdeep",keySel);
-                            LoadUIFromkey(keySel);
+            FavDb favRef = new FavDb(ArticleDetail.this);
+            SQLiteDatabase sqldb = favRef.getReadableDatabase();
 
 
-                            // Handle the deep link. For example, open the linked
-                            // content, or apply promotional credit to the user's
-                            // account.
-                            // ...
+            Cursor cursor = favRef.queryKey(sqldb, keySel, "favourite");
+            Cursor cr = favRef.queryKey(sqldb, keySel, "booked");
+            if (cursor.getCount() > 0) {
 
-                            // ...
+
+                favButton.setImageResource(R.drawable.ic_favorite);
+                isFav = true;
+            }
+
+            if (cr.getCount() > 0) {
+
+                bookmarkButton.setImageResource(R.drawable.ic_bookmark_white_24dp);
+                isBookMarked = true;
+
+            }
+            likeListener = publishedRef.child(keySel).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        date = dataSnapshot.child("dateCreated").getValue().toString();
+                        datetvw.setText(date);
+                        //  Log.d("ckdate", date);
+                        if (dataSnapshot.child("likes").exists()) {
+                            String n_Likes = dataSnapshot.child("likes").getValue().toString();
+                            nLikes = Integer.parseInt(n_Likes);
+
+
+                            num_Of_likes.setText(n_Likes + "like");
                         }
-                    }})
-                .addOnFailureListener(this, new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "getDynamicLink:onFailure", e);
+
+
                     }
-                });
-                */
-        FavDb favRef = new FavDb(ArticleDetail.this);
-        SQLiteDatabase sqldb = favRef.getReadableDatabase();
+                }
 
-
-        Cursor cursor = favRef.queryKey(sqldb, keySel, "favourite");
-        Cursor cr = favRef.queryKey(sqldb, keySel, "booked");
-        if (cursor.getCount() > 0) {
-
-
-            favButton.setImageResource(R.drawable.ic_favorite);
-            isFav = true;
-        }
-
-        if (cr.getCount() > 0) {
-
-            bookmarkButton.setImageResource(R.drawable.ic_bookmark_white_24dp);
-            isBookMarked = true;
-
-        }
-        likeListener = publishedRef.child(keySel).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    date = dataSnapshot.child("dateCreated").getValue().toString();
-                    datetvw.setText(date);
-                    //  Log.d("ckdate", date);
-                    if (dataSnapshot.child("likes").exists()) {
-                        String n_Likes = dataSnapshot.child("likes").getValue().toString();
-                        nLikes = Integer.parseInt(n_Likes);
-
-
-                        num_Of_likes.setText(n_Likes + "like");
-                    }
-
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
                 }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+            });
 
 
-        // Log.d("chkobj",""+artsel);
+            // Log.d("chkobj",""+artsel);
 
 
 
@@ -777,66 +776,66 @@ public class ArticleDetail extends AppCompatActivity {
             }
         });
         */
-        commentEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            commentEditText.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.toString().trim().length() > 0) {
-                    sendCmt.setEnabled(true);
                 }
 
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-        sendCmt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String comment = commentEditText.getText().toString();
-                String cName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
-
-
-                long date = System.currentTimeMillis();
-
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                String dateString = sdf.format(date);
-                try {
-                    if (userPhoto == null) {
-
-                        String add = "firebasestorage.googleapis.com/v0/b/roobaru-duniya-86f7d.appspot.com/o/default-profilepic%2Fdefaultprof.jpg?alt=media&token=aeca7a55-05e4-4c02-938f-061624f5c8b4";
-                        userPhoto = Uri.parse("https://" + add);
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    if (s.toString().trim().length() > 0) {
+                        sendCmt.setEnabled(true);
                     }
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
+
                 }
 
+                @Override
+                public void afterTextChanged(Editable s) {
 
-                Comment c = new Comment(cName, comment, dateString, userPhoto.toString(), userId);
-                //commentList.add(c);
-                publishedRef.child(keySel).child("comments").push().setValue(c);
-                HashMap<String, String> notificationData = new HashMap<String, String>();
-                notificationData.put("from", mAuth.getCurrentUser().getUid());
-                notificationData.put("type", "comment");
-                // checkValue();
-
-
-                notificationData.put("commentNo", Long.toString(System.currentTimeMillis()));
-                notificationRef.child(artsel.getuserId()).child(keySel).setValue(notificationData);
-
-                sendCmt.setEnabled(false);
-                commentEditText.clearFocus();
-                commentEditText.setText("");
+                }
+            });
+            sendCmt.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String comment = commentEditText.getText().toString();
+                    String cName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
 
 
-            }
-        });
+                    long date = System.currentTimeMillis();
+
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                    String dateString = sdf.format(date);
+                    try {
+                        if (userPhoto == null) {
+
+                            String add = "firebasestorage.googleapis.com/v0/b/roobaru-duniya-86f7d.appspot.com/o/default-profilepic%2Fdefaultprof.jpg?alt=media&token=aeca7a55-05e4-4c02-938f-061624f5c8b4";
+                            userPhoto = Uri.parse("https://" + add);
+                        }
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
+                    }
+
+
+                    Comment c = new Comment(cName, comment, dateString, userPhoto.toString(), userId);
+                    //commentList.add(c);
+                    publishedRef.child(keySel).child("comments").push().setValue(c);
+                    HashMap<String, String> notificationData = new HashMap<String, String>();
+                    notificationData.put("from", mAuth.getCurrentUser().getUid());
+                    notificationData.put("type", "comment");
+                    // checkValue();
+
+
+                    notificationData.put("commentNo", Long.toString(System.currentTimeMillis()));
+                    notificationRef.child(artsel.getuserId()).child(keySel).setValue(notificationData);
+
+                    sendCmt.setEnabled(false);
+                    commentEditText.clearFocus();
+                    commentEditText.setText("");
+
+
+                }
+            });
 
 
 
@@ -859,13 +858,13 @@ public class ArticleDetail extends AppCompatActivity {
                 }
             });
             */
-        bookmarkButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            bookmarkButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 
 
-                FavDb favdbRef = new FavDb(ArticleDetail.this);
-                SQLiteDatabase db = favdbRef.getWritableDatabase();
+                    FavDb favdbRef = new FavDb(ArticleDetail.this);
+                    SQLiteDatabase db = favdbRef.getWritableDatabase();
                  /*   publishedRef.child(keySel).child("likes").addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -881,70 +880,71 @@ public class ArticleDetail extends AppCompatActivity {
                         }
                     });
                     */
-                if (isBookMarked) {
-                    favdbRef.deleteKey(db, keySel, "booked");
-                    bookmarkButton.setImageResource(R.drawable.ic_bookmark_border_white_24dp);
-                    isBookMarked = false;
-                    Snackbar.make(cdlayout, R.string.bookmark_removed, Snackbar.LENGTH_SHORT).show();
+                    if (isBookMarked) {
+                        favdbRef.deleteKey(db, keySel, "booked");
+                        bookmarkButton.setImageResource(R.drawable.ic_bookmark_border_white_24dp);
+                        isBookMarked = false;
+                        Snackbar.make(cdlayout, R.string.bookmark_removed, Snackbar.LENGTH_SHORT).show();
 
 
-                } else {
-                    favdbRef.insertKey(db, keySel, "booked");
-                    bookmarkButton.setImageResource(R.drawable.ic_bookmark_white_24dp);
-                    isBookMarked = true;
-                    Snackbar.make(cdlayout, R.string.bookmark_saved, Snackbar.LENGTH_SHORT).show();
-                }
-
-            }
-        });
-
-
-        favButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-
-                FavDb favdbRef = new FavDb(ArticleDetail.this);
-                SQLiteDatabase db = favdbRef.getWritableDatabase();
-                 /*   publishedRef.child(keySel).child("likes").addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            String value = dataSnapshot.getValue().toString();
-                            nLikes = Integer.parseInt(value);
-
-
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
-                    */
-                if (isFav) {
-                    favdbRef.deleteKey(db, keySel, "favourite");
-                    favButton.setImageResource(R.drawable.ic_favorite_border);
-                    isFav = false;
-                    if (nLikes > 0) {
-                        nLikes -= 1;
+                    } else {
+                        favdbRef.insertKey(db, keySel, "booked");
+                        bookmarkButton.setImageResource(R.drawable.ic_bookmark_white_24dp);
+                        isBookMarked = true;
+                        Snackbar.make(cdlayout, R.string.bookmark_saved, Snackbar.LENGTH_SHORT).show();
                     }
 
-                } else {
-                    favdbRef.insertKey(db, keySel, "favourite");
-                    favButton.setImageResource(R.drawable.ic_favorite);
-                    HashMap<String, String> notificationData = new HashMap<String, String>();
-                    notificationData.put("from", mAuth.getCurrentUser().getUid());
-                    notificationData.put("type", "like");
-                    notificationRef.child(artsel.getuserId()).child(keySel).setValue(notificationData);
-                    isFav = true;
-                    nLikes += 1;
                 }
-                publishedRef.child(keySel).child("likes").setValue(nLikes);
-
-            }
-        });
+            });
 
 
+            favButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+
+                    FavDb favdbRef = new FavDb(ArticleDetail.this);
+                    SQLiteDatabase db = favdbRef.getWritableDatabase();
+                 /*   publishedRef.child(keySel).child("likes").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            String value = dataSnapshot.getValue().toString();
+                            nLikes = Integer.parseInt(value);
+
+
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                    */
+                    if (isFav) {
+                        favdbRef.deleteKey(db, keySel, "favourite");
+                        favButton.setImageResource(R.drawable.ic_favorite_border);
+                        isFav = false;
+                        if (nLikes > 0) {
+                            nLikes -= 1;
+                        }
+
+                    } else {
+                        favdbRef.insertKey(db, keySel, "favourite");
+                        favButton.setImageResource(R.drawable.ic_favorite);
+                        HashMap<String, String> notificationData = new HashMap<String, String>();
+                        notificationData.put("from", mAuth.getCurrentUser().getUid());
+                        notificationData.put("type", "like");
+                        notificationRef.child(artsel.getuserId()).child(keySel).setValue(notificationData);
+                        isFav = true;
+                        nLikes += 1;
+                    }
+                    publishedRef.child(keySel).child("likes").setValue(nLikes);
+
+                }
+            });
+
+
+        }
     }
 
 
@@ -1019,8 +1019,9 @@ public class ArticleDetail extends AppCompatActivity {
     public void onDestroy() {
         super.onDestroy();
        // Log.d("detaildestroy", "destory");
-
-        commentList.clear();
+if(commentList!=null) {
+    commentList.clear();
+}
 
         if (commentListener != null) {
             publishedRef.child(keySel).child("comments")
@@ -1054,7 +1055,7 @@ public class ArticleDetail extends AppCompatActivity {
 
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        //  Log.d("where","I am called");
+        Log.d("where","I am called");
         setIntent(intent);
 
 

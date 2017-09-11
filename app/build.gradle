@@ -9,8 +9,8 @@ android {
         applicationId "com.samiapps.kv.roobaruduniya"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 25
-        versionName "7.00"
+        versionCode 27
+        versionName "9.00"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     packagingOptions {

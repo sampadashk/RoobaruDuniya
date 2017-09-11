@@ -12,7 +12,10 @@ import com.facebook.LoggingBehavior;
 
 public class MApplication extends Application {
 
-     public void onCreate() {
+
+
+
+    public void onCreate() {
 
         super.onCreate();
         FacebookSdk.setIsDebugEnabled(true);
@@ -21,5 +24,6 @@ public class MApplication extends Application {
 
         // FirebaseDatabase.getInstance().setPersistenceEnabled(true);
     }
+
 
 }
