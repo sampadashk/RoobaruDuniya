@@ -98,6 +98,12 @@
                         android:layout_gravity="left"
                         android:background="@drawable/ic_home_white_24dp"
                         android:contentDescription="@string/go_home" />
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="edit"
+                        android:id="@+id/edit_admin"
+                        android:visibility="gone"/>
 
                     <View
                         android:layout_width="0dp"

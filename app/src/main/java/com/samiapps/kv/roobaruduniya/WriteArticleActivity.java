@@ -37,6 +37,8 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
@@ -703,12 +705,13 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
                 }
 
 
+
                 if (userPos.equals("editor")) {
 
                     //TODO: publish editor
                     //select photo from storage and put in rbd object and firebase database
                     if (rbd.getPhoto() == null) {
-                        String add = "https://firebasestorage.googleapis.com/v0/b/roobaru-duniya-86f7d.appspot.com/o/default%2F3.jpg?alt=media&token=c223a998-7f03-483e-af98-12e0f8c3aa43";
+                        String add = "https://firebasestorage.googleapis.com/v0/b/roobaru-duniya-86f7d.appspot.com/o/article_photo%2F2943?alt=media&token=14bb10c1-ddc8-4ac2-b425-4a862721ecd2";
                         rbd.setPhoto(add);
                         dbRefMsg.child(key).child("photo").setValue(rbd.getPhoto());
 
@@ -743,6 +746,24 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
 
                     //  Log.d("pubbool", "" + b2);
                     //  Log.d("pubkey", key);
+                    dbRefUser.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            if(!dataSnapshot.exists())
+                            {
+                                User u=new User(user.getDisplayName(),userEmail,null,uStatus,userProfile);
+                                dbRefUser.child(userId).setValue(u);
+
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+
+
 
                     dbRefUser.child(userId).child("articleStatus").child(key).setValue("sent");
 
@@ -895,6 +916,7 @@ public class WriteArticleActivity extends AppCompatActivity implements AdapterVi
        // Log.d("item", (String) parent.getItemAtPosition(position));
 
         categoryChoosen = (String) parent.getItemAtPosition(position);
+
         adapter.notifyDataSetChanged();
 
        // Log.d("catselected", categoryChoosen);

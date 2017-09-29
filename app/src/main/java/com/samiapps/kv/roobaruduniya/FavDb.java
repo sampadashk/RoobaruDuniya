@@ -26,6 +26,7 @@ public class FavDb extends SQLiteOpenHelper {
             final String SQL_CREATE_Fav_TABLE = "CREATE TABLE " + RoobaruContract.tableName + "(" + RoobaruContract.COLUMN_KEY + " TEXT NOT NULL," + RoobaruContract.category + " TEXT NOT NULL);";
            // Log.d("checksql", SQL_CREATE_Fav_TABLE);
             db.execSQL(SQL_CREATE_Fav_TABLE);
+
         } catch (Exception e) {
            // Log.e("ERROR", e.toString());
         }

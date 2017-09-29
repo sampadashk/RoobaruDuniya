@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -60,7 +61,7 @@ public class CategoryActivity extends AppCompatActivity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-      //  Log.d("categorylog","oncreate");
+    Log.d("categorylog","oncreate");
         setContentView(R.layout.headlinelayout);
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -173,25 +174,25 @@ public class CategoryActivity extends AppCompatActivity {
     public void onResume()
     {
         super.onResume();
-       // Log.d("categorylog","onResume");
+     // Log.d("categorylog","onResume");
 
     }
     public void onStop()
     {
         super.onStop();
-       // Log.d("categorylog","onStop");
+      // Log.d("categorylog","onStop");
     }
     public void onPause()
     {
         super.onPause();
-       // Log.d("categorylog","onPause");
+     // Log.d("categorylog","onPause");
     }
 
     private void getArticleByCategory() {
         // Query q= categoryRef.child(category).orderByChild("timestamp").limitToFirst(15);
 
 
-        categoryRef.child(category).orderByChild("timeval").limitToLast(20).addListenerForSingleValueEvent(new ValueEventListener() {
+       categoryRef.child(category).orderByChild("timeval").limitToLast(20).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.hasChildren()) {
@@ -202,7 +203,7 @@ public class CategoryActivity extends AppCompatActivity {
                     for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
 
                         String key = postSnapshot.getKey();
-                       // Log.d("ckk", key);
+                    //  Log.d("ckk", key);
                         keys.add(key);
                         error.setVisibility(View.GONE);
                         mRecycleView.setVisibility(View.VISIBLE);
@@ -242,13 +243,18 @@ public class CategoryActivity extends AppCompatActivity {
     }
 
 
-    private void getMessageData(String key) {
-        dbaseReference.child(key).addListenerForSingleValueEvent(new ValueEventListener() {
+    private void getMessageData(final String key) {
+      //  Log.d("keyinmsg",key);
+        dbaseReference.child(key).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+               // Log.d("finalkey",key);
+
                 RoobaruDuniya rbd = dataSnapshot.getValue(RoobaruDuniya.class);
 
-                mLoadingIndicator.setVisibility(View.INVISIBLE);
+
+                mLoadingIndicator.setVisibility(View.GONE);
+               // Log.d("getcattitle",rbd.getTitle());
                 rubaru.add(rbd);
                 imageAdapter.notifyDataSetChanged();
 
@@ -275,7 +281,7 @@ public class CategoryActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (!isNetworkUp()) {
-                // Log.d("hi","show");
+              //   Log.d("hi","show");
                 snackbar = Snackbar.make(homeLayout,
                         getString(R.string.error_no_network),
                         Snackbar.LENGTH_INDEFINITE);
@@ -330,14 +336,23 @@ public class CategoryActivity extends AppCompatActivity {
 
     @Override
     public void onDestroy() {
-       // Log.d("categorylog","ondestroy");
+    //  Log.d("categorylog","ondestroy");
         if (MyReceiver != null) {
 
             unregisterReceiver(MyReceiver);
             MyReceiver = null;
         }
        rubaru.clear();
+        keys.clear();
         imageAdapter.notifyDataSetChanged();
+        if(dbaseReference!=null)
+        dbaseReference=null;
+        if(categoryRef!=null)
+        {
+            categoryRef=null;
+        }
+
+        //imageAdapter.notifyDataSetChanged();
 
 
         super.onDestroy();

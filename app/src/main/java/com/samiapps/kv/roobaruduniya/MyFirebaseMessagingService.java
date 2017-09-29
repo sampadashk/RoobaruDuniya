@@ -116,12 +116,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             Log.e("classname", "null");
             return;
         }
+        Log.d("notifbd","caleed");
         Intent intent = new Intent("android.intent.action.BADGE_COUNT_UPDATE");
         intent.putExtra("badge_count", countNo);
         intent.putExtra("badge_count_package_name", applicationContext.getPackageName());
         intent.putExtra("badge_count_class_name", launcherClassName);
         intent.putExtra("badge_count_msg", msg);
         intent.putExtra("badge_jsondata", ob.toString());
+
 
       //  Log.d("ckjso", ob.toString());
         applicationContext.sendBroadcast(intent);

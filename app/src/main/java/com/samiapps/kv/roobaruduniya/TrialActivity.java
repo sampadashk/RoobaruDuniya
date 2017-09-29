@@ -252,9 +252,12 @@ public class TrialActivity extends AppCompatActivity
                         //   Log.d("hey", (String) di.getValue());
                         isEditor = true;
                         userStatus = "editor";
+
+
                         activityTitles[4] = getString(R.string.editor_unpublished);
                         sentart.setTitle(R.string.editor_unpublished);
                         txtStatus.setText(R.string.editor);
+                        userDtabase.child(mAuth.getCurrentUser().getUid()).child("status").setValue("editor");
 
                         break;
 
@@ -556,12 +559,13 @@ public class TrialActivity extends AppCompatActivity
 
     }
 
-    private void selectNavMenu() {
-    }
+
 
     @Override
     public void onResume() {
         super.onResume();
+
+
         //Log.d("checkmain", CURRENT_TAG);
         //  Log.d(TAG,"resume");
 
@@ -654,8 +658,9 @@ public class TrialActivity extends AppCompatActivity
             e.printStackTrace();
         }
 
+
+         checkUserDb();
         checkEditor();
-        // checkUserDb();
 
 
         loadNavHeader();
@@ -680,14 +685,14 @@ public class TrialActivity extends AppCompatActivity
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 try {
-                    String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                    String uid = mAuth.getCurrentUser().getUid();
                     //Log.d("testui", uid);
                     if (dataSnapshot.hasChild(uid)) {
                         //Log.d("haschi", "true");
                         return;
                     } else {
                         //Log.d("haschi", "false");
-                        String uphoto = FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl().toString();
+                        String uphoto = mAuth.getCurrentUser().getPhotoUrl().toString();
                         User u = new User(uname, uemail, null, TrialActivity.userStatus, uphoto);
                         userDtabase.child(uid).setValue(u);
                     }

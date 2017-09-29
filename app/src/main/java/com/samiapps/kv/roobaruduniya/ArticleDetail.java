@@ -68,6 +68,7 @@ public class ArticleDetail extends AppCompatActivity {
     CollapsingToolbarLayout collapsingToolbarLayout;
     CoordinatorLayout cdlayout;
     LinearLayout displayCont;
+    Button editartticleButton;
 
     TextView num_Of_likes;
     ArrayList<TextFormat> textFormatList;
@@ -130,6 +131,7 @@ public class ArticleDetail extends AppCompatActivity {
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collaptool_layout);
         AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        editartticleButton=(Button) findViewById(R.id.edit_admin);
         collapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.collapsedappbar);
         collapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.expandedappbar);
         sharedButton = (ImageButton) findViewById(R.id.share);
@@ -190,6 +192,12 @@ public class ArticleDetail extends AppCompatActivity {
 
             userPhoto = mAuth.getCurrentUser().getPhotoUrl();
             userId = mAuth.getCurrentUser().getUid();
+            String uemail=mAuth.getCurrentUser().getEmail();
+            if(uemail.equals("shukla.sampada@gmail.com")||uemail.equals("ankita87jn@gmail.com"))
+            {
+                editartticleButton.setVisibility(View.VISIBLE);
+            }
+
 
             commentList = new ArrayList<>();
             commentAdapter = new CommentAdapter(this, commentList);
@@ -207,6 +215,18 @@ public class ArticleDetail extends AppCompatActivity {
             notificationRef.keepSynced(true);
             msgReference = db.getReference("messages");
             userRef = db.getReference("user");
+            editartticleButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent=new Intent(ArticleDetail.this,EditorArticleActivity.class);
+                    intent.putExtra("position",pos);
+                    intent.putExtra("Keypos",keySel);
+                    Bundle b = new Bundle();
+                    b.putSerializable(SentFragment.TAG, artsel);
+                    intent.putExtras(b);
+                    startActivity(intent);
+                }
+            });
 
             // msgReference.keepSynced(true);
             commentAdapter.setOnItemClickListener(new CommentAdapter.ClickListener() {

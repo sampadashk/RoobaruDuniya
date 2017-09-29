@@ -56,6 +56,7 @@ public class EditorArticleActivity extends AppCompatActivity implements AdapterV
     DatabaseReference styleReference;
     private DatabaseReference dbtitlepublished;
 
+
     private  String contentString;
     ImageButton photoButton;
     int pos;
@@ -98,6 +99,7 @@ public class EditorArticleActivity extends AppCompatActivity implements AdapterV
         firebaseStorage = FirebaseStorage.getInstance();
         storageReference = firebaseStorage.getReference().child("article_photo");
         category = db.getReference("categories");
+
         defaultPhoto = firebaseStorage.getReference().child("default");
         italicButton = (Button) findViewById(R.id.italic_button);
         boldButton = (Button) findViewById(R.id.bold_button);
@@ -548,6 +550,8 @@ public class EditorArticleActivity extends AppCompatActivity implements AdapterV
         dbRefUser.child(writerId).child("articleStatus").child(key).removeValue();
         dbRefMsg.child(key).removeValue();
         dbPendingArticle.child(key).removeValue();
+       
+
 
     }
 
@@ -612,6 +616,7 @@ public class EditorArticleActivity extends AppCompatActivity implements AdapterV
       //  Log.d("item", (String) parent.getItemAtPosition(position));
 
         categoryChoosen = (String) parent.getItemAtPosition(position);
+
         adapter.notifyDataSetChanged();
 
       //  Log.d("catsel", categoryChoosen);
